@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import com.example.food.Map.MapActivity;
 import com.example.food.R;
 import com.example.food.Settings.SettingsActivity;
+import com.example.food.Sort.SortActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initContent();
         setupNavigationDrawerMenu();
+
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, SortActivity.class);
+        startActivity(intent);
+        MainActivity.this.finish();
     }
 
     private void initContent() {
