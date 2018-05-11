@@ -44,5 +44,6 @@
 
     <!--Map-->
     <string name="text_warm">No GPS or WIFI</string>
+    <string name="Sort_Activity_Title">分類選擇</string>
 
 </resources>
