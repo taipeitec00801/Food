@@ -33,11 +33,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initContent();
         setupNavigationDrawerMenu();
-
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this, SortActivity.class);
-        startActivity(intent);
-        MainActivity.this.finish();
     }
 
     private void initContent() {
