@@ -1,0 +1,25 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorBackground">@color/colorBody</item>
+        <item name="colorCardBody">@color/colorCardBody</item>
+
+        <!-- hamburger -->
+        <item name="colorControlNormal">@color/colorBlack</item>
+
+        <!--<item name="dra"-->
+        
+        <!-- image -->
+        <item name="ivSettingDayNight">@drawable/moon</item>
+        <item name="ivUserSetting">@drawable/user_setting_black</item>
+        <item name="ivSettingClean">@drawable/clean_black</item>
+        <item name="ivSettingLikes">@drawable/likes</item>
+
+        <!-- string -->
+        <item name="tvSettingDayNight">@string/settingDayNight</item>
+    </style>
+
+</resources>

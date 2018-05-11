@@ -1,0 +1,23 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorBackground">@color/colorBody</item>
+        <item name="colorCardBody">@color/colorCardBody</item>
+
+        <!-- hamburger -->
+        <item name="colorControlNormal">@color/colorBlack</item>
+
+        <!-- image -->
+        <item name="ivSettingDayNight">@drawable/sun</item>
+        <item name="ivUserSetting">@drawable/user_setting_white</item>
+        <item name="ivSettingClean">@drawable/clean_white</item>
+        <item name="ivSettingLikes">@drawable/likes_night</item>
+
+        <!-- string -->
+        <item name="tvSettingDayNight">@string/settingDaytime</item>
+    </style>
+
+</resources>

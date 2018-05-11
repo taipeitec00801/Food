@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">食在好評</string>
+    <string name="textSettings">設定</string>
+    <string name="textQuestion">問題回報</string>
+    <string name="textInformation">資訊</string>
+    <string name="textMap">附近</string>
+    <string name="textHome">首頁</string>
+    <string name="textCollection">收藏庫</string>
+    <string name="textSearch">搜尋</string>
+    <string name="textNull"></string>
+    <string name="textGift">禮物</string>
+    <string name="textUserFriend">追蹤</string>
+    <string name="textQRcode">QRcode</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="textIntroduction">簡介</string>
+    <string name="text_btSubmit">註冊</string>
+    <string name="text_btLogin">登入</string>
+
+
+    <string name="textLogout">登出</string>
+    <string name="settingDayNight">夜間模式</string>
+    <string name="settingDaytime">日間模式</string>
+    <string name="settingPreferences">偏好種類設定</string>
+    <string name="settingUserData">更改個人資料</string>
+    <string name="textClean">清除暫存</string>
+
+
+    <string name="textJapaneseStyle">日式</string>
+    <string name="textChineseStyle">中式</string>
+    <string name="textWesternStyle">西式</string>
+    <string name="textKoreaStyle">韓式</string>
+    <string name="textThaiStyle">泰式</string>
+    <string name="textOther">其他</string>
+    <string name="textLocalDishes">小吃</string>
+    <string name="textGuangdongStyle">港式</string>
+    <string name="textDrinksDesserts"><![CDATA[飲品 & 甜點]]></string>
+    <string name="textIceCream">冰品</string>
+    <string name="textPreferencesSettings">偏好種類設定</string>
+    <string name="textSort">分類</string>
+    <string name="textAddStore">分享店家</string>
+    <string name="textMember">會員</string>
+    <string name="textServer">系統</string>
+
+    <!--Map-->
+    <string name="text_warm">No GPS or WIFI</string>
+
+</resources>

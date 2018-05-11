@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="colorBackground" format="reference|color" />
+    <attr name="colorCardBody" format="reference|color" />
+    <attr name="textColor" format="color|reference" />
+
+
+    <!-- image -->
+    <attr name="ivSettingDayNight" format="reference" />
+    <attr name="ivUserSetting" format="reference" />
+    <attr name="ivSettingClean" format="reference" />
+    <attr name="ivSettingLikes" format="reference" />
+
+
+    <!-- string -->
+    <attr name="tvSettingDayNight" format="reference" />
+
+</resources>

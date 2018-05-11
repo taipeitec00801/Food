@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navHome"
+            android:icon="@drawable/home"
+            android:title="@string/textHome" />
+
+        <item
+            android:id="@+id/navMap"
+            android:icon="@drawable/map"
+            android:title="@string/textMap" />
+        <item
+            android:id="@+id/navSort"
+            android:icon="@drawable/fork"
+            android:title="@string/textSort" />
+        <item
+            android:id="@+id/navSearch"
+            android:icon="@drawable/magnifier"
+            android:title="@string/textSearch" />
+        <item
+            android:id="@+id/navQRcode"
+            android:icon="@drawable/qrcode"
+            android:title="@string/textQRcode" />
+
+    </group>
+
+    <item android:title="@string/textMember">
+        <menu>
+            <item
+                android:id="@+id/navCollection"
+                android:icon="@drawable/collection"
+                android:title="@string/textCollection" />
+            <item
+                android:id="@+id/navAddStore"
+                android:icon="@drawable/add"
+                android:title="@string/textAddStore" />
+            <item
+                android:id="@+id/navGift"
+                android:icon="@drawable/gift"
+                android:title="@string/textGift" />
+            <item
+                android:id="@+id/navUserFriend"
+                android:icon="@drawable/userfriend"
+                android:title="@string/textUserFriend" />
+        </menu>
+    </item>
+
+    <item android:title="@string/textServer">
+        <menu>
+            <item
+                android:id="@+id/navSettings"
+                android:icon="@drawable/settings"
+                android:title="@string/textSettings" />
+            <item
+                android:id="@+id/navInformation"
+                android:icon="@drawable/information"
+                android:title="@string/textInformation" />
+            <item
+                android:id="@+id/navQuestion"
+                android:icon="@drawable/question"
+                android:title="@string/textQuestion" />
+        </menu>
+    </item>
+
+</menu>
