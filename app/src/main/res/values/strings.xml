@@ -10,8 +10,6 @@
     <string name="textGift">禮物</string>
     <string name="textUserFriend">追蹤</string>
     <string name="textQRcode">QRcode</string>
-    <string name="drawer_open">Open</string>
-    <string name="drawer_close">Close</string>
     <string name="textIntroduction">簡介</string>
     <string name="text_btSubmit">註冊</string>
     <string name="text_btLogin">登入</string>
@@ -43,5 +41,11 @@
 
     <!--Map-->
     <string name="text_warm">No GPS or WIFI</string>
+
+
+    <string name="text_btYes">確定</string>
+    <string name="text_btCancel">取消</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
 
 </resources>

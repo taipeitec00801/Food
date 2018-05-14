@@ -1,12 +1,15 @@
 package com.example.food.Settings;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 
 import com.example.food.DataCleanManager;
 import com.example.food.Main.MainActivity;
+import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 
 import java.io.File;
@@ -47,7 +51,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             e.printStackTrace();
         }
 
-//            點選不同的 CardView
+        //  點選不同的 CardView
         selectCardView();
 
     }
@@ -67,6 +71,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void selectCardView() {
+        /* 更改個人資料 */
         CardView cvUerInformation = findViewById(R.id.userInformation);
         cvUerInformation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
             }
         });
-
+        /* 偏好種類設定 */
         CardView cvSettingsPreferences = findViewById(R.id.settingsPreferences);
         cvSettingsPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
             }
         });
-
+        /* 日夜間模式 */
         CardView cvChangeDayTimeOrNight = findViewById(R.id.changeDayTimeOrNight);
         cvChangeDayTimeOrNight.setOnClickListener(new View.OnClickListener() {
             int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
@@ -107,7 +112,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 recreate();
             }
         });
-
+        /* 清除快取 */
         CardView cvClearApplicationCache = findViewById(R.id.clearApplicationCache);
         cvClearApplicationCache.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +121,45 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 DataCleanManager.cleanExternalCache(getApplicationContext());
             }
         });
+        /* 登出 */
+        CardView settingLogout = findViewById(R.id.settingLogout);
+        settingLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog alertDialog = new AlertDialog();
+                alertDialog.show(getSupportFragmentManager(), "alert");
+            }
+        });
+    }
+
+    //登出 Dialog
+    public static class AlertDialog extends DialogFragment implements DialogInterface.OnClickListener {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new android.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.textLogout)
+                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setMessage("Do you really want to logout?")
+                    .setPositiveButton(R.string.text_btYes,this)
+                    .setNegativeButton(R.string.text_btCancel,this)
+                    .create();
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                    break;
+                default:
+                    dialog.cancel();
+                    break;
+            }
+        }
     }
 
     private void initContent() {
