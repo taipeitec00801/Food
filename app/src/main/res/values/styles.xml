@@ -6,6 +6,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorBackground">@color/colorBody</item>
         <item name="colorCardBody">@color/colorCardBody</item>
+        <!-- 動畫 -->
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+        <item name="android:activityOpenEnterAnimation">@android:anim/fade_in</item>
 
         <!-- hamburger -->
         <item name="colorControlNormal">@color/colorBlack</item>

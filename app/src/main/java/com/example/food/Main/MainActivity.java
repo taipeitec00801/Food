@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initTheme();
         setContentView(R.layout.activity_main);
+        initTheme();
 
         initContent();
         setupNavigationDrawerMenu();
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (modeTheme == 2) {
             AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
         }
-
+        setContentView(R.layout.activity_main);
     }
 
     private void initContent() {

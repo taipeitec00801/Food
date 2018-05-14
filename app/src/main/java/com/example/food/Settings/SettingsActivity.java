@@ -16,6 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,8 +43,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
         initContent();
         setupNavigationDrawerMenu();
+
         File file = new File(this.getCacheDir().getPath());
         TextView tvClearApplicationCache = findViewById(R.id.tvClearApplicationCache);
         try {
@@ -54,6 +59,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         selectCardView();
 
     }
+
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
@@ -68,6 +75,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 
     private void selectCardView() {
         /* 更改個人資料 */
@@ -158,6 +167,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     break;
                 default:
                     dialog.cancel();
+                    SettingsActivity.cleanCache = false;
                     break;
             }
         }

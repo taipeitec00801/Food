@@ -6,6 +6,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorBackground">@color/colorBody</item>
         <item name="colorCardBody">@color/colorCardBody</item>
+        <item name="android:windowContentTransitions">true</item>
 
         <!-- hamburger -->
         <item name="colorControlNormal">@color/colorBlack</item>
