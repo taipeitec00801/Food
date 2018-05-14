@@ -1,6 +1,7 @@
 package com.example.food.Main;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -18,20 +20,42 @@ import com.example.food.Map.MapActivity;
 import com.example.food.R;
 import com.example.food.Settings.SettingsActivity;
 
+import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
+import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initTheme();
         setContentView(R.layout.activity_main);
 
         initContent();
         setupNavigationDrawerMenu();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        askPermissions();
+
+    }
+
+//    判斷日夜間模式
+    private void initTheme() {
+        int modeTheme = Integer.parseInt(getSharedPreferences("MyTheme", MODE_PRIVATE)
+                .getString("theme",""));
+        if (modeTheme == 1) {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
+        } else if (modeTheme == 2) {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
+        }
+
     }
 
     private void initContent() {
@@ -43,17 +67,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.navigationView);
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView.setNavigationItemSelectedListener(this);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 drawerLayout,
                 toolbar,
                 R.string.drawer_open,
                 R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-        NavigationView navView = findViewById(R.id.navigationView);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 menuItem.setChecked(true);
                 drawerLayout.closeDrawers();
                 Intent intent = new Intent();
@@ -67,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case R.id.navMap:
                         intent.setClass(MainActivity.this, MapActivity.class);
                         startActivity(intent);
-                        MainActivity.this.finish();
                         break;
 
                     default:
@@ -108,12 +130,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             closeDrawer();
         else
             super.onBackPressed();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        askPermissions();
     }
 
     //要求User Permissions

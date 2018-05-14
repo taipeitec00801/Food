@@ -52,6 +52,8 @@
         <activity android:name=".Settings.SettingsActivity" />
         <activity android:name=".Settings.PreferencesSettingsActivity"
                   android:parentActivityName=".Settings.SettingsActivity" />
+        <activity android:name=".Settings.UserInformationActivity"
+            android:parentActivityName=".Settings.SettingsActivity" />
         <activity android:name=".Map.MapActivity"
                   android:parentActivityName=".Main.MainActivity"/>
         <activity android:name=".Search.SearchActivity" />

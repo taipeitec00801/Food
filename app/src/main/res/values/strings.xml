@@ -7,7 +7,6 @@
     <string name="textHome">首頁</string>
     <string name="textCollection">收藏庫</string>
     <string name="textSearch">搜尋</string>
-    <string name="textNull"></string>
     <string name="textGift">禮物</string>
     <string name="textUserFriend">追蹤</string>
     <string name="textQRcode">QRcode</string>
@@ -23,7 +22,7 @@
     <string name="settingDaytime">日間模式</string>
     <string name="settingPreferences">偏好種類設定</string>
     <string name="settingUserData">更改個人資料</string>
-    <string name="textClean">清除暫存</string>
+    <string name="textCleanCache">清除快取</string>
 
 
     <string name="textJapaneseStyle">日式</string>

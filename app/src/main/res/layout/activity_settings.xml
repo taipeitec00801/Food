@@ -31,6 +31,7 @@
                 android:layout_height="70dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="12dp"
+                android:id="@+id/userInformation"
                 android:layout_marginRight="6dp"
                 android:layout_marginLeft="6dp" >
 
@@ -127,11 +128,11 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/clearApplicationCache"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="12dp"
-                android:id="@+id/settingClear"
                 android:layout_marginTop="24dp"
                 android:layout_marginRight="6dp"
                 android:layout_marginLeft="6dp" >
@@ -150,12 +151,22 @@
                         android:src="?attr/ivSettingClean"/>
 
                     <TextView
-                        android:layout_width="180dp"
+                        android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textSize="20sp"
                         android:textColor="@color/colorText"
-                        android:text="@string/textClean" />
+                        android:layout_marginEnd="30dp"
+                        android:text="@string/textCleanCache" />
+
+                    <TextView
+                        android:id="@+id/tvClearApplicationCache"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="20sp"
+                        android:textColor="@color/colorText"
+                        android:text="" />
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -199,7 +210,7 @@
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/navigationView"
+        android:id="@+id/settingsNavigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
