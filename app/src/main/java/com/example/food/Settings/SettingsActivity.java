@@ -1,6 +1,5 @@
 package com.example.food.Settings;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 
 import com.example.food.DataCleanManager;
 import com.example.food.Main.MainActivity;
-import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 
 import java.io.File;
@@ -36,6 +34,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private Toolbar settingsToolbar;
     private DrawerLayout settingsDrawerLayout;
+    public static boolean cleanCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +116,12 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cvClearApplicationCache.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DataCleanManager.cleanInternalCache(getApplicationContext());
-                DataCleanManager.cleanExternalCache(getApplicationContext());
+                CleanCacheDialog cleanCacheDialog = new CleanCacheDialog();
+                cleanCacheDialog.show(getSupportFragmentManager(), "alert");
+                if (cleanCache) {
+                    DataCleanManager.cleanInternalCache(getApplicationContext());
+                    DataCleanManager.cleanExternalCache(getApplicationContext());
+                }
             }
         });
         /* 登出 */
@@ -126,14 +129,42 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         settingLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog alertDialog = new AlertDialog();
-                alertDialog.show(getSupportFragmentManager(), "alert");
+                LogoutDialog logoutDialog = new LogoutDialog();
+                logoutDialog.show(getSupportFragmentManager(), "alert");
             }
         });
     }
 
+    //清除快取 Dialog
+    public static class CleanCacheDialog extends DialogFragment implements DialogInterface.OnClickListener {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new android.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.textCleanCache)
+                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setMessage("Do you really want to clear cache?")
+                    .setPositiveButton(R.string.text_btYes,this)
+                    .setNegativeButton(R.string.text_btCancel,this)
+                    .create();
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    SettingsActivity.cleanCache = true;
+                    break;
+                default:
+                    dialog.cancel();
+                    break;
+            }
+        }
+    }
+
     //登出 Dialog
-    public static class AlertDialog extends DialogFragment implements DialogInterface.OnClickListener {
+    public static class LogoutDialog extends DialogFragment implements DialogInterface.OnClickListener {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
