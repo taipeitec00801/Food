@@ -13,6 +13,7 @@
     <string name="textIntroduction">簡介</string>
     <string name="text_btSubmit">註冊</string>
     <string name="text_btLogin">登入</string>
+    <string name="text_gender">性別</string>
 
 
     <string name="textLogout">登出</string>

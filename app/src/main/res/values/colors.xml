@@ -9,5 +9,7 @@
     <color name="colorBlack">#000000</color>
     <color name="colorText">#000000</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="lgColorText">#FFC3B3B2</color>
+    <color name="etColorAccent">#f0649c</color>
 
 </resources>

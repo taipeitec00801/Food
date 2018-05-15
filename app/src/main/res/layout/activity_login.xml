@@ -12,7 +12,7 @@
         android:id="@+id/main_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/login_bg">
+        android:background="@drawable/login_bg_2">
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,8 +41,9 @@
                 android:layout_marginTop="180dp"
                 android:drawableLeft="@drawable/username"
                 android:drawablePadding="20dp"
-                android:hint="User Name" />
-            <!--android:digits="0123456789qwertyuioplkjhgfdsazxcvbnm" />-->
+                android:hint="User Name"
+                android:textColor="@color/lgColorText"/>
+
 
             <EditText
                 android:id="@+id/etPassword"
@@ -54,30 +55,29 @@
                 android:drawablePadding="20dp"
                 android:hint="PassWord"
                 android:inputType="textPassword"
+                android:textColor="@color/lgColorText" />
 
-                />
 
+            <Button
+                android:id="@+id/btLogin"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="65dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/btn_bg"
+                android:onClick="onSubmitClick"
+                android:text="@string/text_btLogin"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/btSubmit"
                 android:layout_width="250dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="65dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/btn_bg"
-                android:text="@string/text_btSubmit"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/btClear"
-                android:layout_width="250dp"
-                android:layout_height="50dp"
-                android:layout_marginLeft="65dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/btn_bg"
-                android:onClick="onSubmitClick"
-                android:text="@string/text_btLogin"
+                android:text="@string/text_btSubmit"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp" />
         </LinearLayout>

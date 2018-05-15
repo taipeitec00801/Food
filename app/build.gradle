@@ -35,5 +35,6 @@ dependencies {
     implementation 'com.github.mancj:MaterialSearchBar:0.7.6'
     //Gson
     implementation 'com.google.code.gson:gson:2.8.1'
-
+    /*circleimageview*/
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
