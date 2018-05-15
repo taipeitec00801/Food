@@ -1,16 +1,13 @@
 package com.example.food.Map;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,17 +36,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.food.R;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -59,14 +53,18 @@ import java.util.List;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private GoogleMap mgoogleMap; //儲存地圖資訊
     private LocationManager mlocationManager;//LocationManager物件
-    //    private String provider;
-    // private Location location;
     private Marker Store_Marker;
+    private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private List<StoreInfo> storeInfoList;
     private double latitude, longitude;
     private GoogleApiClient mgoogleApiClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private int overallXScrol = 0;
+    private int scrollPosition = 0;
+    private LatLng markerPosition;
+    private Marker lastClicked;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +78,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mtoolbar.setTitle(getString(R.string.textMap));
         setSupportActionBar(mtoolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
     }
 
     private void handViews() {
@@ -92,13 +88,32 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         recyclerView.setAdapter(new storeInfoAdapter(this,storeInfoList));
         /* 不處理捲動事件所以監聽器設為null */
         recyclerView.setOnFlingListener(null);
-        /* 如果希望一次滑動一頁資料，要加上PagerSnapHelper物件 */
+        /* 一次滑動一頁資料*/
         PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
         pagerSnapHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE ) {
+                    recyclePosition(scrollPosition,Store_Marker);
+                }
+            }
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                overallXScrol = recyclerView.computeHorizontalScrollExtent();
+                Log.d("overallXScrol",""+overallXScrol);
+                Log.d("ScrollExtent",""+recyclerView.computeHorizontalScrollExtent());
+                Log.d("ScrollOffset",""+recyclerView.computeHorizontalScrollOffset());
+                Log.d("ScrollRange",""+recyclerView.computeHorizontalScrollRange());
+                scrollPosition = recyclerView.computeHorizontalScrollOffset()/overallXScrol;
+            }
+        });
 
     }
 
-    //CardView implement
+    //RecyclerView implement
     private class storeInfoAdapter extends RecyclerView.Adapter<storeInfoAdapter.mViewHolder> {
         private Context context;
         private List<StoreInfo> storeInfoList;
@@ -128,16 +143,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
 
         @Override
-        public void onBindViewHolder(@NonNull mViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final mViewHolder holder, final int position) {
             final StoreInfo storeInfo = storeInfoList.get(position);
             holder.imageView.setImageResource(storeInfo.getStore_img());
             holder.tvName.setText(storeInfo.getStrore_Name());
             holder.tvinfo.setText(storeInfo.getStore_simpinfo()+", id is :"+storeInfo.getStor_id());
-
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MapActivity.this,"Click",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapActivity.this,"ID:"+position,Toast.LENGTH_SHORT).show();
+                    /*
+                                            send Data to 店家評價頁面
+                                      */
                 }
             });
         }
@@ -177,9 +194,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             location.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()) {
+                    if(task.isSuccessful() && location != null) {
                         Location currentlocation = (Location) task.getResult();
-                        setLocation(currentlocation.getLatitude(),currentlocation.getLongitude());
+                        if(currentlocation != null) {
+                            setLocation(currentlocation.getLatitude(),currentlocation.getLongitude());
+                        } else {
+                            new AlertDialog().show(getSupportFragmentManager(),"Warm");
+                        }
+
                     } else {
                         Toast.makeText(MapActivity.this,"unable to get currentLocation",Toast.LENGTH_SHORT).show();
                     }
@@ -187,6 +209,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             });
         } catch (SecurityException e) {
             Log.e("DeviceLoc","DeviceLocation:"+e.getMessage());
+        } catch (NullPointerException e) {
+            Log.e("DeviceLoc","DeviceLocation Latln:"+e.getMessage());
         }
 
     }
@@ -213,25 +237,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        makeMakers();
+        makeMarkers();
         //MakerClick(CardView ScrollToPosition)
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                final LatLng markerPosition = marker.getPosition();
+                markerPosition = marker.getPosition();
                 int selectMarker = -1;
                 for(int i =0;i< storeInfoList.size();i++) {
                     if(markerPosition.latitude == storeInfoList.get(i).getLatitude() && markerPosition.longitude == storeInfoList.get(i).getLongitude()) {
                         selectMarker = i;
                     }
                 }
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(latitude, longitude))
-                        .zoom(14)
-                        .build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 recyclerView.smoothScrollToPosition(selectMarker);
-                return false;
+                recyclePosition(selectMarker,marker);
+                return true;
             }
         });
     }
@@ -290,8 +310,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new android.app.AlertDialog.Builder(getActivity())
                     .setTitle(R.string.text_warm)
-                    .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("Please Open GPS or WIFI")
+                    .setIcon(R.drawable.warn_icon)
+                    .setMessage("Please check GPS or WIFI")
                     .setPositiveButton("Yes",this)
                     .setNegativeButton("NO",this)
                     .create();
@@ -309,32 +329,64 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         }
     }
-
-
-    private void makeMakers() {
+    //MapMarkers
+    private void makeMarkers() {
         List<StoreInfo> markers = getStoreInfoList();
+        Bitmap smallMarker = smallMarker();
+        //MapMarker
+        for(int i=0;i<markers.size();i++) {
+                Store_Marker = mgoogleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(markers.get(i).getLatitude(),markers.get(i).getLongitude()))
+                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        }
+    }
+    //Custom Marker
+    private Bitmap smallMarker() {
         int height = 50;
         int width = 50;
-        //Custom Marker size
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_marker);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b,width,height,false);
-        //MapMarker
-        for(int i=0;i<markers.size();i++) {
-            Store_Marker = mgoogleMap.addMarker(new MarkerOptions()
-                                                .position(new LatLng(markers.get(i).getLatitude(),markers.get(i).getLongitude()))
-                                                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-        }
-
+        return smallMarker;
+    }
+    //Custom Select Marker
+    private Bitmap SelectsmallMarker() {
+        int height = 70;
+        int width = 70;
+        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_maker_item);
+        Bitmap b = bitmapdraw.getBitmap();
+        Bitmap SelectsmallMarker = Bitmap.createScaledBitmap(b,width,height,false);
+        return SelectsmallMarker;
+    }
+    //顯示Select Markers
+    private void recyclePosition(int position,Marker marker){
+         final Marker lastMarker;
+         lastMarker = marker;
+         scrollPosition = position;
+         markerPosition  = new LatLng(storeInfoList.get(scrollPosition).getLatitude(),storeInfoList.get(scrollPosition).getLongitude());
+         marker.setPosition(markerPosition);
+         marker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
+         if(lastClicked != null) {
+             lastClicked.setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker()));
+         }
+         marker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
+         lastClicked = marker;
     }
 
     //StoreInfoList
     public List<StoreInfo> getStoreInfoList() {
         List<StoreInfo> StoreInfoList = new ArrayList<>();
-        StoreInfoList.add(new StoreInfo(1,R.drawable.drinks_and_desserts,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.042685,121.539954));
-        StoreInfoList.add(new StoreInfo(2,R.drawable.ice_cream,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.040197,121.535736));
-        StoreInfoList.add(new StoreInfo(3,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.041201,121.531548));
+        StoreInfoList.add(new StoreInfo(0,R.drawable.drinks_and_desserts,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.042685,121.539954));
+        StoreInfoList.add(new StoreInfo(1,R.drawable.ice_cream,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.040197,121.535736));
+        StoreInfoList.add(new StoreInfo(2,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.041201,121.531548));
+        StoreInfoList.add(new StoreInfo(3,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04380758,121.53599093));
+        StoreInfoList.add(new StoreInfo(4,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04417695,121.53433869));
+        StoreInfoList.add(new StoreInfo(5,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04061933,121.53543303));
+        StoreInfoList.add(new StoreInfo(6,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04281612,121.53886626));
+        StoreInfoList.add(new StoreInfo(7,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04629592,121.53508562));
+        StoreInfoList.add(new StoreInfo(8,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04240787,121.53021473));
+        StoreInfoList.add(new StoreInfo(9,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04011386,121.536463));
+        StoreInfoList.add(new StoreInfo(10,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.03844193,121.53856585));
         return StoreInfoList;
     }
-
 }

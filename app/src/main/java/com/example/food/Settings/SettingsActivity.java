@@ -221,7 +221,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new android.app.AlertDialog.Builder(getActivity())
                     .setTitle(R.string.textCleanCache)
-                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setIcon(R.drawable.warn_icon)
                     .setMessage("Do you really want to clear cache?")
                     .setPositiveButton(R.string.text_btYes,this)
                     .setNegativeButton(R.string.text_btCancel,this)
@@ -250,7 +250,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return new android.app.AlertDialog.Builder(getActivity())
                     .setTitle(R.string.textLogout)
-                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setIcon(R.drawable.warn_icon)
                     .setMessage("Do you really want to logout?")
                     .setPositiveButton(R.string.text_btYes,this)
                     .setNegativeButton(R.string.text_btCancel,this)
