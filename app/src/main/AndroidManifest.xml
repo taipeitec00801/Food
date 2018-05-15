@@ -4,13 +4,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--約略定位:WI-FI-->
+    <!-- 約略定位:WI-FI -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!--精確定位:GPS-->
+    <!-- 精確定位:GPS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
@@ -24,17 +24,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDtR5QzJmkzPIAIyUEYpE5nVHNYYBODagY " />
 
         <activity
             android:name=".Main.WelcomeActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,17 +49,21 @@
         </activity>
         <activity android:name=".Collection.CollectionActivity" />
         <activity android:name=".Settings.SettingsActivity" />
-        <activity android:name=".Settings.PreferencesSettingsActivity"
-                  android:parentActivityName=".Settings.SettingsActivity" />
-        <activity android:name=".Settings.UserInformationActivity"
+        <activity
+            android:name=".Settings.PreferencesSettingsActivity"
             android:parentActivityName=".Settings.SettingsActivity" />
-        <activity android:name=".Map.MapActivity"
-                  android:parentActivityName=".Main.MainActivity"/>
+        <activity
+            android:name=".Settings.UserInformationActivity"
+            android:parentActivityName=".Settings.SettingsActivity" />
+        <activity
+            android:name=".Map.MapActivity"
+            android:parentActivityName=".Main.MainActivity" />
         <activity android:name=".Search.SearchActivity" />
         <activity android:name=".Sort.SortActivity" />
         <activity android:name=".Comment.CommentActivity" />
         <activity android:name=".Member.LoginActivity" />
-        <activity android:name=".Member.MemberActivity"></activity>
+        <activity android:name=".Member.MemberActivity" />
+        <activity android:name=".UnderDevelopmentActivity" />
     </application>
 
 </manifest>
