@@ -8,9 +8,12 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +34,8 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         reSettingsPreferences.setLayoutManager(new LinearLayoutManager(PreferencesSettingsActivity.this));
         List<UserPreferencesSetting> UserPreferencesSettings = getUserPreferencesSettings();
         reSettingsPreferences.setAdapter(new UserPreferencesSettingsAdapter(UserPreferencesSettings, PreferencesSettingsActivity.this));
+
+
     }
 
     private void initContent() {

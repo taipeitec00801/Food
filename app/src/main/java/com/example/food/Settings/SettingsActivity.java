@@ -16,9 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +23,7 @@ import android.widget.TextView;
 
 import com.example.food.DataCleanManager;
 import com.example.food.Main.MainActivity;
+import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 
 import java.io.File;
@@ -44,23 +42,13 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+
         initContent();
         setupNavigationDrawerMenu();
-
-        File file = new File(this.getCacheDir().getPath());
-        TextView tvClearApplicationCache = findViewById(R.id.tvClearApplicationCache);
-        try {
-            tvClearApplicationCache.setText(DataCleanManager.getCacheSize(file));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         //  點選不同的 CardView
         selectCardView();
 
     }
-
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
@@ -76,9 +64,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         return super.onKeyDown(keyCode, event);
     }
 
-
-
     private void selectCardView() {
+
         /* 更改個人資料 */
         CardView cvUerInformation = findViewById(R.id.userInformation);
         cvUerInformation.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +78,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         });
         /* 偏好種類設定 */
         CardView cvSettingsPreferences = findViewById(R.id.settingsPreferences);
+
         cvSettingsPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,20 +90,25 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         /* 日夜間模式 */
         CardView cvChangeDayTimeOrNight = findViewById(R.id.changeDayTimeOrNight);
         cvChangeDayTimeOrNight.setOnClickListener(new View.OnClickListener() {
-            int mode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
             @Override
             public void onClick(View view) {
-                String modeTheme;
+                String theme;
                 SharedPreferences pref = getSharedPreferences("MyTheme", MODE_PRIVATE);
-                if (mode == Configuration.UI_MODE_NIGHT_YES) {
+                int myTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+                if (myTheme == Configuration.UI_MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-                    modeTheme = String.valueOf(MODE_NIGHT_NO);
-                    pref.edit().putString("theme", modeTheme).apply();
-                } else if (mode == Configuration.UI_MODE_NIGHT_NO) {
+                    theme = String.valueOf(MODE_NIGHT_NO);
+                    pref.edit()
+                            .putString("theme", theme)
+                            .apply();
+                } else if (myTheme == Configuration.UI_MODE_NIGHT_NO) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
-                    modeTheme = String.valueOf(MODE_NIGHT_YES);
-                    pref.edit().putString("theme", modeTheme).apply();
+                    theme = String.valueOf(MODE_NIGHT_YES);
+                    pref.edit()
+                            .putString("theme", theme)
+                            .apply();
                 }
                 recreate();
             }
@@ -144,68 +137,19 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         });
     }
 
-    //清除快取 Dialog
-    public static class CleanCacheDialog extends DialogFragment implements DialogInterface.OnClickListener {
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new android.app.AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.textCleanCache)
-                    .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("Do you really want to clear cache?")
-                    .setPositiveButton(R.string.text_btYes,this)
-                    .setNegativeButton(R.string.text_btCancel,this)
-                    .create();
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    SettingsActivity.cleanCache = true;
-                    break;
-                default:
-                    dialog.cancel();
-                    SettingsActivity.cleanCache = false;
-                    break;
-            }
-        }
-    }
-
-    //登出 Dialog
-    public static class LogoutDialog extends DialogFragment implements DialogInterface.OnClickListener {
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new android.app.AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.textLogout)
-                    .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("Do you really want to logout?")
-                    .setPositiveButton(R.string.text_btYes,this)
-                    .setNegativeButton(R.string.text_btCancel,this)
-                    .create();
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent intent = new Intent();
-                    intent.setClass(getActivity(), MainActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                    break;
-                default:
-                    dialog.cancel();
-                    break;
-            }
-        }
-    }
-
     private void initContent() {
         settingsToolbar = findViewById(R.id.settingsToolbar);
         settingsToolbar.setTitle(R.string.textSettings);
+
+        // 讀取快取大小
+        File file = new File(this.getCacheDir().getPath());
+        TextView tvClearApplicationCache = findViewById(R.id.tvClearApplicationCache);
+        try {
+            tvClearApplicationCache.setText(DataCleanManager.getCacheSize(file));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void setupNavigationDrawerMenu() {
@@ -268,6 +212,65 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             closeDrawer();
         else
             super.onBackPressed();
+    }
+
+    //清除快取 Dialog
+    public static class CleanCacheDialog extends DialogFragment implements DialogInterface.OnClickListener {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new android.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.textCleanCache)
+                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setMessage("Do you really want to clear cache?")
+                    .setPositiveButton(R.string.text_btYes,this)
+                    .setNegativeButton(R.string.text_btCancel,this)
+                    .create();
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    SettingsActivity.cleanCache = true;
+                    break;
+                default:
+                    dialog.cancel();
+                    SettingsActivity.cleanCache = false;
+                    break;
+            }
+        }
+    }
+
+    //登出 Dialog
+    public static class LogoutDialog extends DialogFragment implements DialogInterface.OnClickListener {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new android.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.textLogout)
+                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setMessage("Do you really want to logout?")
+                    .setPositiveButton(R.string.text_btYes,this)
+                    .setNegativeButton(R.string.text_btCancel,this)
+                    .create();
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                    break;
+                default:
+                    dialog.cancel();
+                    break;
+            }
+        }
     }
 
 }
