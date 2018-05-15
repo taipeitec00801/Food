@@ -1,8 +1,8 @@
 package com.example.food.Main;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 //    判斷日夜間模式
     private void initTheme() {
-        int modeTheme = Integer.parseInt(getSharedPreferences("MyTheme", MODE_PRIVATE)
-                .getString("theme",""));
-        if (modeTheme == 1) {
-            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-        } else if (modeTheme == 2) {
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        int modeTheme = Integer.parseInt(prefs.getString("MyTheme",""));
+        if (modeTheme == 2) {
             AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
         }
         setContentView(R.layout.activity_main);
     }
