@@ -3,8 +3,11 @@ package com.example.food.Main;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -15,8 +18,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.food.Map.MapActivity;
+import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 import com.example.food.Settings.SettingsActivity;
 
@@ -27,14 +34,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-
+    private ImageView ivUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initTheme();
-
         initContent();
         setupNavigationDrawerMenu();
     }
@@ -43,19 +49,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart() {
         super.onStart();
         askPermissions();
-
     }
 
 //    判斷日夜間模式
     private void initTheme() {
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        int modeTheme = Integer.parseInt(prefs.getString("MyTheme",""));
-        if (modeTheme == 2) {
-            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
+        PackageInfo info = null;
+        try {
+            info = getPackageManager().getPackageInfo("com.example.food", 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
-        setContentView(R.layout.activity_main);
+        int currentVersion = info.versionCode;
+        SharedPreferences prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
+        int lastVersion = prefs.getInt("versionKey", 0);
+        //如果当前版本大于上次版本，该版本属于第一次啟動
+        if (currentVersion > lastVersion) {
+            prefs.edit().putString("theme","0").apply();
+            //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
+            prefs.edit().putInt("versionKey",currentVersion).apply();
+        } else {
+            int myTheme = Integer.parseInt(prefs.getString("theme",""));
+            if (myTheme == 2) {
+                AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
+            }
+            setContentView(R.layout.activity_main);
+        }
     }
 
     private void initContent() {
@@ -66,6 +86,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.navigationView);
         drawerLayout = findViewById(R.id.drawerLayout);
+        //點擊投向 到登入
+        View headerView = navigationView.getHeaderView(0);
+        RelativeLayout head = headerView.findViewById(R.id.menuHeader);
+        ivUser = head.findViewById(R.id.ivUser);
+        ivUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 drawerLayout,
