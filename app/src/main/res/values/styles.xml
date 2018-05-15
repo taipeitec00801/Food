@@ -6,6 +6,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorBackground">@color/colorBody</item>
         <item name="colorCardBody">@color/colorCardBody</item>
+        <!-- 切換 Activity動畫 -->
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
 
         <!-- hamburger -->
@@ -13,22 +14,26 @@
 
         <!--<item name="dra"-->
         
-        <!-- image -->
+        <!-- 切換 image -->
         <item name="ivSettingDayNight">@drawable/moon</item>
         <item name="ivUserSetting">@drawable/user_setting_black</item>
         <item name="ivSettingClean">@drawable/clean_black</item>
         <item name="ivSettingLikes">@drawable/likes</item>
 
-        <!-- string -->
+        <!-- 切換 string -->
         <item name="tvSettingDayNight">@string/settingDayNight</item>
     </style>
 
 
     <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@transition/activity_in</item>
-        <item name="android:activityOpenExitAnimation">@transition/activity_out</item>
-        <item name="android:activityCloseEnterAnimation">@transition/activity_in</item>
-        <item name="android:activityCloseExitAnimation">@transition/activity_out</item>
+        <!--A點擊打開B，B的出現動畫-->
+        <item name="android:activityOpenEnterAnimation">@transition/next_activity_in</item>
+        <!--A點擊打開B，A的消失動畫-->
+        <item name="android:activityOpenExitAnimation">@transition/past_activity_out</item>
+        <!--B離開回到A，A的出現動畫-->
+        <item name="android:activityCloseEnterAnimation">@transition/past_activity_in</item>
+        <!--B離開回到A，B的消失動畫-->
+        <item name="android:activityCloseExitAnimation">@transition/next_activity_out</item>
     </style>
 
 
