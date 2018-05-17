@@ -1,228 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawerLayout"
+    android:background="@drawable/login_bg_3"
     android:fitsSystemWindows="true"
     tools:context=".Member.MemberActivity">
 
 
-<RelativeLayout
-        android:id="@+id/main_content"
+    <TextView
+        android:id="@+id/etCreate"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@drawable/login_bg_3">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/etCreate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="13dp"
-                    android:background="@null"
-                    android:drawablePadding="20dp"
-                    android:gravity="center"
-                    android:text="建立帳號與密碼"
-                    android:textSize="40dp"
-                    android:textColor="@color/lgColorText"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp"
+        android:background="@null"
+        android:drawablePadding="20dp"
+        android:gravity="center"
+        android:text="建立帳號與密碼"
+        android:textColor="@color/lgColorText"
+        android:textSize="40dp" />
 
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/cvImage"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="82dp"
-                    android:gravity="center"
-                    android:src="@drawable/person"
-                    app:civ_border_color="@color/colorWhite"
-                    app:civ_border_width="2dp" />
-                <!--<ImageView-->
-                    <!--android:layout_width="100dp"-->
-                    <!--android:layout_height="100dp"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:layout_marginTop="82dp"-->
-                    <!--android:gravity="center"-->
-                    <!--android:background="@color/colorWhite"/>-->
+    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cvImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="82dp"
+        android:gravity="center"
+        android:src="@drawable/person"
+        app:civ_border_color="@color/colorWhite"
+        app:civ_border_width="2dp" />
+    <!--<ImageView-->
+    <!--android:layout_width="100dp"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="82dp"-->
+    <!--android:gravity="center"-->
+    <!--android:background="@color/colorWhite"/>-->
 
 
-                <EditText
-                    android:id="@+id/etUser"
-                    android:layout_width="250dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="200dp"
-                    android:drawableLeft="@drawable/username"
-                    android:drawablePadding="20dp"
-                    android:hint="User Name"
-                    android:paddingLeft="5dp"
-                    android:textColor="@color/lgColorText"/>
+    <EditText
+        android:id="@+id/etUser"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="200dp"
+        android:drawableLeft="@drawable/username"
+        android:drawablePadding="20dp"
+        android:hint="User Name"
+        android:paddingLeft="5dp"
+        android:textColor="@color/lgColorText" />
 
-                <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="250dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="265dp"
-                    android:drawableLeft="@drawable/passeordkey"
-                    android:drawablePadding="20dp"
-                    android:hint="PassWord"
-                    android:inputType="textPassword"
-                    android:paddingLeft="5dp"
-                    android:textColor="@color/lgColorText"/>
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="265dp"
+        android:drawableLeft="@drawable/passeordkey"
+        android:drawablePadding="20dp"
+        android:hint="PassWord"
+        android:inputType="textPassword"
+        android:paddingLeft="5dp"
+        android:textColor="@color/lgColorText" />
 
-                <EditText
-                    android:id="@+id/cfPassword"
-                    android:layout_width="250dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="330dp"
-                    android:drawableLeft="@drawable/done"
-                    android:drawablePadding="20dp"
-                    android:hint="Confirm"
-                    android:inputType="textPassword"
-                    android:paddingLeft="5dp"
-                    android:textColor="@color/lgColorText"/>
+    <EditText
+        android:id="@+id/cfPassword"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="330dp"
+        android:drawableLeft="@drawable/done"
+        android:drawablePadding="20dp"
+        android:hint="Confirm"
+        android:inputType="textPassword"
+        android:paddingLeft="5dp"
+        android:textColor="@color/lgColorText" />
 
-                <EditText
-                    android:id="@+id/etBirthday"
-                    android:layout_width="250dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="395dp"
-                    android:drawableLeft="@drawable/ic_cake_black_24dp"
-                    android:drawablePadding="20dp"
-                    android:hint="Birthday"
-                    android:paddingLeft="5dp"
-                    android:onClick="onDateClick"
-                    android:textColor="@color/lgColorText"
-                    android:editable="false"/>
+    <EditText
+        android:id="@+id/etBirthday"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="395dp"
+        android:drawableLeft="@drawable/ic_cake_white_24dp"
+        android:drawablePadding="20dp"
+        android:editable="false"
+        android:hint="Birthday"
+        android:onClick="onDateClick"
+        android:paddingLeft="5dp"
+        android:textColor="@color/lgColorText" />
 
-                <EditText
-                    android:id="@+id/etGender"
-                    android:layout_width="250dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="460dp"
-                    android:drawableLeft="@drawable/ic_wc_black_24dp"
-                    android:drawablePadding="20dp"
-                    android:paddingLeft="5dp"
-                    android:editable="false">
-                    <!--<android.support.v7.widget.AppCompatSpinner-->
-                        <!--android:entries="@string/text_gender"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_alignParentStart="true"-->
-                        <!--android:layout_alignParentTop="true">-->
-                    <!--android:focusable="false"-->
-                    <!--</android.support.v7.widget.AppCompatSpinner>-->
-                </EditText>
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/spGender"
-                    android:layout_width="213dp"
-                    android:layout_height="51dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@+id/etGender"
-                    android:layout_marginEnd="70dp"
-                     android:scrollbarSize="20dp"
-                    android:textColor="@color/lgColorText"
-                    />
-
-                <Button
-                    android:id="@+id/btConfirm"
-                    android:layout_width="250dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="65dp"
-                    android:layout_marginTop="525dp"
-                    android:background="@drawable/btn_bg"
-                    android:text="確認註冊"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="18sp"
-                    android:onClick="onConfirmClick"/>
-
-            </RelativeLayout>
-
-    <!--<RelativeLayout-->
-        <!--android:layout_width="251dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginTop="460dp"-->
-        <!--android:gravity="center_horizontal">-->
+    <EditText
+        android:id="@+id/etGender"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="460dp"
+        android:drawableLeft="@drawable/ic_wc_white_24dp"
+        android:drawablePadding="20dp"
+        android:editable="false"
+        android:paddingLeft="5dp">
         <!--<android.support.v7.widget.AppCompatSpinner-->
-            <!--android:entries="@string/text_gender"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_alignParentTop="true">-->
-
+        <!--android:entries="@string/text_gender"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true">-->
+        <!--android:focusable="false"-->
         <!--</android.support.v7.widget.AppCompatSpinner>-->
-        <!--<EditText-->
-            <!--android:id="@+id/etGender"-->
-            <!--android:layout_width="250dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_marginTop="460dp"-->
-            <!--android:src="@drawable/ic_wc_black_24dp"-->
-            <!--android:drawablePadding="20dp"-->
-            <!--android:hint="Gender"-->
-            <!--android:paddingLeft="5dp">-->
-            <!--<android.support.v7.widget.AppCompatSpinner-->
-                <!--android:entries="@string/text_gender"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_alignParentStart="true"-->
-                <!--android:layout_alignParentTop="true">-->
+    </EditText>
 
-            <!--</android.support.v7.widget.AppCompatSpinner>-->
-        <!--</EditText>-->
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/spGender"
+        android:layout_width="213dp"
+        android:layout_height="51dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/etGender"
+        android:layout_marginEnd="70dp"
+        android:scrollbarSize="20dp"
+        android:textColor="@color/lgColorText" />
 
+    <Button
+        android:id="@+id/btConfirm"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="525dp"
+        android:background="@drawable/btn_bg"
+        android:onClick="onConfirmClick"
+        android:text="確認註冊"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
 
-        <!--<ImageView-->
-
-            <!--android:layout_width="24dp"-->
-            <!--android:layout_height="24dp"-->
-            <!--android:layout_alignParentStart="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_marginStart="6dp"-->
-            <!--android:src="@drawable/ic_wc_black_24dp"/>-->
-
-    <!--</RelativeLayout>-->
-
-
-    </RelativeLayout>
-
-
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_options" />
-
-</android.support.v4.widget.DrawerLayout>
+</RelativeLayout>
