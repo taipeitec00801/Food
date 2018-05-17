@@ -8,7 +8,6 @@
     android:fitsSystemWindows="true"
     tools:context=".Member.MemberActivity">
 
-
     <TextView
         android:id="@+id/etCreate"
         android:layout_width="wrap_content"
@@ -22,7 +21,6 @@
         android:text="建立帳號與密碼"
         android:textColor="@color/lgColorText"
         android:textSize="40dp" />
-
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cvImage"
@@ -43,7 +41,6 @@
     <!--android:layout_marginTop="82dp"-->
     <!--android:gravity="center"-->
     <!--android:background="@color/colorWhite"/>-->
-
 
     <EditText
         android:id="@+id/etUser"
