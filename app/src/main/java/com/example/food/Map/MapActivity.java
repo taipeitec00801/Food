@@ -2,6 +2,7 @@ package com.example.food.Map;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -40,6 +42,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.food.R;
 import com.google.android.gms.maps.model.Marker;
@@ -53,17 +57,17 @@ import java.util.List;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private GoogleMap mgoogleMap; //儲存地圖資訊
     private LocationManager mlocationManager;//LocationManager物件
-    private Marker Store_Marker;
+    private Marker Store_Marker,lastClicked,defaultMarker;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private List<StoreInfo> storeInfoList;
     private double latitude, longitude;
     private GoogleApiClient mgoogleApiClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private ProgressDialog mprogressDialog;
     private int overallXScrol = 0;
     private int scrollPosition = 0;
     private LatLng markerPosition;
-    private Marker lastClicked;
 
 
     @Override
@@ -72,12 +76,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (googleServicesAvailable()) {
             setContentView(R.layout.activity_map);
             initMap();
+            handViews();
+            Toolbar mtoolbar = findViewById(R.id.map_toolbar);
+            mtoolbar.setTitle(getString(R.string.textMap));
+            setSupportActionBar(mtoolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        handViews();
-        Toolbar mtoolbar = findViewById(R.id.map_toolbar);
-        mtoolbar.setTitle(getString(R.string.textMap));
-        setSupportActionBar(mtoolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void handViews() {
@@ -96,7 +100,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE ) {
-                    recyclePosition(scrollPosition,Store_Marker);
+                    recyclePosition(scrollPosition,defaultMarker);
                 }
             }
             @Override
@@ -168,6 +172,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fmMap);
         mapFragment.getMapAsync(MapActivity.this);
+      //  Toast.makeText(MapActivity.this,"Map Ready!",Toast.LENGTH_SHORT).show();
     }
 
     //check googleServicesAvailable
@@ -198,6 +203,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         Location currentlocation = (Location) task.getResult();
                         if(currentlocation != null) {
                             setLocation(currentlocation.getLatitude(),currentlocation.getLongitude());
+                            //User為圓心半徑50M
+                            mgoogleMap.addCircle(new CircleOptions()
+                                    .center(new LatLng(currentlocation.getLatitude(),currentlocation.getLongitude()))
+                                    .radius(50) // In meters
+                                    .strokeColor(0x800000FF) //ARGB，
+                                    .strokeWidth(2f)
+                                    .fillColor(0x200000FF));
                         } else {
                             new AlertDialog().show(getSupportFragmentManager(),"Warm");
                         }
@@ -237,6 +249,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        //Init Markers
         makeMarkers();
         //MakerClick(CardView ScrollToPosition)
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -250,7 +263,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 }
                 recyclerView.smoothScrollToPosition(selectMarker);
-                recyclePosition(selectMarker,marker);
+                recyclePosition(selectMarker,defaultMarker);
                 return true;
             }
         });
@@ -262,7 +275,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         longitude = lon;
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(latitude, longitude))
-                .zoom(14)
+                .zoom(15)
                 .build();
         CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
         mgoogleMap.animateCamera(update);
@@ -339,6 +352,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         .position(new LatLng(markers.get(i).getLatitude(),markers.get(i).getLongitude()))
                         .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }
+        defaultMarker = mgoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(markers.get(0).getLatitude(),markers.get(0).getLongitude()))
+                .icon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker())));
     }
     //Custom Marker
     private Bitmap smallMarker() {
@@ -351,8 +367,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
     //Custom Select Marker
     private Bitmap SelectsmallMarker() {
-        int height = 70;
-        int width = 70;
+        int height = 60;
+        int width = 60;
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_maker_item);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap SelectsmallMarker = Bitmap.createScaledBitmap(b,width,height,false);
@@ -360,17 +376,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
     //顯示Select Markers
     private void recyclePosition(int position,Marker marker){
-         final Marker lastMarker;
-         lastMarker = marker;
+         defaultMarker = marker;
          scrollPosition = position;
          markerPosition  = new LatLng(storeInfoList.get(scrollPosition).getLatitude(),storeInfoList.get(scrollPosition).getLongitude());
-         marker.setPosition(markerPosition);
-         marker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
+         defaultMarker.setPosition(markerPosition);
+         defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
          if(lastClicked != null) {
              lastClicked.setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker()));
          }
-         marker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
-         lastClicked = marker;
+         defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
+         lastClicked = defaultMarker;
     }
 
     //StoreInfoList
