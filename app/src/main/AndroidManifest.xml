@@ -60,6 +60,7 @@
             android:parentActivityName=".Main.MainActivity" />
         <activity android:name=".Search.SearchActivity" />
         <activity android:name=".Sort.SortActivity" />
+        <activity android:name=".Sort.SortAsActivity" />
         <activity android:name=".Comment.CommentActivity" />
         <activity android:name=".Member.LoginActivity" />
         <activity android:name=".Member.MemberActivity" />

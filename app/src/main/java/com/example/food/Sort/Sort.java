@@ -1,63 +1,83 @@
 package com.example.food.Sort;
 
 public class Sort {
-    private String nameL,nameR;
-    private int imageR,imageL,sortResUp,sortResDown;
+    private int cvLcolor,ivLsrc,sortLnum;
+    private String tvLname;
+    private int cvRcolor,ivRsrc,sortRnum;
+    private String tvRname;
 
-    public Sort(String nameL, int imageR, int sortResUp, String nameR, int imageL,  int sortResDown) {
-        this.nameL = nameL;
-        this.nameR = nameR;
-        this.imageR = imageR;
-        this.imageL = imageL;
-        this.sortResUp = sortResUp;
-        this.sortResDown = sortResDown;
+    public Sort(int cvLcolor, int ivLsrc, int sortLnum, String tvLname, int cvRcolor, int ivRsrc, int sortRnum, String tvRname) {
+        this.cvLcolor = cvLcolor;
+        this.ivLsrc = ivLsrc;
+        this.sortLnum = sortLnum;
+        this.tvLname = tvLname;
+        this.cvRcolor = cvRcolor;
+        this.ivRsrc = ivRsrc;
+        this.sortRnum = sortRnum;
+        this.tvRname = tvRname;
     }
 
-    public String getNameL() {
-        return nameL;
+    public int getCvLcolor() {
+        return cvLcolor;
     }
 
-    public void setNameL(String nameL) {
-        this.nameL = nameL;
+    public void setCvLcolor(int cvLcolor) {
+        this.cvLcolor = cvLcolor;
     }
 
-    public String getNameR() {
-        return nameR;
+    public int getIvLsrc() {
+        return ivLsrc;
     }
 
-    public void setNameR(String nameR) {
-        this.nameR = nameR;
+    public void setIvLsrc(int ivLsrc) {
+        this.ivLsrc = ivLsrc;
     }
 
-    public int getImageR() {
-        return imageR;
+    public int getSortLnum() {
+        return sortLnum;
     }
 
-    public void setImageR(int imageR) {
-        this.imageR = imageR;
+    public void setSortLnum(int sortLnum) {
+        this.sortLnum = sortLnum;
     }
 
-    public int getImageL() {
-        return imageL;
+    public String getTvLname() {
+        return tvLname;
     }
 
-    public void setImageL(int imageL) {
-        this.imageL = imageL;
+    public void setTvLname(String tvLname) {
+        this.tvLname = tvLname;
     }
 
-    public int getSortResUp() {
-        return sortResUp;
+    public int getCvRcolor() {
+        return cvRcolor;
     }
 
-    public void setSortResUp(int sortResUp) {
-        this.sortResUp = sortResUp;
+    public void setCvRcolor(int cvRcolor) {
+        this.cvRcolor = cvRcolor;
     }
 
-    public int getSortResDown() {
-        return sortResDown;
+    public int getIvRsrc() {
+        return ivRsrc;
     }
 
-    public void setSortResDown(int sortResDown) {
-        this.sortResDown = sortResDown;
+    public void setIvRsrc(int ivRsrc) {
+        this.ivRsrc = ivRsrc;
+    }
+
+    public int getSortRnum() {
+        return sortRnum;
+    }
+
+    public void setSortRnum(int sortRnum) {
+        this.sortRnum = sortRnum;
+    }
+
+    public String getTvRname() {
+        return tvRname;
+    }
+
+    public void setTvRname(String tvRname) {
+        this.tvRname = tvRname;
     }
 }

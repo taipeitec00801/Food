@@ -26,7 +26,9 @@ import android.widget.RelativeLayout;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.R;
+import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
+import com.example.food.Sort.SortActivity;
 import com.example.food.UnderDevelopmentActivity;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
@@ -143,7 +145,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.setClass(MainActivity.this, UnderDevelopmentActivity.class);
                         startActivity(intent);
                         break;
-
+                    case R.id.navSort:
+                        intent.setClass(MainActivity.this, SortActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.navSearch:
+                        intent.setClass(MainActivity.this, SearchActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
                         initContent();
                         break;
