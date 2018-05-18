@@ -6,6 +6,9 @@ public class SortAs {
     private int likeNumber;
 
 
+
+
+
     public SortAs(int sortRes, String name, int likeNumber) {
         this.sortRes = sortRes;
         this.name = name;
