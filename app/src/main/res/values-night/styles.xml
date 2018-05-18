@@ -18,6 +18,13 @@
         <item name="ivSettingClean">@drawable/clean_white</item>
         <item name="ivSettingLikes">@drawable/likes_night</item>
 
+        <item name="ivSettingId">@drawable/username</item>
+        <item name="ivSettingPassword">@drawable/passeordkey</item>
+        <item name="ivSettingNickname">@drawable/nickname_white</item>
+        <item name="ivSettingBirthday">@drawable/ic_cake_white_24dp</item>
+        <item name="ivSettingGender">@drawable/ic_wc_white_24dp</item>
+        <item name="ivChevronRight">@drawable/ic_chevron_right_white</item>
+
         <!-- 切換 string -->
         <item name="tvSettingDayNight">@string/settingDaytime</item>
     </style>
