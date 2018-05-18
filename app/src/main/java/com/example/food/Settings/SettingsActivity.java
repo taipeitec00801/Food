@@ -16,13 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.food.DataCleanManager;
-import com.example.food.Main.MainActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 
@@ -42,26 +40,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-
         initContent();
         setupNavigationDrawerMenu();
         //  點選不同的 CardView
         selectCardView();
 
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if (keyCode == KeyEvent.KEYCODE_BACK )
-        {
-            Intent intent = new Intent();
-            intent.setClass(SettingsActivity.this, MainActivity.class);
-            startActivity(intent);
-            SettingsActivity.this.finish();
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     private void selectCardView() {
@@ -93,23 +76,21 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
             @Override
             public void onClick(View view) {
-                String theme;
                 SharedPreferences pref = getSharedPreferences("MyTheme", MODE_PRIVATE);
                 int myTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
                 if (myTheme == Configuration.UI_MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-                    theme = String.valueOf(MODE_NIGHT_NO);
                     pref.edit()
-                            .putString("theme", theme)
+                            .putInt("theme", MODE_NIGHT_NO)
                             .apply();
                 } else if (myTheme == Configuration.UI_MODE_NIGHT_NO) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
-                    theme = String.valueOf(MODE_NIGHT_YES);
                     pref.edit()
-                            .putString("theme", theme)
+                            .putInt("theme", MODE_NIGHT_YES)
                             .apply();
                 }
+
                 recreate();
             }
         });
@@ -152,6 +133,24 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     }
 
+    /*   每個 Activity  的要使用
+        @Override
+        protected void onActivityResult ...       */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            // requestCode "RESULT_OK" 代表 前一頁
+            // 一定要有   RESULT_OK
+            case RESULT_OK:
+                break;
+            // requestCode "0" 代表 首頁
+            case 0:
+                break;
+            default:
+                break;
+        }
+    }
+
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.settingsNavigationView);
         settingsDrawerLayout = findViewById(R.id.settingsDrawerLayout);
@@ -172,8 +171,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 switch (menuItem.getItemId()) {
 
                     case R.id.navHome:
-                        intent.setClass(SettingsActivity.this, MainActivity.class);
-                        startActivity(intent);
+                        // "0" 代表 首頁的requestCode
+                        setResult(0, intent);
                         SettingsActivity.this.finish();
                         break;
 
