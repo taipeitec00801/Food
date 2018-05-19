@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
 
 import java.util.ArrayList;
@@ -116,6 +117,8 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             TextView tvNameRight, tvNameLeft;
             CardView cvLeft, cvRight;
             CardView cvMoveL,cvMoveR;
+            MaterialRippleLayout mrlL,mrlR;
+
 
             SortViewHolder(View itemView) {
                 super(itemView);
@@ -130,6 +133,9 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
                 cvRight = itemView.findViewById(R.id.sort_item_Right_cv);
                 cvMoveR = itemView.findViewById(R.id.sort_item_cv_moveR);
+
+                mrlL = itemView.findViewById(R.id.sort_item_ripple_L);
+                mrlR = itemView.findViewById(R.id.sort_item_ripple_R);
             }
         }
 
@@ -147,43 +153,40 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         }
 
         @Override
-        public void onBindViewHolder(SortViewHolder viewHolder, int position) {
+        public void onBindViewHolder(final SortViewHolder viewHolder, int position) {
             final Sort sort = sortList.get(position);
+            final Bundle bundle = new Bundle();
 
             viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
             viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
             viewHolder.tvNameLeft.setTextColor(sort.getCvLcolor());
             viewHolder.cvLeft.setCardBackgroundColor(sort.getCvLcolor());
-            viewHolder.cvLeft.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Sort", sort.getTvLname());
-                    bundle.putInt("SortRes", sort.getSortLnum());
-                    intent.putExtras(bundle);
-                    intent.setClass(SortActivity.this, SortAsActivity.class);
-                    startActivity(intent);
-                }
-            });
 
             viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
             viewHolder.tvNameRight.setText(String.valueOf(sort.getTvRname()));
             viewHolder.tvNameRight.setTextColor(sort.getCvRcolor());
             viewHolder.cvRight.setCardBackgroundColor(sort.getCvRcolor());
-            viewHolder.cvRight.setOnClickListener(new View.OnClickListener() {
+
+            //點擊左item後將資料打包放進傳送門。
+            viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("Sort", sort.getTvRname());
-                    bundle.putInt("SortRes", sort.getSortRnum());
-                    intent.putExtras(bundle);
-                    intent.setClass(SortActivity.this, SortAsActivity.class);
-                    startActivity(intent);
+                    bundle.putString("Sort", sort.getTvLname());
+                    bundle.putInt("SortRes", sort.getSortLnum());
+                    portalToSortAs(bundle);
+                }
+            });
+            //點擊右item後將資料打包放進傳送門。
+            viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bundle.putString("Sort", sort.getTvLname());
+                    bundle.putInt("SortRes", sort.getSortLnum());
+                    portalToSortAs(bundle);
                 }
             });
 
+            //設定每個item動畫延遲時間，position超過3，不使用動畫。
             if(position <= 3){
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(SortActivity.this, R.anim.sort_item_down);
@@ -197,7 +200,15 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
         }
     }
-
+    //傳送門，將送進來的資料傳到下一頁。
+    public void portalToSortAs(Bundle itemBundle){
+        Intent intent = new Intent();
+        Bundle bundle = itemBundle;
+        intent.putExtras(bundle);
+        intent.setClass(SortActivity.this, SortAsActivity.class);
+        startActivity(intent);
+    }
+    //分類的資料庫，顏色使用16進位
     public List<Sort> getSortList() {
         List<Sort> sortList = new ArrayList<>();
         sortList.add(new Sort(0xff34CCD6,R.drawable.s03,0,"中式餐廳",
