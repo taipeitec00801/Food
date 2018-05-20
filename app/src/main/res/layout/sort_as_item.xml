@@ -47,7 +47,6 @@
                 android:textSize="30dp"
                 android:background="@android:color/transparent"/>
 
-
         <!--黑線右邊佔總寬度25%-->
         <LinearLayout
             android:id="@+id/sortAs_item_mapBt"
@@ -55,8 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@color/colorText"
-            android:orientation="vertical"
-            android:layout_marginRight="3dp">
+            android:orientation="vertical">
 
             <!--ImageButton高度佔60%-->
             <ImageButton

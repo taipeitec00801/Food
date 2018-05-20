@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,12 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
+import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,21 +38,50 @@ import java.util.List;
 
 public class SortActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static Boolean btcont = true;
+
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private Button outBt,comeBt;
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
+    private RecyclerView recyclerView;
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        int i = Integer.parseInt(outBt.getText().toString());
+        recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_L).setVisibility(View.INVISIBLE);
+        recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_R).setVisibility(View.INVISIBLE);
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sort);
-
+        outBt = findViewById(R.id.sort_bt);
+        comeBt = findViewById(R.id.sort_comebt);
         //建立ToolBar
         initContent();
         setupNavigationDrawerMenu();
 
+        outBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(outBt.isEnabled()){
+                    mThread=new HandlerThread("aa");
+                    mThread.start();
+                    mThreadHandler=new Handler(mThread.getLooper());
+                    mThreadHandler.post(r1);
+                }
+                outBt.setEnabled(false);
+            }
+        });
+
+
         //
-        RecyclerView recyclerView = findViewById(R.id.sort_rv);
+        recyclerView = findViewById(R.id.sort_rv);
         recyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
@@ -56,7 +89,32 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         List<Sort> sortList = getSortList();
         recyclerView.setAdapter(new sortAdapter(this, sortList));
 
+    }
+    private Runnable r1 = new Runnable(){
 
+        public void run(){
+
+            //這裡放執行緒要執行的程式。
+            int i = Integer.parseInt(outBt.getText().toString());
+            portalToSortAs(getSortList().get(i),comeBt.isEnabled());
+
+        }
+    };
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(mThreadHandler != null){
+            mThreadHandler.removeCallbacks(r1);
+        }
+        if(mThread != null){
+            mThread.quit();
+        }
+    }
+//
+    @Override
+    protected void onStart() {
+        super.onStart();
+        outBt.setEnabled(btcont);
     }
 
     private void initContent() {
@@ -120,7 +178,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             CardView cvLeft, cvRight;
             CardView cvMoveL,cvMoveR;
             MaterialRippleLayout mrlL,mrlR;
-
+            SpinKitView skvL , skvR;
 
             SortViewHolder(View itemView) {
                 super(itemView);
@@ -138,6 +196,9 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
                 mrlL = itemView.findViewById(R.id.sort_item_ripple_L);
                 mrlR = itemView.findViewById(R.id.sort_item_ripple_R);
+
+                skvL = itemView.findViewById(R.id.sort_item_spin_kit_L);
+                skvR = itemView.findViewById(R.id.sort_item_spin_kit_R);
             }
         }
 
@@ -155,36 +216,60 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         }
 
         @Override
-        public void onBindViewHolder(final SortViewHolder viewHolder, int position) {
+        public void onBindViewHolder(final SortViewHolder viewHolder, final int position) {
             final Sort sort = sortList.get(position);
-
+            int colorL;
+            int colorR;
+            if(position % 2 == 0){
+                colorL = 0xff34CCD6;//藍色
+                colorR = 0xffFF7676;//紅色
+                Drawable drawable = getDrawable(R.drawable.sb);
+                viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+                drawable = getDrawable(R.drawable.sr);
+                viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+            }else{
+                colorL = 0xffFF7676;
+                colorR = 0xff34CCD6;
+                Drawable drawable = getDrawable(R.drawable.sr);
+                viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+                drawable = getDrawable(R.drawable.sb);
+                viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+            }
             viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
             viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
-            viewHolder.tvNameLeft.setTextColor(0xff34CCD6);
-            viewHolder.cvLeft.setCardBackgroundColor(0xff34CCD6);
+            viewHolder.tvNameLeft.setTextColor(colorL);
+            viewHolder.cvLeft.setCardBackgroundColor(colorL);
 
             viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
             viewHolder.tvNameRight.setText(String.valueOf(sort.getTvRname()));
-            viewHolder.tvNameRight.setTextColor(0xffFF7676);
-            viewHolder.cvRight.setCardBackgroundColor(0xffFF7676);
+            viewHolder.tvNameRight.setTextColor(colorR);
+            viewHolder.cvRight.setCardBackgroundColor(colorR);
 
             //點擊左item後將資料打包放進傳送門。
             viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    portalToSortAs(sort,true);
+                    if(btcont){
+                        String number = String.valueOf(position);
+                        outBt.setText(number);
+                        comeBt.setEnabled(true);
+                        outBt.performClick();
+                        viewHolder.skvL.setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
             //點擊右item後將資料打包放進傳送門。
             viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                        }
-//                    });
-                    portalToSortAs(sort,false);
+                public void onClick(final View v) {
+                    if(btcont){
+                        String number = String.valueOf(position);
+                        outBt.setText(number);
+                        comeBt.setEnabled(false);
+                        outBt.performClick();
+                        viewHolder.skvR.setVisibility(View.VISIBLE);
+                    }
                 }
             });
 
@@ -198,19 +283,16 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
                 am.setStartOffset(aniTime);
                 viewHolder.cvMoveR.setAnimation(am);
             }
-
-
         }
     }
     //傳送門，將送進來的資料傳到下一頁。
     public void portalToSortAs(Sort sort ,Boolean whereCome){
-        SortDAO sortDAO = new SortDAO(SortActivity.this);
+        final SortDAO sortDAO = new SortDAO(SortActivity.this);
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         List<SortAs> sortAsList = null;
-        String name;
-        int number;
-
+        String name = null;
+        int number = 0;
         if(whereCome){
             name = sort.getTvLname();
             number = sort.getSortLnum();
@@ -225,6 +307,8 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         intent.setClass(SortActivity.this, SortAsActivity.class);
         startActivity(intent);
     }
+
+
     //分類的資料庫，顏色使用16進位
     public List<Sort> getSortList() {
         List<Sort> sortList = new ArrayList<>();

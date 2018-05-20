@@ -10,6 +10,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class SortDAO {
     private Activity inputActivity;
@@ -22,7 +25,7 @@ public class SortDAO {
         TAG = inputActivity.getClass().getName();
     }
 
-    public List<SortAs> sortRestaurant(int sortNumber){
+    public List<SortAs> sortRestaurant(int sortNumber) {
         if (Common.networkConnected(inputActivity)) {
             sortAsList = null;
             //建立商店物件的List，以便接收資料庫回傳的資料。
@@ -37,10 +40,11 @@ public class SortDAO {
             //jsonObject新增屬性action其值為findSortByRes
             jsonObject.addProperty("action", "findSortByRes");
             //jsonObject新增屬性sortNumber其值為sortNumbers
-            jsonObject.addProperty("sortNumber",sortNumbers);
+            jsonObject.addProperty("sortNumber", sortNumbers);
             //將jsonObject轉成json格式的字串。
             String jsonOut = jsonObject.toString();
             spotGetAllTask = new CommonTask(url, jsonOut);
+
             //CommonTask會將傳入的jsonOut字串送給伺服器
             //而伺服器判斷字串對應的方法後，對資料庫做出方法內的動作。
             //伺服器會找到在伺服器內部的findSortByRes方法，傳入參數sortNumbers，
@@ -82,17 +86,21 @@ public class SortDAO {
             //}
             try {
                 //用字串儲存伺服器回應的json格式字串。
+//                spotGetAllTask.get(500, TimeUnit.MILLISECONDS);
                 String jsonIn = spotGetAllTask.execute().get();
                 //利用TypeToken指定資料型態為List<SortAs>
-                Type listType = new TypeToken<List<SortAs>>() {}.getType();
+                Type listType = new TypeToken<List<SortAs>>() {
+                }.getType();
                 //利用Gson把json字串轉成Type指定的型態(List<SortAs>)後放入sortAsList(List<SortAs>)。
                 sortAsList = gson.fromJson(jsonIn, listType);
-            } catch (Exception e) {
+//            }catch(TimeoutException te){
+//                Common.showToast(inputActivity, "伺服器無回應");
+            }catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
             if (sortAsList == null || sortAsList.isEmpty()) {
                 //當伺服器回傳空的List時顯示給使用者"查無資料"。
-                Common.showToast(inputActivity, "查無資料");
+//                Common.showToast(inputActivity, "查無資料");
             } else {
                 //回傳sortAsList。
                 return sortAsList;

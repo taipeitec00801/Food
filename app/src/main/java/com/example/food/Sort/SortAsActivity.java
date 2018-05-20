@@ -36,8 +36,8 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private RecyclerView recyclerView;
-    private List<SortAs> sortAsList;
-
+    private List<SortAs> sortAsList = null;
+    private TextView errorText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,18 +45,28 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         initContent();
         setupNavigationDrawerMenu();
 
+        SortActivity.btcont = true;
         recyclerView = findViewById(R.id.sortAs_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(SortAsActivity.this));
 
         //將上一頁送來bundle打開。
         Bundle bundle = getIntent().getExtras();
         sortAsList = (List<SortAs>) bundle.getSerializable("SortAsList");
-        recyclerView.setAdapter(new sortAdapter(this,sortAsList));
+        if(sortAsList == null || sortAsList.isEmpty()){
+            errorText = findViewById(R.id.sortAs_errorTv);
+            errorText.setText("連線不穩，請重新嘗試。");
+        }else{
+            recyclerView.setAdapter(new sortAdapter(this,sortAsList));
+        }
+
     }
 
     private void initContent() {
-        Bundle bundle = getIntent().getExtras();
-        String titleName = bundle.getString("SortName");
+        String titleName = "分類失敗";
+        if(getIntent() != null){
+            Bundle bundle = getIntent().getExtras();
+            titleName = bundle.getString("SortName");
+        }
         toolbar = findViewById(R.id.sortAs_toolbar);
         toolbar.setTitle(titleName);
     }
