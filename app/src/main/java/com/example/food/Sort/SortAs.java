@@ -1,6 +1,8 @@
 package com.example.food.Sort;
 
-public class SortAs {
+import java.io.Serializable;
+
+public class SortAs implements Serializable{
     private int sortRes;
     private String name;
     private int likeNumber;

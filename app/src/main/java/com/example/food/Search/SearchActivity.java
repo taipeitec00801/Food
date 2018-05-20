@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.example.food.R;
 import com.example.food.Sort.Common;
 import com.example.food.Sort.SortAs;
+import com.example.food.Sort.SortDAO;
 import com.example.food.Sort.task.CommonTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -84,49 +85,16 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
-                searchSetting();
+                searchSetting(SearchActivity.this);
             }
 
             @Override
             public void onButtonClicked(int buttonCode) {
-                searchSetting();
+                searchSetting(SearchActivity.this);
             }
         });
-//        searchBar.bringToFront();
-//        List<Sort> sortList = getSortList();
-//        recyclerView.setAdapter(new sortAdapter(this, sortList));
-
 
     }
-
-    private void findResByName(String resName){
-        if (Common.networkConnected(SearchActivity.this)) {
-            sortItemList = null;
-            Gson gson = new Gson();
-            String url = Common.URL + "/ssServlet";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "findByName");
-            jsonObject.addProperty("resName",resName);
-            String jsonOut = jsonObject.toString();
-            spotGetAllTask = new CommonTask(url, jsonOut);
-            try {
-                String jsonIn = spotGetAllTask.execute().get();
-                Type listType = new TypeToken<List<SortAs>>() {}.getType();
-                sortItemList = gson.fromJson(jsonIn, listType);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-            if (sortItemList == null || sortItemList.isEmpty()) {
-                Common.showToast(SearchActivity.this, "No spots found");
-            } else {
-
-                recyclerView.setAdapter(new sortAdapter(SearchActivity.this, sortItemList));
-            }
-        } else {
-            Common.showToast(SearchActivity.this, "no network connection available");
-        }
-    }
-
     private class sortAdapter extends
             RecyclerView.Adapter<sortAdapter.SortViewHolder> {
         private Context context;
@@ -227,15 +195,16 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
 
-    public void searchSetting(){
-        hideSoftKeyboard(SearchActivity.this);
+    public void searchSetting(Activity inputActivity){
+        hideSoftKeyboard(inputActivity);
         if(searchBar.getText() != null){
             if(recyclerView.getAdapter() != null){
 
                 recyclerView.removeAllViews();
             }
-            findResByName(searchBar.getText());
-
+            SortDAO sortDAO = new SortDAO(inputActivity);
+            sortItemList = sortDAO.findResByName(searchBar.getText());
+            recyclerView.setAdapter(new sortAdapter(inputActivity,sortItemList));
         }else{
 
         }

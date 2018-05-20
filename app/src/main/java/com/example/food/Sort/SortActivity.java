@@ -2,6 +2,7 @@ package com.example.food.Sort;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,34 +157,34 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onBindViewHolder(final SortViewHolder viewHolder, int position) {
             final Sort sort = sortList.get(position);
-            final Bundle bundle = new Bundle();
 
             viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
             viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
-            viewHolder.tvNameLeft.setTextColor(sort.getCvLcolor());
-            viewHolder.cvLeft.setCardBackgroundColor(sort.getCvLcolor());
+            viewHolder.tvNameLeft.setTextColor(0xff34CCD6);
+            viewHolder.cvLeft.setCardBackgroundColor(0xff34CCD6);
 
             viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
             viewHolder.tvNameRight.setText(String.valueOf(sort.getTvRname()));
-            viewHolder.tvNameRight.setTextColor(sort.getCvRcolor());
-            viewHolder.cvRight.setCardBackgroundColor(sort.getCvRcolor());
+            viewHolder.tvNameRight.setTextColor(0xffFF7676);
+            viewHolder.cvRight.setCardBackgroundColor(0xffFF7676);
 
             //點擊左item後將資料打包放進傳送門。
             viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bundle.putString("Sort", sort.getTvLname());
-                    bundle.putInt("SortRes", sort.getSortLnum());
-                    portalToSortAs(bundle);
+                    portalToSortAs(sort,true);
                 }
             });
             //點擊右item後將資料打包放進傳送門。
             viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bundle.putString("Sort", sort.getTvLname());
-                    bundle.putInt("SortRes", sort.getSortLnum());
-                    portalToSortAs(bundle);
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                        }
+//                    });
+                    portalToSortAs(sort,false);
                 }
             });
 
@@ -201,9 +203,24 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     //傳送門，將送進來的資料傳到下一頁。
-    public void portalToSortAs(Bundle itemBundle){
+    public void portalToSortAs(Sort sort ,Boolean whereCome){
+        SortDAO sortDAO = new SortDAO(SortActivity.this);
         Intent intent = new Intent();
-        Bundle bundle = itemBundle;
+        Bundle bundle = new Bundle();
+        List<SortAs> sortAsList = null;
+        String name;
+        int number;
+
+        if(whereCome){
+            name = sort.getTvLname();
+            number = sort.getSortLnum();
+        }else{
+            name = sort.getTvRname();
+            number = sort.getSortRnum();
+        }
+        sortAsList = sortDAO.sortRestaurant(number);
+        bundle.putString("SortName", name);
+        bundle.putSerializable("SortAsList", (Serializable) sortAsList);
         intent.putExtras(bundle);
         intent.setClass(SortActivity.this, SortAsActivity.class);
         startActivity(intent);
@@ -211,20 +228,20 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     //分類的資料庫，顏色使用16進位
     public List<Sort> getSortList() {
         List<Sort> sortList = new ArrayList<>();
-        sortList.add(new Sort(0xff34CCD6,R.drawable.s03,0,"中式餐廳",
-                0xffFF7676,R.drawable.s02,1,"西式餐廳"));
+        sortList.add(new Sort(R.drawable.s03,0,"中式餐廳",
+                R.drawable.s02,1,"西式餐廳"));
 
-        sortList.add(new Sort(0xffFF7676,R.drawable.s05,2,"韓式餐廳",
-                0xff34CCD6,R.drawable.s04,3,"日式餐廳"));
+        sortList.add(new Sort(R.drawable.s05,2,"韓式餐廳",
+                R.drawable.s04,3,"日式餐廳"));
 
-        sortList.add(new Sort(0xff34CCD6,R.drawable.s06,4,"港式餐廳",
-                0xffFF7676,R.drawable.s07,5,"泰式餐廳"));
+        sortList.add(new Sort(R.drawable.s06,4,"港式餐廳",
+                R.drawable.s07,5,"泰式餐廳"));
 
-        sortList.add(new Sort(0xffFF7676,R.drawable.s08,6,"小吃",
-                0xff34CCD6,R.drawable.s09,7,"冰品"));
+        sortList.add(new Sort(R.drawable.s08,6,"小吃",
+                R.drawable.s09,7,"冰品"));
 
-        sortList.add(new Sort(0xff34CCD6,R.drawable.s10,8,"飲料甜點",
-                0xffFF7676,R.drawable.s01,9,"其他"));
+        sortList.add(new Sort(R.drawable.s10,8,"飲料甜點",
+                R.drawable.s01,9,"其他"));
 
 
         return sortList;
