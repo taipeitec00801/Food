@@ -167,7 +167,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/userBirthday"
+            android:id="@+id/cvUserBirthday"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_below="@id/userNickname"
@@ -194,6 +194,7 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/tvUserBirthday"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -215,7 +216,7 @@
             android:id="@+id/userGender"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_below="@id/userBirthday"
+            android:layout_below="@id/cvUserBirthday"
             android:layout_marginTop="1dp">
 
             <LinearLayout
@@ -239,6 +240,7 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/tvUserGender"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

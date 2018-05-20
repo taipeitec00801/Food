@@ -44,7 +44,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         setupNavigationDrawerMenu();
         //  點選不同的 CardView
         selectCardView();
-
     }
 
     private void selectCardView() {

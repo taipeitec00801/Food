@@ -33,7 +33,8 @@ public class UserInformationActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_information);
-        showNow();
+        // 讀取  資料庫內的會員資料
+        showMemberData();
         initContent();
         selectCardView();
     }
@@ -56,11 +57,23 @@ public class UserInformationActivity extends AppCompatActivity implements
                 new MaterialDialog.Builder(UserInformationActivity.this)
                         .title(R.string.textNickname)
                         .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                        .inputRange(6,12,0)
                         .widgetColorRes(R.color.colorBody)
                         .input(0, 0,  new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
 
+                                // 確認密碼 視窗
+                                new MaterialDialog.Builder(UserInformationActivity.this)
+                                        .title(R.string.textNickname)
+                                        .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                                        .widgetColorRes(R.color.colorBody)
+                                        .input(0, 0,  new MaterialDialog.InputCallback() {
+                                            @Override
+                                            public void onInput(MaterialDialog dialog, CharSequence input) {
+
+                                            }
+                                        }).show();
                             }
                         }).show();
             }
@@ -84,9 +97,8 @@ public class UserInformationActivity extends AppCompatActivity implements
             }
         });
         /* 生日 */
-        CardView cvUserBirthday = findViewById(R.id.userBirthday);
+        CardView cvUserBirthday = findViewById(R.id.cvUserBirthday);
         cvUserBirthday.setOnClickListener(new View.OnClickListener() {
-            TextView tvUserNickname = findViewById(R.id.tvUserNickname);
             @Override
             public void onClick(View view) {
                 DatePickerDialogFragment datePickerFragment = new DatePickerDialogFragment();
@@ -97,6 +109,7 @@ public class UserInformationActivity extends AppCompatActivity implements
         /* 性別 */
         CardView cvUserGender = findViewById(R.id.userGender);
         cvUserGender.setOnClickListener(new View.OnClickListener() {
+            TextView tvUserGender = findViewById(R.id.tvUserGender);
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(UserInformationActivity.this)
@@ -105,20 +118,7 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                switch (which) {
-                                    case 0:
-                                        Toast.makeText(UserInformationActivity.this,"不顯示",Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 1:
-                                        Toast.makeText(UserInformationActivity.this,"男",Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case 2:
-                                        Toast.makeText(UserInformationActivity.this,"女",Toast.LENGTH_SHORT).show();
-                                        break;
-                                    default:
-                                        dialog.cancel();
-                                        break;
-                                }
+                                tvUserGender.setText(text);
                                 return true;
                             }
                         })
@@ -137,26 +137,54 @@ public class UserInformationActivity extends AppCompatActivity implements
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
-    private void showNow() {
-        Calendar calendar = Calendar.getInstance();
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
-    }
     /* 選擇日期的跳脫視窗 */
     public static class DatePickerDialogFragment extends DialogFragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             UserInformationActivity uiActivity = (UserInformationActivity) getActivity();
-            return new DatePickerDialog(
-                    uiActivity, uiActivity, uiActivity.mYear, uiActivity.mMonth, uiActivity.mDay);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(uiActivity, uiActivity,
+                                    uiActivity.mYear, uiActivity.mMonth, uiActivity.mDay);
+            return datePickerDialog;
         }
     }
+
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         mYear = year;
         mMonth = month;
         mDay = day;
+        updateDisplay();
+    }
+
+    private void showMemberData() {
+//        showMemberId();
+//        showMemberPassword();
+        showMemberBirthday();
+
+    }
+
+    // 讀取  資料庫內的會員生日
+    private void showMemberBirthday() {
+        Calendar calendar = Calendar.getInstance();
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
+        TextView tvUserBirthday = findViewById(R.id.tvUserBirthday);
+        tvUserBirthday.setText(new StringBuilder().append(mYear).append("-")
+                .append(pad(mMonth+1)).append("-").append(mDay));
+    }
+
+    // 若數字有十位數 直接顯示 / 若是個位數 補0再顯示
+    private String pad(int number) {
+        if (number >= 10) {
+            return String.valueOf(number);
+        } else {
+            return "0" + String.valueOf(number);
+        }
     }
 }
