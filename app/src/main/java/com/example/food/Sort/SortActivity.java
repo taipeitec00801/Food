@@ -66,6 +66,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         initContent();
         setupNavigationDrawerMenu();
 
+        //被點擊時，建立新的執行緒，並且將Button關閉，等到onPause()、onStart()時重新開啟。
         outBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +91,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(new sortAdapter(this, sortList));
 
     }
+
     private Runnable r1 = new Runnable(){
 
         public void run(){
@@ -100,6 +102,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
         }
     };
+
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -245,11 +248,13 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             viewHolder.tvNameRight.setTextColor(colorR);
             viewHolder.cvRight.setCardBackgroundColor(colorR);
 
-            //點擊左item後將資料打包放進傳送門。
+            //點擊左item後將資料寫上Button上，此方法將會點擊背後outBt一次。
+            // outBt寫上position以分辨是哪一個Item點擊
+            // comeBt的開啟狀態(true)決定送來的Item是經由左邊送來的。
             viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(btcont){
+                    if(outBt.isEnabled()){
                         String number = String.valueOf(position);
                         outBt.setText(number);
                         comeBt.setEnabled(true);
@@ -259,11 +264,13 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
                 }
             });
-            //點擊右item後將資料打包放進傳送門。
+            //點擊右item後將資料寫上Button上，此方法將會點擊背後outBt一次。
+            // outBt寫上position以分辨是哪一個Item點擊
+            // comeBt的開啟狀態(false)決定送來的Item是經由右邊送來的。
             viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    if(btcont){
+                    if(outBt.isEnabled()){
                         String number = String.valueOf(position);
                         outBt.setText(number);
                         comeBt.setEnabled(false);
@@ -285,7 +292,8 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-    //傳送門，將送進來的資料傳到下一頁。
+    //傳送門，將送進來的資料傳到下一頁還有將資料送給SortDAO物件的方法
+    //此方法將由執行續執行，否則會造成畫面凍結。
     public void portalToSortAs(Sort sort ,Boolean whereCome){
         final SortDAO sortDAO = new SortDAO(SortActivity.this);
         Intent intent = new Intent();
@@ -309,7 +317,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    //分類的資料庫，顏色使用16進位
+    //分類的資料庫
     public List<Sort> getSortList() {
         List<Sort> sortList = new ArrayList<>();
         sortList.add(new Sort(R.drawable.s03,0,"中式餐廳",
