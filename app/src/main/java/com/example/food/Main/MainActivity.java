@@ -28,6 +28,7 @@ import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
+import com.example.food.Sort.Sort;
 import com.example.food.Sort.SortActivity;
 import com.example.food.UnderDevelopmentActivity;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private int firstTheme;
+    private ImageView imgfork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initFirst();
         initContent();
 
+        changepage();
+
         setupNavigationDrawerMenu();
+
+    }
+
+    private void changepage() {
+        imgfork = findViewById(R.id.imgfork);
+        imgfork.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SortActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
