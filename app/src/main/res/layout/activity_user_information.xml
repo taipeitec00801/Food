@@ -36,9 +36,9 @@
             android:src="@drawable/add" />
 
         <android.support.v7.widget.CardView
-            android:id="@+id/userId"
+            android:id="@+id/cvUserId"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/userSetting_height"
             android:layout_below="@id/cvUserImage"
             android:layout_marginTop="25dp">
 
@@ -60,7 +60,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textUserId"
                     android:textColor="@color/colorText"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/tvUserId"
@@ -70,16 +70,16 @@
                     android:gravity="right"
                     android:text="資料庫內  userId"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/userSetting_textSize" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/userPassword"
+            android:id="@+id/cvUserPassword"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/userSetting_height"
             android:layout_marginTop="1dp"
-            android:layout_below="@id/userId">
+            android:layout_below="@id/cvUserId">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -99,9 +99,10 @@
                     android:layout_gravity="center"
                     android:text="@string/textPassword"
                     android:textColor="@color/colorText"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
+                    android:id="@+id/tvUserPassword"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
@@ -109,7 +110,7 @@
                     android:gravity="right"
                     android:text="資料庫內  userPassword"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/userSetting_textSize" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -121,10 +122,10 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/userNickname"
+            android:id="@+id/cvUserNickname"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@id/userPassword"
+            android:layout_height="@dimen/userSetting_height"
+            android:layout_below="@id/cvUserPassword"
             android:layout_marginTop="1dp">
 
             <LinearLayout
@@ -145,7 +146,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textNickname"
                     android:textColor="@color/colorText"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/tvUserNickname"
@@ -155,7 +156,7 @@
                     android:gravity="right"
                     android:text="資料庫內  userNickname"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/userSetting_textSize" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -169,8 +170,8 @@
         <android.support.v7.widget.CardView
             android:id="@+id/cvUserBirthday"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@id/userNickname"
+            android:layout_height="@dimen/userSetting_height"
+            android:layout_below="@id/cvUserNickname"
             android:layout_marginTop="1dp">
 
             <LinearLayout
@@ -191,7 +192,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textBirthday"
                     android:textColor="@color/colorText"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/tvUserBirthday"
@@ -201,7 +202,7 @@
                     android:gravity="right"
                     android:text="資料庫內  userBirthday"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/userSetting_textSize" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -213,9 +214,9 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/userGender"
+            android:id="@+id/cvUserGender"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/userSetting_height"
             android:layout_below="@id/cvUserBirthday"
             android:layout_marginTop="1dp">
 
@@ -237,7 +238,7 @@
                     android:layout_gravity="center"
                     android:text="@string/text_gender"
                     android:textColor="@color/colorText"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/tvUserGender"
@@ -247,7 +248,7 @@
                     android:gravity="right"
                     android:text="資料庫內  userGender"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/userSetting_textSize" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -259,15 +260,16 @@
         </android.support.v7.widget.CardView>
 
         <Button
+            android:id="@+id/btUserDataSetting"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:layout_below="@+id/userGender"
+            android:layout_below="@+id/cvUserGender"
             android:layout_centerHorizontal="true"
             android:background="@drawable/btn_bg_set"
             android:layout_marginTop="20dp"
             android:text="@string/text_btYes"
             android:textColor="@color/colorText"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
     </RelativeLayout>
 
 </LinearLayout>

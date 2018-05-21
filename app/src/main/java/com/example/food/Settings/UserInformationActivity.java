@@ -2,7 +2,6 @@ package com.example.food.Settings;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -13,14 +12,17 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.R;
 
+import java.sql.Blob;
+import java.sql.Date;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -28,15 +30,41 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserInformationActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener {
     private int mYear, mMonth, mDay;
+    private String x = null,y = null;
+    private TextView tvUserPassword, tvUserNickname, tvUserGender;
+    private final String testUserId = "taipeitec00801@gmail.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_information);
-        // 讀取  資料庫內的會員資料
-        showMemberData();
+        findById();
         initContent();
         selectCardView();
+        confirmButton();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 讀取  資料庫內的會員資料
+        showMemberData(testUserId);
+    }
+
+    private void findById() {
+        tvUserPassword = findViewById(R.id.tvUserPassword);
+        tvUserNickname = findViewById(R.id.tvUserNickname);
+        tvUserGender = findViewById(R.id.tvUserGender);
+    }
+
+    private void confirmButton() {
+        Button btUserDataSetting = findViewById(R.id.btUserDataSetting);
+        btUserDataSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("confirmButton","true");
+            }
+        });
     }
 
     private void selectCardView() {
@@ -45,33 +73,36 @@ public class UserInformationActivity extends AppCompatActivity implements
         cvUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+//                cvUserImage.src
             }
         });
 
         /* 密碼 */
-        CardView cvUserPassword = findViewById(R.id.userPassword);
+        CardView cvUserPassword = findViewById(R.id.cvUserPassword);
         cvUserPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(UserInformationActivity.this)
-                        .title(R.string.textNickname)
+                        .title(R.string.textPassword)
                         .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
                         .inputRange(6,12,0)
                         .widgetColorRes(R.color.colorBody)
                         .input(0, 0,  new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
-
+                                x = String.valueOf(input);
+                                Log.e("CharSequence input",x);
                                 // 確認密碼 視窗
                                 new MaterialDialog.Builder(UserInformationActivity.this)
-                                        .title(R.string.textNickname)
+                                        .title(R.string.confirmPassword)
                                         .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
                                         .widgetColorRes(R.color.colorBody)
                                         .input(0, 0,  new MaterialDialog.InputCallback() {
                                             @Override
                                             public void onInput(MaterialDialog dialog, CharSequence input) {
-
+                                                y = String.valueOf(input);
+                                                Log.e("CharSequence input2",y);
+                                                tvUserPassword.setText(input);
                                             }
                                         }).show();
                             }
@@ -79,9 +110,8 @@ public class UserInformationActivity extends AppCompatActivity implements
             }
         });
         /* 暱稱 */
-        CardView cvUserNickname = findViewById(R.id.userNickname);
+        CardView cvUserNickname = findViewById(R.id.cvUserNickname);
         cvUserNickname.setOnClickListener(new View.OnClickListener() {
-            TextView tvUserNickname = findViewById(R.id.tvUserNickname);
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(UserInformationActivity.this)
@@ -107,9 +137,8 @@ public class UserInformationActivity extends AppCompatActivity implements
             }
         });
         /* 性別 */
-        CardView cvUserGender = findViewById(R.id.userGender);
+        CardView cvUserGender = findViewById(R.id.cvUserGender);
         cvUserGender.setOnClickListener(new View.OnClickListener() {
-            TextView tvUserGender = findViewById(R.id.tvUserGender);
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(UserInformationActivity.this)
@@ -118,7 +147,16 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                tvUserGender.setText(text);
+                                switch (which) {
+                                    case 0:
+                                    case 1:
+                                    case 2:
+                                        discernMemberGender(which);
+                                        break;
+                                    default:
+                                        dialog.cancel();
+                                        break;
+                                }
                                 return true;
                             }
                         })
@@ -157,11 +195,22 @@ public class UserInformationActivity extends AppCompatActivity implements
         updateDisplay();
     }
 
-    private void showMemberData() {
-//        showMemberId();
-//        showMemberPassword();
-        showMemberBirthday();
+    private void showMemberData(String userId) {
+        final MemberDAO memberDAO = new MemberDAO(UserInformationActivity.this);
+        List<Member> memberList = memberDAO.userInformation(userId);
+        Log.e("memberList",String.valueOf(memberList));
 
+//        Member member = new Member(userId);
+//        String password = memberList.getPassword();
+//        String nickName = member.getNickName();
+//        Date birthday = member.getBirthday();
+//        int gender = member.getGender();
+//        discernMemberGender(gender);
+//
+//        Blob portrait = member.getPortrait();
+
+
+        showMemberBirthday();
     }
 
     // 讀取  資料庫內的會員生日
@@ -171,6 +220,17 @@ public class UserInformationActivity extends AppCompatActivity implements
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
         updateDisplay();
+    }
+
+    // 分析 性別
+    private void discernMemberGender(int gender) {
+        if (gender ==1) {
+            tvUserGender.setText(R.string.textMale);
+        } else if (gender == 2) {
+            tvUserGender.setText(R.string.textFemale);
+        } else {
+            tvUserGender.setText(R.string.textDoNotShow);
+        }
     }
 
     private void updateDisplay() {
@@ -187,4 +247,6 @@ public class UserInformationActivity extends AppCompatActivity implements
             return "0" + String.valueOf(number);
         }
     }
+
+
 }
