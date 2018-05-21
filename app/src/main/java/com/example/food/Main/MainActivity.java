@@ -26,7 +26,9 @@ import android.widget.RelativeLayout;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.R;
+import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
+import com.example.food.Sort.SortActivity;
 import com.example.food.UnderDevelopmentActivity;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
@@ -36,8 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private SharedPreferences prefs;
-    private int themeFirst, themeNoFirst;
+    private int firstTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         askPermissions();
 
         //判斷 主題是否有變動  若有 recreate 這個 Activity
-        themeNoFirst = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (themeNoFirst != themeFirst) {
-            Log.e("text onStart", "themeNoFirst != themeFirst");
+        int nowTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nowTheme != firstTheme) {
             recreate();
         }
     }
@@ -66,14 +66,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //  首次 執行App 或是 重開App  的偏好設定
     private void initFirst() {
         PackageInfo info = null;
-        themeFirst = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         try {
             info = getPackageManager().getPackageInfo("com.example.food", 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         int currentVersion = info.versionCode;
-        prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
         int lastVersion = prefs.getInt("versionKey", 0);
         //如果當前版本大於上次版本，該版本屬於第一次啟動
         if (currentVersion > lastVersion) {
@@ -82,9 +81,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
             prefs.edit().putInt("versionKey", currentVersion).apply();
         } else {
+            firstTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
             //  讀取 SharedPreferences 中的模式
             int myTheme = prefs.getInt("theme", 0);
-            if (myTheme == 2) {
+            if (firstTheme == 32 || myTheme == 2) {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
             } else {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
@@ -143,7 +144,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.setClass(MainActivity.this, UnderDevelopmentActivity.class);
                         startActivity(intent);
                         break;
-
+                    case R.id.navSort:
+                        intent.setClass(MainActivity.this, SortActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.navSearch:
+                        intent.setClass(MainActivity.this, SearchActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
                         initContent();
                         break;
@@ -193,12 +201,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
+        }
     }
-
     //要求User Permissions
     private static final int REQ_PERMISSIONS = 0;
 
@@ -211,7 +219,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(this, permissions, REQ_PERMISSIONS);
         }
 

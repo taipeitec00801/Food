@@ -16,7 +16,7 @@
 
         <ImageView
             android:id="@+id/map_cardview_storeImg"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="match_parent"
             android:paddingLeft="5dp"
             android:src="@drawable/drinks_and_desserts"/>
@@ -24,6 +24,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingLeft="10dp"
             android:orientation="vertical">
 
             <TextView

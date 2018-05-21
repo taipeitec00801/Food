@@ -31,10 +31,19 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
-    //SearchBar
+
+    /* SearchBar */
     implementation 'com.github.mancj:MaterialSearchBar:0.7.6'
-    //Gson
+    /* Gson */
     implementation 'com.google.code.gson:gson:2.8.1'
-    /*circleimageview*/
+    //Material Ripple Layout
+    implementation 'com.balysv:material-ripple:1.0.2'
+    //Loading animations
+    implementation 'com.github.ybq:Android-SpinKit:1.1.0'
+
+    /* circleimageview */
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    /* dialogs */
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }

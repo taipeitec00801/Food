@@ -22,9 +22,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="3dp"
-            android:id="@+id/settingsContent"
-            android:layout_below="@+id/settingsToolbar"
-            tools:context=".Settings.SettingsFragment">
+            android:layout_below="@+id/settingsToolbar">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"

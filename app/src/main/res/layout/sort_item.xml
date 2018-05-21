@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sort_item_cv"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="?attr/colorBackground">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/sort_item_cv_moveL"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            app:cardBackgroundColor="@color/colorText">
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/sort_item_spin_kit_L"
+                style="@style/SpinKitView.Large.FadingCircle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:padding="60dp"
+                app:SpinKit_Color="#ffffff"
+                android:background="#aa000000"
+                android:visibility="invisible"
+                android:translationZ="50dp"/>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/sort_item_Lift_cv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp">
+
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:id="@+id/sort_item_ripple_L"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mrl_rippleColor="#000000">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/sort_item_Left_iv"
+                        android:layout_width="match_parent"
+                        android:layout_weight="3"
+                        android:layout_height="0dp"
+                        android:src="@drawable/cf"
+                        android:layout_margin="30dp"
+                        android:background="@android:color/transparent"/>
+
+                    <TextView
+                        android:id="@+id/sort_item_Left_tv"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+
+                        android:textStyle="bold"
+                        android:text="中式餐廳"
+                        android:textSize="18dp"
+                        android:textColor="@android:color/transparent"
+                        android:drawableRight="@drawable/sr1"
+                        android:padding="5dp"
+                        android:background="#ccffffff"/>
+
+                </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+            </android.support.v7.widget.CardView>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/sort_item_cv_moveR"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            app:cardBackgroundColor="@color/colorText">
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/sort_item_spin_kit_R"
+                style="@style/SpinKitView.Large.FadingCircle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:padding="60dp"
+                app:SpinKit_Color="#ffffff"
+                android:background="#aa000000"
+                android:visibility="invisible"
+                android:translationZ="50dp"/>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/sort_item_Right_cv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp">
+
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:id="@+id/sort_item_ripple_R"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mrl_rippleColor="#000000">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+
+                    <ImageView
+                        android:id="@+id/sort_item_Right_iv"
+                        android:layout_width="match_parent"
+                        android:layout_weight="3"
+                        android:layout_height="0dp"
+                        android:src="@drawable/cf"
+                        android:layout_margin="30dp"
+                        android:background="@android:color/transparent"/>
+
+                    <TextView
+                        android:id="@+id/sort_item_Right_tv"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:textStyle="bold"
+                        android:text="中式餐廳"
+                        android:textSize="18dp"
+                        android:textColor="@android:color/transparent"
+                        android:drawableRight="@drawable/sr1"
+
+                        android:padding="5dp"
+                        android:background="#ccffffff"/>
+
+                </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+            </android.support.v7.widget.CardView>
+
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

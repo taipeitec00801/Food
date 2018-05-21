@@ -30,6 +30,8 @@ public class CommonTask extends AsyncTask<String, Integer, String> {
         StringBuilder inStr = new StringBuilder();
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setConnectTimeout(2000);
+            connection.setReadTimeout(2000);
             connection.setDoInput(true); // allow inputs
             connection.setDoOutput(true); // allow outputs
             // 不知道請求內容大小時可以呼叫此方法將請求內容分段傳輸，設定0代表使用預設大小

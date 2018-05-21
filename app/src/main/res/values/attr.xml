@@ -12,6 +12,13 @@
     <attr name="ivSettingClean" format="reference" />
     <attr name="ivSettingLikes" format="reference" />
 
+    <attr name="ivSettingId" format="reference" />
+    <attr name="ivSettingPassword" format="reference" />
+    <attr name="ivSettingNickname" format="reference" />
+    <attr name="ivSettingBirthday" format="reference" />
+    <attr name="ivSettingGender" format="reference" />
+    <attr name="ivChevronRight" format="reference" />
+
 
     <!-- string -->
     <attr name="tvSettingDayNight" format="reference" />
