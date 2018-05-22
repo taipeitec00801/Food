@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,12 +24,16 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.food.Comment.CommentActivity;
+import com.example.food.Search.SearchActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -70,6 +75,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LatLng markerPosition;
 
 
+    @Override //Create Menu
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.map_menu,menu);
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +92,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             mtoolbar.setTitle(getString(R.string.textMap));
             setSupportActionBar(mtoolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            //SearchIcon點擊跳至搜尋頁
+            mtoolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.mapSearchIcon:
+                            Intent intent = new Intent();
+                            intent.setClass(MapActivity.this, SearchActivity.class);
+                            startActivity(intent);
+                    }
+                    return false;
+                }
+            });
+
         }
     }
 
@@ -155,10 +180,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(MapActivity.this,"ID:"+position,Toast.LENGTH_SHORT).show();
-                    /*
-                                            send Data to 店家評價頁面
-                                      */
+//                  send Data to 店家評價頁面
+//                    Intent intent = new Intent();
+//                    intent.setClass(MapActivity.this, CommentActivity.class);
+//                    startActivity(intent);
+//                    MapActivity.this.finish();
                 }
             });
         }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/collection_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/japan_food" />
+
+    <TextView
+        android:id="@+id/collection_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/collection_image"
+        android:text="name"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+</RelativeLayout>

@@ -40,12 +40,14 @@ dependencies {
     implementation 'com.balysv:material-ripple:1.0.2'
     //Loading animations
     implementation 'com.github.ybq:Android-SpinKit:1.1.0'
-
     /* circleimageview */
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-
+    /* SwipeMenuListView */
+    implementation 'com.baoyz.swipemenulistview:library:1.3.0'
+    /* pullrefreshlayout */
+    implementation 'com.baoyz.pullrefreshlayout:library:1.2.0'
     /* dialogs */
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     /*thumbUplib:ThumbUp*/
-    compile 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
+    implementation 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
 }

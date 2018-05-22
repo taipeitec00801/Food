@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
+
         <ImageView
             android:id="@+id/map_cardview_storeImg"
             android:layout_width="150dp"
