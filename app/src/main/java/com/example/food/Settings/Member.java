@@ -6,13 +6,12 @@ import java.sql.Date;
 
 @SuppressWarnings("serial")
 class Member implements Serializable {
-    private String userId, password, nickName;
-    private Date birthday;
+    private String userId, password, nickName, birthday;
     private int gender;
     private Blob portrait;
     private String preference, collection;
 
-    public Member(String userId, String password, String nickName, Date birthday, int gender, Blob portrait, String preference, String collection) {
+    public Member(String userId, String password, String nickName, String birthday, int gender, Blob portrait, String preference, String collection) {
         this.userId = userId;
         this.password = password;
         this.nickName = nickName;
@@ -23,6 +22,22 @@ class Member implements Serializable {
         this.collection = collection;
     }
 
+    // 透過 userId　來變更　preference
+    public Member(String userId, String preference) {
+        this.userId = userId;
+        this.preference = preference;
+    }
+
+    // 修改個人資料
+    public Member(String userId, String password, String nickName, String birthday, int gender) {
+        this.userId = userId;
+        this.password = password;
+        this.nickName = nickName;
+        this.birthday = birthday;
+        this.gender = gender;
+    }
+
+    // 透過 userId 搜尋
     public Member(String userId) {
         this.userId = userId;
     }
@@ -51,11 +66,11 @@ class Member implements Serializable {
         this.nickName = nickName;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 

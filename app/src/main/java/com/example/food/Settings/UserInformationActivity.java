@@ -19,20 +19,18 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.R;
 
-import java.sql.Blob;
-import java.sql.Date;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserInformationActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener {
-    private int mYear, mMonth, mDay;
-    private String x = null,y = null;
-    private TextView tvUserPassword, tvUserNickname, tvUserGender;
-    private final String testUserId = "taipeitec00801@gmail.com";
+    private int mYear, mMonth, mDay, newGender;
+    private Member member;
+    private String newPassword, newNickName, newBirthday;
+    private TextView tvUserNickname, tvUserBirthday;
+    private static final String testUserId = "taipeitec00801@gmail.com";
+    private MemberDAO memberDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,22 +45,27 @@ public class UserInformationActivity extends AppCompatActivity implements
     @Override
     public void onStart() {
         super.onStart();
+
         // 讀取  資料庫內的會員資料
-        showMemberData(testUserId);
+        memberDAO = new MemberDAO(UserInformationActivity.this);
+        member = memberDAO.findMemberByUserId(testUserId);
+
+        showMemberData(member);
     }
 
     private void findById() {
-        tvUserPassword = findViewById(R.id.tvUserPassword);
+        tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
-        tvUserGender = findViewById(R.id.tvUserGender);
     }
 
     private void confirmButton() {
-        Button btUserDataSetting = findViewById(R.id.btUserDataSetting);
-        btUserDataSetting.setOnClickListener(new View.OnClickListener() {
+        CardView cvUserDataSetting = findViewById(R.id.cvUserDataSetting);
+        cvUserDataSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e("confirmButton","true");
+                memberDAO.updateMemberDate(testUserId, newPassword, newNickName,
+                                        newBirthday, newGender);
             }
         });
     }
@@ -89,9 +92,11 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .widgetColorRes(R.color.colorBody)
                         .input(0, 0,  new MaterialDialog.InputCallback() {
                             @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                x = String.valueOf(input);
-                                Log.e("CharSequence input",x);
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                newPassword = input.toString();
+                                //  密碼是否與資料庫內相同
+                                discernMemberPassword(member.getPassword(),newPassword);
+
                                 // 確認密碼 視窗
                                 new MaterialDialog.Builder(UserInformationActivity.this)
                                         .title(R.string.confirmPassword)
@@ -99,10 +104,8 @@ public class UserInformationActivity extends AppCompatActivity implements
                                         .widgetColorRes(R.color.colorBody)
                                         .input(0, 0,  new MaterialDialog.InputCallback() {
                                             @Override
-                                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                                y = String.valueOf(input);
-                                                Log.e("CharSequence input2",y);
-                                                tvUserPassword.setText(input);
+                                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                discernMemberPassword(newPassword,input.toString());
                                             }
                                         }).show();
                             }
@@ -120,8 +123,9 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .widgetColorRes(R.color.colorBody)
                         .input(0, 0,  new MaterialDialog.InputCallback() {
                             @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                tvUserNickname.setText(input);
+                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                newNickName = input.toString();
+                                tvUserNickname.setText(newNickName);
                             }
                         }).show();
             }
@@ -150,7 +154,6 @@ public class UserInformationActivity extends AppCompatActivity implements
                                 switch (which) {
                                     case 0:
                                     case 1:
-                                    case 2:
                                         discernMemberGender(which);
                                         break;
                                     default:
@@ -181,72 +184,69 @@ public class UserInformationActivity extends AppCompatActivity implements
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             UserInformationActivity uiActivity = (UserInformationActivity) getActivity();
-            DatePickerDialog datePickerDialog = new DatePickerDialog(uiActivity, uiActivity,
+            assert uiActivity != null;
+            return new DatePickerDialog(uiActivity, uiActivity,
                                     uiActivity.mYear, uiActivity.mMonth, uiActivity.mDay);
-            return datePickerDialog;
         }
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         mYear = year;
-        mMonth = month;
+        mMonth = month+1;
         mDay = day;
-        updateDisplay();
+        newBirthday = mYear + "-" + pad(mMonth) + "-" + pad(mDay);
+        tvUserBirthday.setText(newBirthday);
     }
 
-    private void showMemberData(String userId) {
-        final MemberDAO memberDAO = new MemberDAO(UserInformationActivity.this);
-        List<Member> memberList = memberDAO.userInformation(userId);
-        Log.e("memberList",String.valueOf(memberList));
+    //判斷 是否大於十位數 若為個位數 補0
+    private String pad(int number) {
+        if (number >= 10)
+            return String.valueOf(number);
+        else
+            return "0" + String.valueOf(number);
+    }
 
-//        Member member = new Member(userId);
-//        String password = memberList.getPassword();
-//        String nickName = member.getNickName();
-//        Date birthday = member.getBirthday();
-//        int gender = member.getGender();
-//        discernMemberGender(gender);
+    private void showMemberData(Member member) {
+        TextView tvUserId = findViewById(R.id.tvUserId);
+        tvUserId.setText(member.getUserId());
+
+        discernMemberPassword(member.getPassword(),"");
+        newNickName = member.getNickName();
+        tvUserNickname.setText(newNickName);
+        newBirthday = member.getBirthday();
+        tvUserBirthday.setText(newBirthday);
+        discernMemberGender(member.getGender());
+    }
+
+    // 載入此介面時，判斷會員是否有 Portrait 若沒有 顯示預設頭像
+    private void showMemberPortrait() {
+//        if () {
 //
-//        Blob portrait = member.getPortrait();
-
-
-        showMemberBirthday();
+//        }  else {
+//
+//        }
     }
 
-    // 讀取  資料庫內的會員生日
-    private void showMemberBirthday() {
-        Calendar calendar = Calendar.getInstance();
-        mYear = calendar.get(Calendar.YEAR);
-        mMonth = calendar.get(Calendar.MONTH);
-        mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        updateDisplay();
+    // 判斷密碼 original與input相關關係
+    private void discernMemberPassword(String original, String input) {
+        TextView tvUserPassword = findViewById(R.id.tvUserPassword);
+        if (!original.equals(input) && !input.isEmpty()) {
+            tvUserPassword.setText(input);
+        } else {
+            tvUserPassword.setText(original);
+        }
     }
 
     // 分析 性別
     private void discernMemberGender(int gender) {
-        if (gender ==1) {
-            tvUserGender.setText(R.string.textMale);
-        } else if (gender == 2) {
+        TextView tvUserGender = findViewById(R.id.tvUserGender);
+        newGender = gender;
+        if (gender == 0) {
             tvUserGender.setText(R.string.textFemale);
         } else {
-            tvUserGender.setText(R.string.textDoNotShow);
+            tvUserGender.setText(R.string.textMale);
         }
     }
-
-    private void updateDisplay() {
-        TextView tvUserBirthday = findViewById(R.id.tvUserBirthday);
-        tvUserBirthday.setText(new StringBuilder().append(mYear).append("-")
-                .append(pad(mMonth+1)).append("-").append(mDay));
-    }
-
-    // 若數字有十位數 直接顯示 / 若是個位數 補0再顯示
-    private String pad(int number) {
-        if (number >= 10) {
-            return String.valueOf(number);
-        } else {
-            return "0" + String.valueOf(number);
-        }
-    }
-
 
 }

@@ -65,11 +65,7 @@
         <activity android:name=".Comment.CommentActivity" />
         <activity android:name=".Member.LoginActivity" />
         <activity android:name=".Member.MemberActivity" />
-        <activity android:name=".UnderDevelopmentActivity" />
-        <activity android:name=".Comment.Comment_interface" />
-        <activity android:name=".Comment.Information" />
-
-
+        <activity android:name=".Other.UnderDevelopmentActivity" />
     </application>
 
 </manifest>

@@ -99,7 +99,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textPassword"
                     android:textColor="@color/colorText"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvUserPassword"
@@ -146,7 +146,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textNickname"
                     android:textColor="@color/colorText"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvUserNickname"
@@ -192,7 +192,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textBirthday"
                     android:textColor="@color/colorText"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvUserBirthday"
@@ -238,7 +238,7 @@
                     android:layout_gravity="center"
                     android:text="@string/text_gender"
                     android:textColor="@color/colorText"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvUserGender"
@@ -259,17 +259,25 @@
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
-        <Button
-            android:id="@+id/btUserDataSetting"
+        <android.support.v7.widget.CardView
+            android:id="@+id/cvUserDataSetting"
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_below="@+id/cvUserGender"
+            app:cardBackgroundColor="@color/colorTransparent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="25dp"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/btn_bg_set"
-            android:layout_marginTop="20dp"
-            android:text="@string/text_btYes"
-            android:textColor="@color/colorText"
-            android:textSize="20sp" />
+            android:layout_marginTop="20dp" >
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_bg_set"
+                android:text="@string/text_btYes"
+                android:textColor="@color/colorText"
+                android:textSize="20sp"/>
+        </android.support.v7.widget.CardView>
+
     </RelativeLayout>
 
 </LinearLayout>
