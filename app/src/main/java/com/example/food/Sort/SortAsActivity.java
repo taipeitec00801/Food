@@ -124,14 +124,14 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         }
 
         class SortViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView ,likeView;
-            TextView tvName,tvLike;
+//            ImageView imageView ,likeView;
+//            TextView tvName,tvLike;
             SortViewHolder(View itemView) {
                 super(itemView);
-                imageView = itemView.findViewById(R.id.sortAs_item_iv);
-                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
-                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
-                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
+//                imageView = itemView.findViewById(R.id.sortAs_item_iv);
+//                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
+//                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
+//                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
             }
         }
 
@@ -150,10 +150,10 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-            viewHolder.likeView.setImageResource(R.drawable.like);
-            viewHolder.imageView.setImageResource(R.drawable.p01);
-            viewHolder.tvName.setText(String.valueOf(sort.getName()));
-            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
+//            viewHolder.likeView.setImageResource(R.drawable.like);
+//            viewHolder.imageView.setImageResource(R.drawable.p01);
+//            viewHolder.tvName.setText(String.valueOf(sort.getName()));
+//            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
 
         }
     }

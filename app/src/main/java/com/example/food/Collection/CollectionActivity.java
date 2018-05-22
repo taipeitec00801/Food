@@ -40,9 +40,9 @@ import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.Common;
 import com.example.food.Sort.SortActivity;
-import com.example.food.UnderDevelopmentActivity;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+//import com.example.food.UnderDevelopmentActivity;
+//import com.google.gson.Gson;
+//import com.google.gson.JsonObject;
 
 
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
                         CollectionActivity.this.finish();
                         break;
                     case R.id.navGift:
-                        intent.setClass(CollectionActivity.this, UnderDevelopmentActivity.class);
+//                        intent.setClass(CollectionActivity.this, UnderDevelopmentActivity.class);
                         startActivity(intent);
                         CollectionActivity.this.finish();
                         break;
