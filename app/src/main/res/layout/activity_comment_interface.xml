@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Comment.Comment_interface"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/settingsPreferencesToolbar"
+        layout="@layout/toolbar" />
+    <LinearLayout
+        android:id="@+id/namelayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/imageboy"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/boy" />
+
+        <TextView
+            android:id="@+id/MediumText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="Medium Text"
+            android:textSize="24dp" />
+
+        <TextView
+            android:id="@+id/SmallText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="25dp"
+            android:text="Small Text"
+            android:textSize="18dp" />
+
+
+    </LinearLayout>
+
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/Im"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:src="@drawable/food"></ImageView>
+
+    <EditText
+        android:id="@+id/mEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="25dp"
+        android:text="新增評論"></EditText>
+
+    <Button
+        android:id="@+id/Collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/button_rounde"
+        android:text="提交" /><!--放在最底-->
+
+
+
+
+</LinearLayout>
+
+
+
+

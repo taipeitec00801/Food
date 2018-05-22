@@ -103,6 +103,7 @@
                     app:contentPadding="10dp">
 
                     <ImageView
+                        android:id="@+id/goToCommon"
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
                         android:scaleType="fitXY"

@@ -46,4 +46,6 @@ dependencies {
 
     /* dialogs */
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+    /*thumbUplib:ThumbUp*/
+    compile 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
 }

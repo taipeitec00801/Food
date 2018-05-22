@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.example.food.Comment.CommentActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.R;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private int firstTheme;
-    private ImageView imgfork;
+    private ImageView imgfork,gotocommon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         changepage();
 
         setupNavigationDrawerMenu();
+        //Common Test 用
+        gotocommon = findViewById(R.id.goToCommon);
+        gotocommon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, CommentActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
