@@ -2,60 +2,52 @@ package com.example.food.Settings;
 
 import java.io.Serializable;
 import java.sql.Blob;
-import java.sql.Date;
 
 @SuppressWarnings("serial")
 class Member implements Serializable {
-    private String userId, password, nickName, birthday;
-    private int gender;
+    private String userAccount, userPassword, nickName, birthday;
+    private int gender, userId;
     private Blob portrait;
-    private String preference, collection;
+    private String preference, collection, userGift, userFriends;
 
-    public Member(String userId, String password, String nickName, String birthday, int gender, Blob portrait, String preference, String collection) {
-        this.userId = userId;
-        this.password = password;
+    // 傳修改過後的個人資料 給server
+    public Member(String userAccount, String userPassword, String nickName, String birthday, int gender, Blob portrait) {
+        this.userAccount = userAccount;
+        this.userPassword = userPassword;
         this.nickName = nickName;
         this.birthday = birthday;
         this.gender = gender;
         this.portrait = portrait;
-        this.preference = preference;
-        this.collection = collection;
     }
 
-    // 透過 userId　來變更　preference
-    public Member(String userId, String preference) {
-        this.userId = userId;
-        this.preference = preference;
-    }
-
-    // 修改個人資料
-    public Member(String userId, String password, String nickName, String birthday, int gender) {
-        this.userId = userId;
-        this.password = password;
+    // 接受server給的個人會員資料
+    public Member(String userAccount, String userPassword, String nickName, String birthday, int gender) {
+        this.userAccount = userAccount;
+        this.userPassword = userPassword;
         this.nickName = nickName;
         this.birthday = birthday;
         this.gender = gender;
     }
 
-    // 透過 userId 搜尋
-    public Member(String userId) {
-        this.userId = userId;
+    // 傳 userAccount 來搜尋
+    public Member(String userAccount) {
+        this.userAccount = userAccount;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserAccount() {
+        return userAccount;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     public String getNickName() {
@@ -82,6 +74,14 @@ class Member implements Serializable {
         this.gender = gender;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public Blob getPortrait() {
         return portrait;
     }
@@ -104,5 +104,21 @@ class Member implements Serializable {
 
     public void setCollection(String collection) {
         this.collection = collection;
+    }
+
+    public String getUserGift() {
+        return userGift;
+    }
+
+    public void setUserGift(String userGift) {
+        this.userGift = userGift;
+    }
+
+    public String getUserFriends() {
+        return userFriends;
+    }
+
+    public void setUserFriends(String userFriends) {
+        this.userFriends = userFriends;
     }
 }
