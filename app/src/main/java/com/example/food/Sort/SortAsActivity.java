@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.food.R;
-import com.example.food.Sort.task.CommonTask;
-import com.example.food.Sort.task.ImageTask;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class SortAsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{

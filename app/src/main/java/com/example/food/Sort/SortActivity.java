@@ -26,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
@@ -51,10 +52,12 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
-        int i = Integer.parseInt(outBt.getText().toString());
-        recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_L).setVisibility(View.INVISIBLE);
-        recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_R).setVisibility(View.INVISIBLE);
+        if(!outBt.isEnabled()){
+            int i = Integer.parseInt(outBt.getText().toString());
 
+            recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_L).setVisibility(View.INVISIBLE);
+            recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_R).setVisibility(View.INVISIBLE);
+        }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,6 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         //建立ToolBar
         initContent();
         setupNavigationDrawerMenu();
-
         //被點擊時，建立新的執行緒，並且將Button關閉，等到onPause()、onStart()時重新開啟。
         outBt.setOnClickListener(new View.OnClickListener() {
             @Override
