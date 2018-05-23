@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.example.food.Collection.CollectionActivity;
 import com.example.food.Comment.CommentActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private int firstTheme;
-    private ImageView imgfork,gotocommon;
+    private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
+        imgmap = findViewById(R.id.imgmap);
+        imgmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
+        collection = findViewById(R.id.collection);
+        collection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
+                startActivity(intent);
+            }
+        });
+        magnifier = findViewById(R.id.magnifier);
+        magnifier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     @Override
