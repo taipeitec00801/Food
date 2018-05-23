@@ -15,28 +15,45 @@
         android:background="#f1f1df"
         android:orientation="vertical">
 
-                <com.mancj.materialsearchbar.MaterialSearchBar
-                    style="@style/MaterialSearchBarLight"
-                    app:mt_speechMode="false"
-                    app:mt_hint="搜尋店家"
-                    app:mt_maxSuggestionsCount="0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:mt_menuDividerEnabled="true"
-                    app:mt_navIconEnabled="true"
-                    android:id="@+id/searchBar"
-                    android:layout_marginBottom="1dp"/>
-        <ScrollView
-            android:layout_width="match_parent"
+        <com.mancj.materialsearchbar.MaterialSearchBar
+            style="@style/MaterialSearchBarLight"
+            app:mt_speechMode="false"
+            app:mt_hint="搜尋店家"
+            app:mt_maxSuggestionsCount="0"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/searchBar">
+            app:mt_menuDividerEnabled="true"
+            app:mt_navIconEnabled="true"
+            android:id="@+id/searchBar"
+            android:layout_marginBottom="1dp"/>
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/searchBar"
+            android:descendantFocusability="blocksDescendants">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/search_rv"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </ScrollView>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/search_rvUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="和魯肉飯相關的留言"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/search_rvDown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
 
 
     </RelativeLayout>

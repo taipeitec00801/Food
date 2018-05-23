@@ -11,42 +11,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.food.R;
-import com.example.food.Sort.Common;
 import com.example.food.Sort.SortAs;
 import com.example.food.Sort.SortDAO;
-import com.example.food.Sort.task.CommonTask;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -55,12 +41,15 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private static final String TAG = "SearchActivity";
-    private RecyclerView recyclerView;
+    private RecyclerView rvUp,rvDown;
     private MaterialSearchBar searchBar;
     private List<SortAs> sortItemList = null;
     private sortAdapter sortAdapter = null;
+    private searchAdapter searchAdapter = null;
     private boolean ordercont = true;
-    private ScrollView scrollView;
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,19 +57,20 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         //建立ToolBar
         initContent();
         setupNavigationDrawerMenu();
-        recyclerView = findViewById(R.id.search_rv);
-        recyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(
-                        1, StaggeredGridLayoutManager.HORIZONTAL));
-        recyclerView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(searchBar.isSearchEnabled()){
-                    searchBar.disableSearch();
-                }
-                return false;
-            }
-        });
+
+        rvUp = findViewById(R.id.search_rvUp);
+        rvUp.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL));
+        rvDown = findViewById(R.id.search_rvDown);
+        rvDown.setLayoutManager(new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL));
+//        rvUp.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if(searchBar.isSearchEnabled()){
+//                    searchBar.disableSearch();
+//                }
+//                return false;
+//            }
+//        });
         searchBar = findViewById(R.id.searchBar);
         searchBar.inflateMenu(R.menu.search_order,R.drawable.order);
         searchBar.setMenuIconTint(0xffff0000);
@@ -123,14 +113,13 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                                 }
                             });
                         }
-                        if(sortAdapter != null){
-                            recyclerView.getAdapter().notifyDataSetChanged();
-                        }
+                        rvUp.getAdapter().notifyDataSetChanged();
                     }
                 }
                 return false;
             }
         });
+
 //        searchBar.hideSuggestionsList();
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
@@ -139,7 +128,26 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
             }
             @Override
             public void onSearchConfirmed(CharSequence text) {
-                searchSetting(SearchActivity.this);
+                mThread=new HandlerThread("bb");
+                mThread.start();
+                mThreadHandler=new Handler(mThread.getLooper());
+                mThreadHandler.post(r1);
+                try {
+                    mThread.join(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(rvUp.getAdapter()==null||rvDown.getAdapter()==null){
+                    rvUp.setAdapter(searchAdapter);
+                    rvDown.setAdapter(sortAdapter);
+                }else{
+                    sortAdapter.notifyDataSetChanged();
+                    searchAdapter.notifyDataSetChanged();
+                    rvUp.setAdapter(searchAdapter);
+//                    rvDown.setAdapter(sortAdapter);
+                }
+
+
                 searchBar.disableSearch();
             }
 
@@ -156,33 +164,30 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
             }
         });
 
+
+
     }
 
     private class sortAdapter extends
             RecyclerView.Adapter<sortAdapter.SortViewHolder> {
         private Context context;
         private List<SortAs> sortList;
-        private int imageSize;
 
         sortAdapter(Context context, List<SortAs> sortList) {
             this.context = context;
             this.sortList = sortList;
-            imageSize = getResources().getDisplayMetrics().widthPixels / 8;
         }
 
         class SortViewHolder extends RecyclerView.ViewHolder {
-//            ImageView imageView ,likeView;
-//            TextView tvName,tvLike;
+            ImageView imageView ,likeView;
+            TextView tvName,tvLike;
             SortViewHolder(View itemView) {
                 super(itemView);
-//                imageView = itemView.findViewById(R.id.sortAs_item_iv);
-//                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
-//                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
-//                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
+                imageView = itemView.findViewById(R.id.sortAs_item_iv);
+                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
+                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
+                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
             }
-        }
-        public void restartItem() {
-            notifyDataSetChanged();
         }
         @Override
         public int getItemCount() {
@@ -199,11 +204,55 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-//            viewHolder.likeView.setImageResource(R.drawable.like);
-//            viewHolder.imageView.setImageResource(R.drawable.p01);
-//            viewHolder.tvName.setText(String.valueOf(sort.getName()));
-//            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
-//            viewHolder.itemView.setElevation(0);
+            viewHolder.likeView.setImageResource(R.drawable.like);
+            viewHolder.imageView.setImageResource(R.drawable.p01);
+            viewHolder.tvName.setText(String.valueOf(sort.getName()));
+            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
+            viewHolder.itemView.setElevation(0);
+        }
+    }
+
+    private class searchAdapter extends
+            RecyclerView.Adapter<searchAdapter.SearchViewHolder> {
+        private Context context;
+        private List<SortAs> sortList;
+
+        searchAdapter(Context context, List<SortAs> sortList) {
+            this.context = context;
+            this.sortList = sortList;
+        }
+
+        class SearchViewHolder extends RecyclerView.ViewHolder {
+            ImageView bgImg,leftImg,rightImg;
+            TextView resName,resSort;
+            CircleImageView circleImg;
+
+            SearchViewHolder(View itemView) {
+                super(itemView);
+                bgImg = itemView.findViewById(R.id.search_item_bgImg);
+                leftImg = itemView.findViewById(R.id.search_item_leftImg);
+                rightImg = itemView.findViewById(R.id.search_item_rightImg);
+                resName = itemView.findViewById(R.id.search_item_resName);
+                resSort = itemView.findViewById(R.id.search_item_resSort);
+                circleImg = itemView.findViewById(R.id.search_item_circleImg);
+            }
+        }
+        @Override
+        public int getItemCount() {
+            return sortList.size();
+        }
+
+        @Override
+        public SearchViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            View itemView = layoutInflater.inflate(R.layout.search_item, viewGroup, false);
+            return new SearchViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(SearchViewHolder viewHolder, int position) {
+            SortAs sort = sortList.get(position);
+            viewHolder.resName.setText(sort.getName());
         }
     }
 
@@ -263,12 +312,25 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
     public void searchSetting(Activity inputActivity){
         if(searchBar.getText() != null) {
-            sortItemList = null;
-            recyclerView.setAdapter(null);
-            SortDAO sortDAO = new SortDAO(inputActivity);
+            SortDAO sortDAO = new SortDAO(SearchActivity.this);
             sortItemList = sortDAO.findResByName(searchBar.getText());
-            sortAdapter = new sortAdapter(this, sortItemList);
-            recyclerView.setAdapter(sortAdapter);
+            sortAdapter = new sortAdapter(SearchActivity.this, sortItemList);
+            searchAdapter = new searchAdapter(SearchActivity.this, sortItemList);
         }
     }
+    private Runnable r1 = new Runnable(){
+        public void run(){
+            //這裡放執行緒要執行的程式。
+            searchSetting(SearchActivity.this);
+
+//            mThreadHandler.post();
+        }
+    };
+//
+//    private Runnable r2 = new Runnable() {
+//        @Override
+//        public void run() {
+//
+//        }
+//    };
 }

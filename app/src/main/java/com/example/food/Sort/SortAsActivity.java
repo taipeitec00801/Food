@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.food.R;
-import com.example.food.Sort.task.CommonTask;
-import com.example.food.Sort.task.ImageTask;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 public class SortAsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -124,14 +117,14 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         }
 
         class SortViewHolder extends RecyclerView.ViewHolder {
-//            ImageView imageView ,likeView;
-//            TextView tvName,tvLike;
+            ImageView imageView ,likeView;
+            TextView tvName,tvLike;
             SortViewHolder(View itemView) {
                 super(itemView);
-//                imageView = itemView.findViewById(R.id.sortAs_item_iv);
-//                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
-//                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
-//                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
+                imageView = itemView.findViewById(R.id.sortAs_item_iv);
+                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
+                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
+                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
             }
         }
 
@@ -150,10 +143,10 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-//            viewHolder.likeView.setImageResource(R.drawable.like);
-//            viewHolder.imageView.setImageResource(R.drawable.p01);
-//            viewHolder.tvName.setText(String.valueOf(sort.getName()));
-//            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
+            viewHolder.likeView.setImageResource(R.drawable.like);
+            viewHolder.imageView.setImageResource(R.drawable.p01);
+            viewHolder.tvName.setText(String.valueOf(sort.getName()));
+            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
 
         }
     }
