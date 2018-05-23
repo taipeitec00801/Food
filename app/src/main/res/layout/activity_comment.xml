@@ -8,115 +8,127 @@
     tools:context=".Comment.CommentActivity"
     android:orientation="vertical"
     >
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <include
-        android:id="@+id/settingsPreferencesToolbar"
-        layout="@layout/toolbar" />
+    <!--drawlayout沒有顯示-->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/settingsPreferencesToolbar"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:id="@+id/layout">
-
+        android:orientation="vertical"
+        android:background="?attr/colorBackground">
+        <include
+            android:id="@+id/settingsPreferencesToolbar"
+            layout="@layout/toolbar" />
         <LinearLayout
-            android:id="@+id/innerlayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
+            android:layout_below="@+id/settingsPreferencesToolbar"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:id="@+id/layout">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cv"
+            <LinearLayout
+                android:id="@+id/innerlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="10dp"
-                app:cardMaxElevation="5dp"
-                app:cardPreventCornerOverlap="true"
-                app:contentPadding="10dp">
-                <ImageView
-                    android:id="@+id/Im"
-                    android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/food" />
-                <TextView
-                    android:id="@+id/textview"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/image"
-                    android:layout_marginTop="180dp"
-                    android:text="Text description picture"
-                    android:orientation="horizontal"/>
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="10dp"
+                    app:cardMaxElevation="5dp"
+                    app:cardPreventCornerOverlap="true"
+                    app:contentPadding="10dp">
+                    <ImageView
+                        android:id="@+id/Im"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/food" />
+                    <TextView
+                        android:id="@+id/tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/image"
+                        android:layout_marginTop="180dp"
+                        android:text="Text description picture"
+                        android:orientation="horizontal"/>
 
 
 
-            </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/Map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout"
+                android:text="地圖"
+                android:textColor="@color/colorAccent"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/Collection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_weight="1"
+                android:textColor="@color/colorAccent"
+                android:text="收藏" />
+        </LinearLayout>
+        <!--Recycleview-->
+        <LinearLayout
+            android:id="@+id/namelayout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            >
+
+            <ImageView
+                android:id="@+id/imageboy"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/boy" />
+
+            <TextView
+                android:id="@+id/MediumText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="Medium Text"
+                android:textSize="25dp" />
+
+            <TextView
+                android:id="@+id/SmallText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="Small Text"
+                android:textSize="18dp" />
+
+
         </LinearLayout>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/Map"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigationView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout"
-        android:text="地圖"
-        android:layout_weight="1"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_options" >
 
-    <Button
-        android:id="@+id/Collection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/layout"
-        android:layout_weight="1"
-        android:text="收藏" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/Collection">
+    </android.support.design.widget.NavigationView>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/namelayout"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/Map">
-
-        <ImageView
-            android:id="@+id/imageboy"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/boy" />
-
-        <TextView
-            android:id="@+id/MediumText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Medium Text"
-            android:textSize="25dp" />
-
-        <TextView
-            android:id="@+id/SmallText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:text="Small Text"
-            android:textSize="18dp" />
-
-
-    </LinearLayout>
-    </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>
 
