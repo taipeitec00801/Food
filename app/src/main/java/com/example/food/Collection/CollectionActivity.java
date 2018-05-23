@@ -35,12 +35,12 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Map.StoreInfo;
+import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.Common;
 import com.example.food.Sort.SortActivity;
-import com.example.food.UnderDevelopmentActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
