@@ -10,15 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
 
+import com.example.food.DAO.Member;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -29,8 +30,9 @@ public class UserInformationActivity extends AppCompatActivity implements
     private Member member;
     private String newPassword, newNickName, newBirthday;
     private TextView tvUserNickname, tvUserBirthday;
-    private static final String testUserAccount = "taipeitec00801@gmail.com";
     private MemberDAO memberDAO;
+    // 測試用 testUserAccount
+    private static final String testUserAccount = "taipeitec00801@gmail.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +46,7 @@ public class UserInformationActivity extends AppCompatActivity implements
         member = memberDAO.findMemberByUserAccount(testUserAccount);
         showMemberData(member);
 
-
         selectCardView();
-//        confirmButton();
 
         Button cvUserDataSetting = findViewById(R.id.cvUserDataSetting);
         cvUserDataSetting.setOnClickListener(new View.OnClickListener() {
@@ -59,23 +59,10 @@ public class UserInformationActivity extends AppCompatActivity implements
 
     }
 
-
     private void findById() {
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
     }
-
-//    private void confirmButton() {
-//        CardView cvUserDataSetting = findViewById(R.id.cvUserDataSetting);
-//        cvUserDataSetting.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.e("confirmButton","true");
-//                memberDAO.updateMemberDate(testUserAccount, newPassword, newNickName,
-//                                        newBirthday, newGender);
-//            }
-//        });
-//    }
 
     private void selectCardView() {
         /* 個人頭像 */

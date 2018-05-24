@@ -1,10 +1,10 @@
-package com.example.food.Settings;
+package com.example.food.DAO;
 
 import java.io.Serializable;
 import java.sql.Blob;
 
 @SuppressWarnings("serial")
-class Member implements Serializable {
+public class Member implements Serializable {
     private String userAccount, userPassword, nickName, birthday;
     private int gender, userId;
     private Blob portrait;

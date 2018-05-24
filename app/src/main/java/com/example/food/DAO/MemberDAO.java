@@ -1,15 +1,15 @@
-package com.example.food.Settings;
+package com.example.food.DAO;
 
 import android.app.Activity;
 import android.util.Log;
 
+import com.example.food.Settings.Common;
 import com.example.food.Settings.task.CommonTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.sql.Blob;
 
 public class MemberDAO {
     private Activity inputActivity;
