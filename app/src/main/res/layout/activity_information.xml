@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorBackground"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="店名:好吃好吃"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地址：104台北市中山區中山北路二段52號"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/GOTOMap"
+            android:layout_width="13dp"
+            android:layout_height="15dp" />
+    </LinearLayout>
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="開放時間:結束營業時間：22:00"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="連絡電話:02-22689881"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="餐廳介紹"/>
+    <TextView
+        android:id="@+id/tvmenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="這是一間很有美式風格的店面"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="收藏" />
+</LinearLayout>

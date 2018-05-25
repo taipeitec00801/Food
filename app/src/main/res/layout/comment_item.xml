@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="?attr/colorBackground">
+
+
+    <!--最外一層LinearLayout用來設定兩組cardView的比例-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    <!--此層cardView用來設定邊框顏色和動畫可以用Id附著-->
+        <android.support.v7.widget.CardView
+            android:id="@+id/sort_item_cv_moveL"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="3dp"
+            app:cardBackgroundColor="@color/colorText">
+            <!--被點擊後將會跑出載入動畫，預設狀態為invisible(隱藏)-->
+            <!--<com.github.ybq.android.spinkit.SpinKitView-->
+                <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+                <!--android:id="@+id/sort_item_spin_kit_L"-->
+                <!--style="@style/SpinKitView.Large.FadingCircle"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:padding="60dp"-->
+                <!--app:SpinKit_Color="#ffffff"-->
+                <!--android:background="#aa000000"-->
+                <!--android:visibility="invisible"-->
+                <!--android:translationZ="50dp"/>-->
+            <!--第一組主要的cardView-->
+            <android.support.v7.widget.CardView
+                android:id="@+id/sort_item_Lift_cv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp">
+
+                <!--設定被點擊的水波紋動畫。-->
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:id="@+id/comment_item_ripple_L"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mrl_rippleColor="#000000">
+                <!--用來設定ImageView和TextView的比例-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+
+                    <ImageView
+                        android:id="@+id/Left_iv"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_margin="30dp"
+                        android:src="@drawable/boy" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/customname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:text="David"
+                            android:textSize="30dp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/custommessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:text="這間餐廳超好吃的,真的超級推薦...."
+                            android:textSize="15dp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.ldoublem.thumbUplib.ThumbUpView
+                                android:id="@+id/tpv"
+                                android:layout_width="54dp"
+                                android:layout_height="50dp"
+                                app:bgColor="@color/colorAccent"
+                                app:cracksColor="#33475f"
+                                app:edgeColor="#9d55b8"
+                                app:fillColor="#ea8010"
+                                app:unlikeType="1" />
+
+                            <TextView
+                                android:id="@+id/tv"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:padding="5dp"
+                                android:text="89"
+                                android:textSize="25sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+            </android.support.v7.widget.CardView>
+        </android.support.v7.widget.CardView>
+
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

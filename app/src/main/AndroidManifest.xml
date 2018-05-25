@@ -68,6 +68,7 @@
         <activity android:name=".Other.UnderDevelopmentActivity" />
         <activity android:name=".Comment.Comment_interface"/>
         <activity android:name=".Comment.Information"/>
+        <activity android:name=".Comment.Introduce"/>
     </application>
 
 </manifest>

@@ -48,7 +48,7 @@ dependencies {
     implementation 'com.baoyz.pullrefreshlayout:library:1.2.0'
     /* dialogs */
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
-    /*thumbUplib:ThumbUp*/
+    /*ThumbUp*/
     implementation 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
     /*GoogleSignIn:auth*/
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
