@@ -12,6 +12,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
@@ -19,11 +20,9 @@
             android:background="?attr/colorBackground"
             android:orientation="vertical">
             <!-- 第15行  高度未知  我改成 wrap_content  -->
-
             <include
                 android:id="@+id/mainToolbar"
                 layout="@layout/toolbar" />
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp">
@@ -202,6 +201,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_options" />
+        app:menu="@menu/nav_options" >
+
+
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

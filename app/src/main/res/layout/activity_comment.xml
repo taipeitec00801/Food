@@ -8,10 +8,12 @@
     tools:context=".Comment.CommentActivity"
     android:orientation="vertical"
     >
-    <RelativeLayout
+    <!--drawlayout沒有顯示-->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="?attr/colorBackground">
     <include
         android:id="@+id/settingsPreferencesToolbar"
         layout="@layout/toolbar" />
@@ -47,7 +49,7 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/food" />
                 <TextView
-                    android:id="@+id/textview"
+                    android:id="@+id/tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -62,13 +64,17 @@
             </android.support.v7.widget.CardView>
         </LinearLayout>
     </LinearLayout>
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
     <Button
         android:id="@+id/Map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout"
         android:text="地圖"
+        android:textColor="@color/colorAccent"
         android:layout_weight="1"/>
 
     <Button
@@ -76,22 +82,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/layout"
         android:layout_weight="1"
+        android:textColor="@color/colorAccent"
         android:text="收藏" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/Collection">
-
-    </LinearLayout>
-
+</LinearLayout>
+        <!--Recycleview-->
     <LinearLayout
         android:id="@+id/namelayout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/Map">
+        >
 
         <ImageView
             android:id="@+id/imageboy"
@@ -103,7 +104,7 @@
             android:id="@+id/MediumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="3dp"
             android:text="Medium Text"
             android:textSize="25dp" />
 
@@ -117,6 +118,17 @@
 
 
     </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_options" >
+
+    </android.support.design.widget.NavigationView>
+
 </android.support.v4.widget.DrawerLayout>
 

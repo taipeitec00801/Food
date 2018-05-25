@@ -35,15 +35,13 @@ public class Information extends AppCompatActivity {
 
         tpv.setUnLikeType(ThumbUpView.LikeType.broken);
         tpv.setCracksColor(Color.WHITE);
-        tpv.setFillColor(Color.rgb(11, 200, 77));
+        tpv.setFillColor(Color.rgb(255, 0, 0));
         tpv.setEdgeColor(Color.rgb(33, 3, 219));
         tpv.setOnThumbUp(new ThumbUpView.OnThumbUp() {
             @Override
             public void like(boolean like) {
                 if (like) {
                     tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) + 1));
-                } else {
-                    tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) - 1));
 
                 }
             }

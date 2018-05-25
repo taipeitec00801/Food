@@ -38,7 +38,7 @@ public class CommentActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        text3=findViewById(R.id.MediumText);
+        text3=findViewById(R.id.namelayout);
         text3.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
