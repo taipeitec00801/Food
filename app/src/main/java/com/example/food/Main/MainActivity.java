@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -17,17 +16,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.example.food.Collection.CollectionActivity;
+import com.example.food.Comment.CommentActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.R;
+import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
-import com.example.food.UnderDevelopmentActivity;
+import com.example.food.Sort.SortActivity;
+import com.example.food.Other.UnderDevelopmentActivity;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
@@ -36,8 +38,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private SharedPreferences prefs;
-    private int themeFirst, themeNoFirst;
+    private int firstTheme;
+    private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,57 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initFirst();
         initContent();
 
+        changepage();
+
         setupNavigationDrawerMenu();
+        //Common Test 用
+        gotocommon = findViewById(R.id.goToCommon);
+        gotocommon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, CommentActivity.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    private void changepage() {
+        imgfork = findViewById(R.id.imgfork);
+        imgfork.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SortActivity.class);
+                startActivity(intent);
+            }
+        });
+        imgmap = findViewById(R.id.imgmap);
+        imgmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
+        collection = findViewById(R.id.collection);
+        collection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
+                startActivity(intent);
+            }
+        });
+        magnifier = findViewById(R.id.magnifier);
+        magnifier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     @Override
@@ -56,9 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         askPermissions();
 
         //判斷 主題是否有變動  若有 recreate 這個 Activity
-        themeNoFirst = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (themeNoFirst != themeFirst) {
-            Log.e("text onStart", "themeNoFirst != themeFirst");
+        int nowTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nowTheme != firstTheme) {
             recreate();
         }
     }
@@ -66,14 +117,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //  首次 執行App 或是 重開App  的偏好設定
     private void initFirst() {
         PackageInfo info = null;
-        themeFirst = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         try {
             info = getPackageManager().getPackageInfo("com.example.food", 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         int currentVersion = info.versionCode;
-        prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
         int lastVersion = prefs.getInt("versionKey", 0);
         //如果當前版本大於上次版本，該版本屬於第一次啟動
         if (currentVersion > lastVersion) {
@@ -82,9 +132,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
             prefs.edit().putInt("versionKey", currentVersion).apply();
         } else {
+            firstTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
             //  讀取 SharedPreferences 中的模式
             int myTheme = prefs.getInt("theme", 0);
-            if (myTheme == 2) {
+            if (firstTheme == 32 || myTheme == 2) {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
             } else {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
@@ -143,7 +195,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         intent.setClass(MainActivity.this, UnderDevelopmentActivity.class);
                         startActivity(intent);
                         break;
-
+                    case R.id.navSort:
+                        intent.setClass(MainActivity.this, SortActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.navSearch:
+                        intent.setClass(MainActivity.this, SearchActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
                         initContent();
                         break;
@@ -193,12 +252,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
+        }
     }
-
     //要求User Permissions
     private static final int REQ_PERMISSIONS = 0;
 
@@ -211,7 +270,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(this, permissions, REQ_PERMISSIONS);
         }
 

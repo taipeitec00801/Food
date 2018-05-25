@@ -12,13 +12,18 @@
         <!-- hamburger -->
         <item name="colorControlNormal">@color/colorBlack</item>
 
-        <!--<item name="dra"-->
-        
         <!-- 切換 image -->
         <item name="ivSettingDayNight">@drawable/moon</item>
         <item name="ivUserSetting">@drawable/user_setting_black</item>
         <item name="ivSettingClean">@drawable/clean_black</item>
         <item name="ivSettingLikes">@drawable/likes</item>
+
+        <item name="ivSettingId">@drawable/username_black</item>
+        <item name="ivSettingPassword">@drawable/passeordkey_black</item>
+        <item name="ivSettingNickname">@drawable/nickname_black</item>
+        <item name="ivSettingBirthday">@drawable/ic_cake_black_24dp</item>
+        <item name="ivSettingGender">@drawable/ic_wc_black_24dp</item>
+        <item name="ivChevronRight">@drawable/ic_chevron_right_black</item>
 
         <!-- 切換 string -->
         <item name="tvSettingDayNight">@string/settingDayNight</item>

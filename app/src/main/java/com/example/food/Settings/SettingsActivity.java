@@ -20,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.food.DataCleanManager;
+import com.example.food.Other.DataCleanManager;
 import com.example.food.Member.LoginActivity;
 import com.example.food.R;
 
@@ -44,7 +44,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         setupNavigationDrawerMenu();
         //  點選不同的 CardView
         selectCardView();
-
     }
 
     private void selectCardView() {

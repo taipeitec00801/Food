@@ -1,63 +1,67 @@
 package com.example.food.Sort;
 
 public class Sort {
-    private String nameL,nameR;
-    private int imageR,imageL,sortResUp,sortResDown;
+    private int ivLsrc,sortLnum;
+    private String tvLname;
+    private int ivRsrc,sortRnum;
+    private String tvRname;
 
-    public Sort(String nameL, int imageR, int sortResUp, String nameR, int imageL,  int sortResDown) {
-        this.nameL = nameL;
-        this.nameR = nameR;
-        this.imageR = imageR;
-        this.imageL = imageL;
-        this.sortResUp = sortResUp;
-        this.sortResDown = sortResDown;
+    public Sort( int ivLsrc, int sortLnum, String tvLname,int ivRsrc, int sortRnum, String tvRname) {
+
+        this.ivLsrc = ivLsrc;
+        this.sortLnum = sortLnum;
+        this.tvLname = tvLname;
+        this.ivRsrc = ivRsrc;
+        this.sortRnum = sortRnum;
+        this.tvRname = tvRname;
     }
 
-    public String getNameL() {
-        return nameL;
+
+    public int getIvLsrc() {
+        return ivLsrc;
     }
 
-    public void setNameL(String nameL) {
-        this.nameL = nameL;
+    public void setIvLsrc(int ivLsrc) {
+        this.ivLsrc = ivLsrc;
     }
 
-    public String getNameR() {
-        return nameR;
+    public int getSortLnum() {
+        return sortLnum;
     }
 
-    public void setNameR(String nameR) {
-        this.nameR = nameR;
+    public void setSortLnum(int sortLnum) {
+        this.sortLnum = sortLnum;
     }
 
-    public int getImageR() {
-        return imageR;
+    public String getTvLname() {
+        return tvLname;
     }
 
-    public void setImageR(int imageR) {
-        this.imageR = imageR;
+    public void setTvLname(String tvLname) {
+        this.tvLname = tvLname;
     }
 
-    public int getImageL() {
-        return imageL;
+    public int getIvRsrc() {
+        return ivRsrc;
     }
 
-    public void setImageL(int imageL) {
-        this.imageL = imageL;
+    public void setIvRsrc(int ivRsrc) {
+        this.ivRsrc = ivRsrc;
     }
 
-    public int getSortResUp() {
-        return sortResUp;
+    public int getSortRnum() {
+        return sortRnum;
     }
 
-    public void setSortResUp(int sortResUp) {
-        this.sortResUp = sortResUp;
+    public void setSortRnum(int sortRnum) {
+        this.sortRnum = sortRnum;
     }
 
-    public int getSortResDown() {
-        return sortResDown;
+    public String getTvRname() {
+        return tvRname;
     }
 
-    public void setSortResDown(int sortResDown) {
-        this.sortResDown = sortResDown;
+    public void setTvRname(String tvRname) {
+        this.tvRname = tvRname;
     }
 }

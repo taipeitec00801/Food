@@ -4,19 +4,25 @@
 
     <translate
 
-        android:startOffset="500"
-        android:duration="500"
-        android:fromXDelta="-55%p"
+        android:fromXDelta="80%p"
         android:fromYDelta="0"
         android:toXDelta="0%p"
         android:toYDelta="0"
         android:interpolator="@android:anim/decelerate_interpolator"/>
 
-    <translate
-        android:duration="500"
-        android:fromXDelta="0"
-        android:fromYDelta="200%"
-        android:toXDelta="0"
-        android:toYDelta="0%"
-        android:interpolator="@android:anim/decelerate_interpolator"/>
+    <scale
+
+        android:startOffset="200"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:fromXScale="30%"
+        android:fromYScale="30%"
+        android:toXScale="100%"
+        android:toYScale="100%"/>
+
+    <alpha
+        android:fromAlpha="0.1"
+        android:toAlpha="1"
+        />
+
 </set>

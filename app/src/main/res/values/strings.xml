@@ -11,11 +11,22 @@
     <string name="textUserFriend">追蹤</string>
     <string name="textQRcode">QRcode</string>
     <string name="textIntroduction">簡介</string>
+
+    <!-- member -->
     <string name="text_btSubmit">註冊</string>
     <string name="text_btLogin">登入</string>
     <string name="text_gender">性別</string>
+    <string name="textUserId">帳號</string>
+    <string name="textPassword">密碼</string>
+    <string name="confirmPassword">確認密碼</string>
+    <string name="textNickname">暱稱</string>
+    <string name="textBirthday">生日</string>
+    <string name="textMale">男</string>
+    <string name="textFemale">女</string>
+    <string name="textDoNotShow">不顯示</string>
 
 
+    <!-- setting -->
     <string name="textLogout">登出</string>
     <string name="settingDayNight">夜間模式</string>
     <string name="settingDaytime">日間模式</string>

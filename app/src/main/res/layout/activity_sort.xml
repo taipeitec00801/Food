@@ -20,6 +20,15 @@
             android:id="@+id/sort_toolbar"
             layout="@layout/toolbar" />
 
+        <Button
+            android:id="@+id/sort_bt"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+        <Button
+            android:id="@+id/sort_comebt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/sort_rv"
             android:layout_width="match_parent"

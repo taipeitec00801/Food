@@ -2,8 +2,8 @@
 <resources>
     <color name="colorPrimary">#ffa037</color>
     <color name="colorPrimaryDark">#000000</color>
-
     <color name="colorAccent">#f1f1df</color>
+
     <color name="colorBody">#757575</color>
     <color name="colorCardBody">#2e2e2e</color>
 
@@ -11,5 +11,9 @@
     <color name="colorBlack">#000000</color>
     <color name="colorText">#ffffff</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorTransparent">#802e2e2e</color>
+
+    <color name="lgColorText">#FFC3B3B2</color>
+    <color name="etColorAccent">#f0649c</color>
 
 </resources>
