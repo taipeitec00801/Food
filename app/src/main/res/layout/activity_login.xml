@@ -1,91 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg_2"
+    android:id="@+id/drawerLayout"
     android:fitsSystemWindows="true"
-    tools:context=".Member.LoginActivity">
+    tools:context=".Member.LoginActivity"
+    android:background="@drawable/login_bg_2">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
-        android:fontFamily="casual"
-        android:text="Find Your Food"
-        android:textColor="@color/colorWhite"
-        android:textSize="36sp"
-        android:textStyle="italic" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:fontFamily="casual"
+            android:text="Find Your Food"
+            android:textColor="@color/colorWhite"
+            android:textSize="36sp"
+            android:textStyle="italic" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/etUser"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="180dp"
-            android:drawableLeft="@drawable/username"
-            android:drawablePadding="20dp"
-            android:hint="User Name"
-            android:textColor="@color/lgColorText" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:drawableLeft="@drawable/passeordkey"
-            android:drawablePadding="20dp"
-            android:hint="PassWord"
-            android:inputType="textPassword"
-            android:textColor="@color/lgColorText" />
+            <EditText
+                android:id="@+id/etUser"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="180dp"
+                android:drawableLeft="@drawable/username"
+                android:drawablePadding="20dp"
+                android:hint="User Name"
+                android:textColorHint="@color/colorWhite"/>
+
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@drawable/passeordkey"
+                android:drawablePadding="20dp"
+                android:hint="PassWord"
+                android:textColorHint="@color/colorWhite"
+                android:inputType="textPassword" />
+
+
+            <Button
+                android:id="@+id/btLogin"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="65dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/btn_bg"
+                android:onClick="onSubmitClick"
+                android:text="@string/text_btLogin"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btSubmit"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="65dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_bg"
+                android:text="@string/text_btSubmit"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <Button
-            android:id="@+id/btLogin"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="65dp"
-            android:layout_marginTop="20dp"
+            android:id="@+id/btForgetPassword"
+            android:layout_width="125dp"
+            android:layout_height="41dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="11dp"
+            android:layout_marginEnd="11dp"
             android:background="@drawable/btn_bg"
-            android:onClick="onSubmitClick"
-            android:text="@string/text_btLogin"
+            android:gravity="center"
+            android:text="忘記密碼"
             android:textColor="@color/colorWhite"
-            android:textSize="18sp" />
+            android:textSize="18dp" />
 
-        <Button
-            android:id="@+id/btSubmit"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="65dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_bg"
-            android:text="@string/text_btSubmit"
-            android:textColor="@color/colorWhite"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/etForgetPassword"
-        android:layout_width="125dp"
-        android:layout_height="41dp"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btn_sign_in"
+        android:layout_width="178dp"
+        android:layout_height="34dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="11dp"
-        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginEnd="89dp" />
+
+    <Button
+        android:id="@+id/btn_sign_out"
+        android:layout_width="125dp"
+        android:layout_height="41dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/btForgetPassword"
+        android:layout_marginStart="20dp"
         android:background="@drawable/btn_bg"
-        android:gravity="center"
-        android:onClick="onForgetClick"
-        android:text="忘記密碼"
-        android:textColor="@color/colorWhite"
-        android:textSize="18dp" />
+        android:onClick="onClick"
+        android:text="Log Out"
+        android:textColor="@color/colorWhite" />
+
 
 </RelativeLayout>
