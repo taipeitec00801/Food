@@ -1,16 +1,15 @@
-package com.example.food.Settings;
+package com.example.food.DAO;
 
 import android.app.Activity;
 import android.util.Log;
 
+import com.example.food.Settings.Common;
 import com.example.food.Settings.task.CommonTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.sql.Blob;
-import java.util.List;
 
 public class MemberDAO {
     private Activity inputActivity;
@@ -22,7 +21,7 @@ public class MemberDAO {
         TAG = inputActivity.getClass().getName();
     }
 
-    public Member findMemberByUserId(String userId) {
+    public Member findMemberByUserAccount(String userAccount) {
         if (Common.networkConnected(inputActivity)) {
             //建立Gson物件，以便將資料轉成Json格式。
             Gson gson = new Gson();
@@ -30,11 +29,12 @@ public class MemberDAO {
             String url = Common.URL + "/MemberServlet";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
-            //jsonObject新增屬性action其值為findMemberByUserId
-            jsonObject.addProperty("action", "findMemberByUserId");
 
-            //jsonObject新增屬性userId其值為userId
-            jsonObject.addProperty("userId", userId);
+            //jsonObject新增屬性action其值為findMemberByUserId
+            //jsonObject新增屬性userId其值為UserAccount
+
+            jsonObject.addProperty("action", "findMemberByUserAccount");
+            jsonObject.addProperty("UserAccount", userAccount);
 
             //將jsonObject轉成json格式的字串。
             String jsonOut = jsonObject.toString();
@@ -48,7 +48,6 @@ public class MemberDAO {
                 //用字串儲存伺服器回應的json格式字串。
 //                spotGetAllTask.get(500, TimeUnit.MILLISECONDS);
                 String jsonIn = spotGetAllTask.execute().get();
-
                 //利用TypeToken指定資料型態為Member
                 Type listType = new TypeToken<Member>() {
                 }.getType();
@@ -73,38 +72,39 @@ public class MemberDAO {
         return member;
     }
 
-    public boolean updateMemberDate(String userId, String password, String nickName, String birthday, int gender) {
+    public void updateMemberDate(String userId, String password, String nickName, String birthday, int gender) {
         if (Common.networkConnected(inputActivity)) {
-            Member newMember = new Member(userId,password, nickName, birthday, gender);
-
             //透過IP和資料庫名稱找到資料庫。
             String url = Common.URL + "/MemberServlet";
+
+            Member newMember = new Member(userId,password, nickName, birthday, gender);
+
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
-            //jsonObject新增屬性action其值為memberUpdate
-            jsonObject.addProperty("action", "memberUpdate");
+            //jsonObject新增屬性action其值為updateMemberDate
+            jsonObject.addProperty("action", "updateMemberDate");
 
             //CommonTask會將傳入的jsonOut字串送給伺服器
             //而伺服器判斷字串對應的方法後，對資料庫做出方法內的動作。
-            //伺服器會找到在伺服器內部的memberUpdate方法
+            //伺服器會找到在伺服器內部的updateMemberDate方法
             // 找 member table  傳入修改後的資料newMember
-            jsonObject.addProperty("member", new Gson().toJson(newMember));
+            jsonObject.addProperty("Member", new Gson().toJson(newMember));
             int count = 0;
             try {
                 String result = new CommonTask(url, jsonObject.toString()).execute().get();
                 count = Integer.valueOf(result);
+
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
             if (count == 0) {
-                Common.showToast(inputActivity, "");
+                Common.showToast(inputActivity, "Update fail");
             } else {
-                Common.showToast(inputActivity, "");
+                Common.showToast(inputActivity, "Update successfully");
             }
         } else {
             Common.showToast(inputActivity, "no network connection available");
         }
-        return true;
     }
 
 }

@@ -10,15 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
 
+import com.example.food.DAO.Member;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -29,8 +30,9 @@ public class UserInformationActivity extends AppCompatActivity implements
     private Member member;
     private String newPassword, newNickName, newBirthday;
     private TextView tvUserNickname, tvUserBirthday;
-    private static final String testUserId = "taipeitec00801@gmail.com";
     private MemberDAO memberDAO;
+    // 測試用 testUserAccount
+    private static final String testUserAccount = "taipeitec00801@gmail.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,36 +40,28 @@ public class UserInformationActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_user_information);
         findById();
         initContent();
-        selectCardView();
-        confirmButton();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         // 讀取  資料庫內的會員資料
         memberDAO = new MemberDAO(UserInformationActivity.this);
-        member = memberDAO.findMemberByUserId(testUserId);
-
+        member = memberDAO.findMemberByUserAccount(testUserAccount);
         showMemberData(member);
+
+        selectCardView();
+
+        Button cvUserDataSetting = findViewById(R.id.cvUserDataSetting);
+        cvUserDataSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                memberDAO.updateMemberDate(testUserAccount, newPassword, newNickName,
+                        newBirthday, newGender);
+            }
+        });
+
     }
 
     private void findById() {
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
-    }
-
-    private void confirmButton() {
-        CardView cvUserDataSetting = findViewById(R.id.cvUserDataSetting);
-        cvUserDataSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("confirmButton","true");
-                memberDAO.updateMemberDate(testUserId, newPassword, newNickName,
-                                        newBirthday, newGender);
-            }
-        });
     }
 
     private void selectCardView() {
@@ -93,9 +87,8 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .input(0, 0,  new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                newPassword = input.toString();
                                 //  密碼是否與資料庫內相同
-                                discernMemberPassword(member.getPassword(),newPassword);
+                                discernMemberPassword(newPassword,input.toString());
 
                                 // 確認密碼 視窗
                                 new MaterialDialog.Builder(UserInformationActivity.this)
@@ -209,9 +202,9 @@ public class UserInformationActivity extends AppCompatActivity implements
 
     private void showMemberData(Member member) {
         TextView tvUserId = findViewById(R.id.tvUserId);
-        tvUserId.setText(member.getUserId());
+        tvUserId.setText(testUserAccount);
 
-        discernMemberPassword(member.getPassword(),"");
+        discernMemberPassword(member.getUserPassword(),"");
         newNickName = member.getNickName();
         tvUserNickname.setText(newNickName);
         newBirthday = member.getBirthday();
@@ -231,10 +224,12 @@ public class UserInformationActivity extends AppCompatActivity implements
     // 判斷密碼 original與input相關關係
     private void discernMemberPassword(String original, String input) {
         TextView tvUserPassword = findViewById(R.id.tvUserPassword);
-        if (!original.equals(input) && !input.isEmpty()) {
+        if (!original.equals(input) && input.length() !=0) {
             tvUserPassword.setText(input);
+            newPassword = input;
         } else {
             tvUserPassword.setText(original);
+            newPassword = original;
         }
     }
 
