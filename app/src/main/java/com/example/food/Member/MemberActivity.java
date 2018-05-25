@@ -1,20 +1,25 @@
 package com.example.food.Member;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.food.R;
 
@@ -27,7 +32,6 @@ public class MemberActivity extends AppCompatActivity implements
     private Button btConfirm;
     private int mYear, mMonth, mDay;
     private Spinner spGender;
-
     MemderBeanActivity mb = new MemderBeanActivity();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class MemberActivity extends AppCompatActivity implements
         findViews();
         showNow();
         showSpinner();
+//        getDropDownView();
 //        initContent();
         btConfirm.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -60,60 +65,23 @@ public class MemberActivity extends AppCompatActivity implements
         mb.inputFilter(etPassword);
         mb.inputFilter(etUser);
     }
-//    class NewArrayAdapter extends ArrayAdapter {
-//        private Context mContext;
-//        private String [] mStringArray;
-//        public NewArrayAdapter(Context context, int simple_spinner_item, String[] stringArray) {
-//            super(context, android.R.layout.simple_spinner_item, stringArray);
-//            mContext = context;
-//            mStringArray=stringArray;
-//        }
 
+    private void showSpinner() {
+        String[] places = {"Gender", "男姓", "女姓"};
+        SpinnerAdapter adapterPlace = new SpinnerAdapter(this,places);
+        adapterPlace
+                .setDropDownViewResource(android.R.layout.simple_gallery_item);
+//        spGender.setSelection(1, true);
+        spGender.setAdapter(adapterPlace);
 
-//        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-//            //修改Spinner展開後的字體顏色
-//            if (convertView == null) {
-//                LayoutInflater inflater = LayoutInflater.from(this);
-//                convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,false);
-//            }
-//
-//            //此處text1是Spinner默認的用來顯示文字的TextView
-//            TextView tv =  convertView.findViewById(android.R.id.text1);
-//            tv.setText(places[position]);
-//            tv.setTextSize(22f);
-//            tv.setTextColor(Color.RED);
-//
-//            return convertView;
-//
-//        }
-//
-//
-//        public View getView(AdapterView<?> parent, View view, int pos, long id) {
-//            // 修改Spinner選擇後結果的字體顏色
-//            if (view == null) {
-//                LayoutInflater inflater = LayoutInflater.from(this);
-//                convertView = inflater.inflate(android.R.layout.simple_spinner_item, parent, false);
-//            }
-//
-//            //此處text1是Spinner默認的用來顯示文字的TextView
-//            EditText tv =  convertView.findViewById(R.id.etGender);
-//            tv.setText(adapterPlace[position]);
-//            tv.setTextSize(18f);
-//            tv.setTextColor(Color.BLUE);
-//            return convertView;
-//        }
-//
-////    }
-//
-
-
-
-
+////        spGender.setVisibility(View.INVISIBLE);
+        spGender.setOnItemSelectedListener(listener);
+    }
     Spinner.OnItemSelectedListener listener = new Spinner.OnItemSelectedListener() {
         @Override
         public void onItemSelected(
                 AdapterView<?> parent, View view, int pos, long id) {
-            etGender.setText("");
+            etGender.setText(" ");
         }
 
         @Override
@@ -121,18 +89,8 @@ public class MemberActivity extends AppCompatActivity implements
             etGender.setText(R.string.text_gender);
         }//被呼叫時代表下拉式選單有問題
     };
-    private void showSpinner() {
-        String[] places = {"Gender", "男姓", "女姓"};
-        ArrayAdapter<String> adapterPlace = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, places);
-        adapterPlace
-                .setDropDownViewResource(android.R.layout.simple_gallery_item);
-        spGender.setAdapter(adapterPlace);
-        spGender.setSelection(0, true);
-////        spGender.setVisibility(View.INVISIBLE);
-        spGender.setOnItemSelectedListener(listener);
 
-    }
+
     //birthDay
     //----------------------------------------------------------------------------
     private void showNow() {

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.food"
@@ -37,4 +38,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.1'
     /*circleimageview*/
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
 }

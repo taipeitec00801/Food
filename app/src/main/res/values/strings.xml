@@ -49,4 +49,9 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
+    <!-- Button text -->
+    <string name="btn_logout_from_google">Logout from Google</string>
+    <string name="btn_revoke_access">Revoke Access</string>
+    <string name="server_client_id">891658422538-g4lvl5m9a0qqfqdapkneljnni6eas3j5.apps.googleusercontent.com</string>
+
 </resources>
