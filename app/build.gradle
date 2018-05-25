@@ -50,4 +50,6 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     /*thumbUplib:ThumbUp*/
     implementation 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
+    /*GoogleSignIn:auth*/
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
 }
