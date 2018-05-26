@@ -62,8 +62,8 @@ public class MemberActivity extends AppCompatActivity implements
         etBirthday = findViewById(R.id.etBirthday);
         etGender = findViewById(R.id.etGender);
         spGender= findViewById(R.id.spGender);
-        mb.inputFilter(etPassword);
-        mb.inputFilter(etUser);
+        mb.inputFilter(etPassword,12);
+        mb.inputFilter(etUser,40);
     }
 
     private void showSpinner() {
@@ -139,7 +139,7 @@ public class MemberActivity extends AppCompatActivity implements
 
     public void onConfirmClick(View view) {
         boolean isValid =
-                mb.isValid(etUser) & mb.isValid(etPassword);
+                mb.isValidAccount(etUser) & mb.isValidPassword(etPassword);
         if (!isValid) {
             return;
         }

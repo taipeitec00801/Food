@@ -1,6 +1,5 @@
 package com.example.food.Member;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,9 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.food.DAO.MemberDAO;
+import com.example.food.Main.MainActivity;
 import com.example.food.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -25,8 +25,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
-import java.util.Collections;
 
 public class LoginActivity extends AppCompatActivity implements
         View.OnClickListener {
@@ -69,8 +67,8 @@ public class LoginActivity extends AppCompatActivity implements
         btn_sign_in = findViewById(R.id.btn_sign_in);
         btn_sign_out = findViewById(R.id.btn_sign_out);
         btForgetPassword = findViewById(R.id.btForgetPassword);
-        mb.inputFilter(etPassword);
-        mb.inputFilter(etUser);
+        mb.inputFilter(etPassword,12);
+        mb.inputFilter(etUser,40);
         //透過mb.inputFilter()來限制帳密字數;
     }
     public void googleSignIn() {
@@ -249,11 +247,22 @@ public class LoginActivity extends AppCompatActivity implements
 //
 //    //從MemderBeanActivity取得帳密布林值
     public void onSubmitClick(View view) {
-        boolean isValid =
-                mb.isValid(etUser) & mb.isValid(etPassword);
-        if (!isValid) {
+        boolean isValid = mb.isValidAccount(etUser) & mb.isValidPassword(etPassword);
+        if (isValid) {
+            MemberDAO memberDAO = new MemberDAO(LoginActivity.this);
+            boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),
+                    etPassword.getText().toString().trim());
+            if (isUser) {
+                Intent intent = new Intent();
+                intent.setClass(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        } else {
             return;
         }
+
+
+
 //
 //        String user = etUser.getText().toString();
 //        String password = etPassword.getText().toString();

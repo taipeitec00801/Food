@@ -22,10 +22,12 @@ public class MemberDAO {
     private String TAG;
     private Member member = null;
     private ImageTask memberImageTask;
+    private int imageSize;
 
     public MemberDAO(Activity inputActivity) {
         this.inputActivity = inputActivity;
         TAG = inputActivity.getClass().getName();
+        imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 2;
     }
 
     public Member getUserDate(String userAccount, ImageView imageView) {
@@ -47,7 +49,8 @@ public class MemberDAO {
             String jsonOut = jsonObject.toString();
             CommonTask memberGetAllTask = new CommonTask(url, jsonOut);
             //CommonTask會將傳入的jsonOut字串送給伺服器
-            memberImageTask = new ImageTask(url, userAccount, 2, imageView);
+
+            memberImageTask = new ImageTask(url, userAccount, imageSize, imageView);
             memberImageTask.execute();
 
             //ImageTask會將傳入的userAccount字串送給伺服器

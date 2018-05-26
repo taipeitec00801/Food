@@ -1,5 +1,6 @@
 package com.example.food.Settings;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -13,14 +14,18 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.food.DAO.Member;
 import com.example.food.DAO.MemberDAO;
+import com.example.food.Member.MemderBeanActivity;
+import com.example.food.Other.TakePhotoPopWin;
 import com.example.food.R;
 
-import com.example.food.DAO.Member;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -31,6 +36,10 @@ public class UserInformationActivity extends AppCompatActivity implements
     private String newPassword, newNickName, newBirthday;
     private TextView tvUserNickname, tvUserBirthday;
     private MemberDAO memberDAO;
+    private MemderBeanActivity mb;
+    private CircleImageView cvUserImage;
+    private TakePhotoPopWin takePhotoPopWin = new TakePhotoPopWin();
+
     // 測試用 testUserAccount
     private static final String testUserAccount = "taipeitec00801@gmail.com";
 
@@ -43,13 +52,14 @@ public class UserInformationActivity extends AppCompatActivity implements
 
         // 讀取  資料庫內的會員資料
         memberDAO = new MemberDAO(UserInformationActivity.this);
-        member = memberDAO.findMemberByUserAccount(testUserAccount);
+        ImageView imageView = findViewById(R.id.cvUserImage);
+        member = memberDAO.getUserDate(testUserAccount, imageView);
         showMemberData(member);
 
         selectCardView();
 
-        Button cvUserDataSetting = findViewById(R.id.cvUserDataSetting);
-        cvUserDataSetting.setOnClickListener(new View.OnClickListener() {
+        Button btUserDataSetting = findViewById(R.id.btUserDataSetting);
+        btUserDataSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 memberDAO.updateMemberDate(testUserAccount, newPassword, newNickName,
@@ -59,6 +69,13 @@ public class UserInformationActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        Common.askPermissions(UserInformationActivity.this, permissions, Common.PERMISSION_READ_EXTERNAL_STORAGE);
+    }
+
     private void findById() {
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
@@ -66,11 +83,12 @@ public class UserInformationActivity extends AppCompatActivity implements
 
     private void selectCardView() {
         /* 個人頭像 */
-        CircleImageView cvUserImage = findViewById(R.id.cvUserImage);
+        cvUserImage = findViewById(R.id.cvUserImage);
         cvUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                cvUserImage.src
+                takePhotoPopWin.takePhotoPopWin(UserInformationActivity.this, view);
+
             }
         });
 
@@ -87,20 +105,32 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .input(0, 0,  new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                //  密碼是否與資料庫內相同
-                                discernMemberPassword(newPassword,input.toString());
 
-                                // 確認密碼 視窗
-                                new MaterialDialog.Builder(UserInformationActivity.this)
-                                        .title(R.string.confirmPassword)
-                                        .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                                        .widgetColorRes(R.color.colorBody)
-                                        .input(0, 0,  new MaterialDialog.InputCallback() {
-                                            @Override
-                                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                                discernMemberPassword(newPassword,input.toString());
-                                            }
-                                        }).show();
+                                //  密碼是否與資料庫內相同
+                                if (discernMemberPassword(newPassword,input.toString())) {
+                                    // 確認密碼 視窗
+                                    new MaterialDialog.Builder(UserInformationActivity.this)
+                                            .title(R.string.confirmPassword)
+                                            .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                                            .widgetColorRes(R.color.colorBody)
+                                            .input(0, 0, new MaterialDialog.InputCallback() {
+                                                @Override
+                                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                    discernMemberPassword(newPassword, input.toString());
+                                                }
+                                            }).show();
+                                } else {
+                                    new MaterialDialog.Builder(UserInformationActivity.this)
+                                            .title("")
+                                            .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                                            .widgetColorRes(R.color.colorBody)
+                                            .input(0, 0, new MaterialDialog.InputCallback() {
+                                                @Override
+                                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                                                    discernMemberPassword(newPassword, input.toString());
+                                                }
+                                            }).show();
+                                }
                             }
                         }).show();
             }
@@ -201,35 +231,34 @@ public class UserInformationActivity extends AppCompatActivity implements
     }
 
     private void showMemberData(Member member) {
-        TextView tvUserId = findViewById(R.id.tvUserId);
-        tvUserId.setText(testUserAccount);
+        if (member != null) {
+            TextView tvUserId = findViewById(R.id.tvUserId);
+            tvUserId.setText(testUserAccount);
 
-        discernMemberPassword(member.getUserPassword(),"");
-        newNickName = member.getNickName();
-        tvUserNickname.setText(newNickName);
-        newBirthday = member.getBirthday();
-        tvUserBirthday.setText(newBirthday);
-        discernMemberGender(member.getGender());
+            discernMemberPassword(member.getUserPassword(),"");
+            newNickName = member.getNickName();
+            tvUserNickname.setText(newNickName);
+            newBirthday = member.getBirthday();
+            tvUserBirthday.setText(newBirthday);
+            discernMemberGender(member.getGender());
+        }
     }
 
-    // 載入此介面時，判斷會員是否有 Portrait 若沒有 顯示預設頭像
-    private void showMemberPortrait() {
-//        if () {
-//
-//        }  else {
-//
-//        }
-    }
-
+    // 未完成
     // 判斷密碼 original與input相關關係
-    private void discernMemberPassword(String original, String input) {
+    private boolean discernMemberPassword(String original, String input) {
+        Pattern pattern = Pattern.compile("[ \\t\\n\\x0B\\f\\r]");
         TextView tvUserPassword = findViewById(R.id.tvUserPassword);
-        if (!original.equals(input) && input.length() !=0) {
+        if (input != null || input.length() !=0) {
+            return false;
+        } else if (!original.equals(input)) {
             tvUserPassword.setText(input);
             newPassword = input;
+            return true;
         } else {
             tvUserPassword.setText(original);
             newPassword = original;
+            return false;
         }
     }
 

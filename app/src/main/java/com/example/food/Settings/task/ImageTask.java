@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.example.food.R;
 import com.google.gson.JsonObject;
 
 import java.io.BufferedInputStream;
@@ -20,21 +21,21 @@ import java.net.URL;
 
 public class ImageTask extends AsyncTask<Object, Integer, Bitmap> {
     private final static String TAG = "ImageTask";
-    private String url;
-    private int id, imageSize;
+    private String url, userAccount;
+    private int imageSize;
     /* ImageTask的屬性strong參照到SpotListFragment內的imageView不好，
         會導致SpotListFragment進入背景時imageView被參照而無法被釋放，
         而且imageView會參照到Context，也會導致Activity無法被回收。
         改採weak參照就不會阻止imageView被回收 */
     private WeakReference<ImageView> imageViewWeakReference;
 
-    public ImageTask(String url, int id, int imageSize) {
-        this(url, id, imageSize, null);
+    public ImageTask(String url, String userAccount, int imageSize) {
+        this(url, userAccount, imageSize, null);
     }
 
-    public ImageTask(String url, int id, int imageSize, ImageView imageView) {
+    public ImageTask(String url, String userAccount, int imageSize, ImageView imageView) {
         this.url = url;
-        this.id = id;
+        this.userAccount = userAccount;
         this.imageSize = imageSize;
         this.imageViewWeakReference = new WeakReference<>(imageView);
     }
@@ -43,7 +44,7 @@ public class ImageTask extends AsyncTask<Object, Integer, Bitmap> {
     protected Bitmap doInBackground(Object... params) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("action", "getImage");
-        jsonObject.addProperty("id", id);
+        jsonObject.addProperty("UserAccount", userAccount);
         jsonObject.addProperty("imageSize", imageSize);
         return getRemoteImage(url, jsonObject.toString());
     }
@@ -57,7 +58,15 @@ public class ImageTask extends AsyncTask<Object, Integer, Bitmap> {
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
         } else {
-//            imageView.setImageResource(R.drawable.default_image);
+            //這裡需加判斷性別(從偏好內讀取)並顯示不同預設圖
+//            if () {
+//
+//            } else {
+//
+//            }
+
+            //暫時預設圖
+            imageView.setImageResource(R.drawable.person);
         }
     }
 
