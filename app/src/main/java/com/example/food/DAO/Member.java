@@ -1,26 +1,43 @@
 package com.example.food.DAO;
 
 import java.io.Serializable;
-import java.sql.Blob;
 
 @SuppressWarnings("serial")
 public class Member implements Serializable {
     private String userAccount, userPassword, nickName, birthday;
     private int gender, userId;
-    private Blob portrait;
+    private byte[] portrait;
     private String preference, collection, userGift, userFriends;
 
-    // 傳修改過後的個人資料 給server
-    public Member(String userAccount, String userPassword, String nickName, String birthday, int gender, Blob portrait) {
+    // 註冊用
+    // 送出會員資料給 server 不含 portrait(在image方法)
+    public Member(String userAccount, String userPassword, String nickName, String birthday,
+                  int gender, String preference) {
         this.userAccount = userAccount;
         this.userPassword = userPassword;
         this.nickName = nickName;
         this.birthday = birthday;
         this.gender = gender;
-        this.portrait = portrait;
+        this.preference = preference;
     }
 
-    // 接受server給的個人會員資料
+    // 接收 server 給的會員所有資料 不含 portrait(在image方法)
+    public Member(int userId, String userAccount, String userPassword, String nickName, String birthday
+            , int gender, String preference, String collection, String userGift,
+                  String userFriends) {
+        this.userAccount = userAccount;
+        this.userPassword = userPassword;
+        this.nickName = nickName;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.userId = userId;
+        this.preference = preference;
+        this.collection = collection;
+        this.userGift = userGift;
+        this.userFriends = userFriends;
+    }
+
+    // 送出 與 接收server給的會員資料 修改會員資料用
     public Member(String userAccount, String userPassword, String nickName, String birthday, int gender) {
         this.userAccount = userAccount;
         this.userPassword = userPassword;
@@ -34,6 +51,38 @@ public class Member implements Serializable {
         this.userAccount = userAccount;
     }
 
+    //登入用
+    public Member(String userAccount, String userPassword) {
+        this.userAccount = userAccount;
+        this.userPassword = userPassword;
+    }
+
+    /*   n用途編號  0=登入用  1=修改喜好  2=新增或移除收藏用
+                   3=禮物回饋  4=追蹤好友  */
+    public Member(int n, int userId, String string) {
+        this.userId = userId;
+        switch (n) {
+            case 0:
+                this.userPassword = string;
+                break;
+            case 1:
+                this.preference = string;
+                break;
+            case 2:
+                this.collection = string;
+                break;
+            case 3:
+                this.userGift = string;
+                break;
+            case 4:
+                this.userFriends = string;
+                break;
+            default:
+                break;
+        }
+    }
+
+    //-------getter--setter---------------------------------------------------------------
     public String getUserAccount() {
         return userAccount;
     }
@@ -82,11 +131,11 @@ public class Member implements Serializable {
         this.userId = userId;
     }
 
-    public Blob getPortrait() {
+    public byte[] getPortrait() {
         return portrait;
     }
 
-    public void setPortrait(Blob portrait) {
+    public void setPortrait(byte[] portrait) {
         this.portrait = portrait;
     }
 
