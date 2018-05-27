@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:layout_margin="15dp"
-    app:cardElevation="12dp">
+    android:layout_height="70dp"
+    android:layout_marginTop="2dp">
 
     <com.balysv.materialripple.MaterialRippleLayout
         android:id="@+id/sortAs_item_ripple"
@@ -16,17 +15,43 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/cf"/>
-            <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/search_downItem_resImg"
+                android:layout_weight="0.25"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="金城武"
+                android:layout_margin="3dp"
+                android:src="@drawable/cf"/>
+
+            <TextView
+                android:id="@+id/search_downItem_resName"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="四海遊龍"
+                android:textSize="25dp"
                 android:gravity="center"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_weight="0.1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/like" />
+
+            <TextView
+                android:id="@+id/search_downItem_likeNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.1"
+                android:background="@android:color/transparent"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:text="999" />
         </LinearLayout>
     </com.balysv.materialripple.MaterialRippleLayout>
 </android.support.v7.widget.CardView>

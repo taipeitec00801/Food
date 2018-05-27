@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.food.R;
 
@@ -108,23 +109,22 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
             RecyclerView.Adapter<sortAdapter.SortViewHolder> {
         private Context context;
         private List<SortAs> sortList;
-        private int imageSize;
 
         sortAdapter(Context context, List<SortAs> sortList) {
             this.context = context;
             this.sortList = sortList;
-            imageSize = getResources().getDisplayMetrics().widthPixels / 8;
         }
 
         class SortViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView ,likeView;
-            TextView tvName,tvLike;
+            ImageView resImg;
+            TextView resName,likeNumber,textNumber,mapBt;
             SortViewHolder(View itemView) {
                 super(itemView);
-                imageView = itemView.findViewById(R.id.sortAs_item_iv);
-                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
-                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
-                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
+                resImg = itemView.findViewById(R.id.sortAs_item_resImg);
+                resName =  itemView.findViewById(R.id.sortAs_item_resName);
+                likeNumber =  itemView.findViewById(R.id.sortAs_item_likeNumber);
+                textNumber = itemView.findViewById(R.id.sortAs_item_textNumber);
+                mapBt = itemView.findViewById(R.id.sortAs_item_mapBt);
             }
         }
 
@@ -143,10 +143,15 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-            viewHolder.likeView.setImageResource(R.drawable.like);
-            viewHolder.imageView.setImageResource(R.drawable.p01);
-            viewHolder.tvName.setText(String.valueOf(sort.getName()));
-            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
+            viewHolder.resImg.setImageResource(R.drawable.food3);
+            viewHolder.resName.setText(String.valueOf(sort.getName()));
+            viewHolder.likeNumber.setText(String.valueOf(sort.getNumber()));
+            viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(SortAsActivity.this,"有歐",Toast.LENGTH_SHORT).show();
+                }
+            });
 
         }
     }

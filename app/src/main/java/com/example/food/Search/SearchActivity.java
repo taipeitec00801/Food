@@ -22,7 +22,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
 import com.example.food.Sort.SortAs;
 import com.example.food.Sort.SortDAO;
@@ -49,6 +51,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private boolean ordercont = true;
     private Handler mThreadHandler;
     private HandlerThread mThread;
+    private TextView tvAbc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         //建立ToolBar
         initContent();
         setupNavigationDrawerMenu();
+        tvAbc = findViewById(R.id.search_tvAbc);
 
         rvUp = findViewById(R.id.search_rvUp);
         rvUp.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL));
@@ -146,7 +150,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                     rvUp.setAdapter(searchAdapter);
 //                    rvDown.setAdapter(sortAdapter);
                 }
-
+                tvAbc.setVisibility(View.VISIBLE);
 
                 searchBar.disableSearch();
             }
@@ -179,14 +183,13 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         }
 
         class SortViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView ,likeView;
-            TextView tvName,tvLike;
+            ImageView resImg;
+            TextView resName,likeNumber;
             SortViewHolder(View itemView) {
                 super(itemView);
-                imageView = itemView.findViewById(R.id.sortAs_item_iv);
-                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
-                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
-                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
+                resImg = itemView.findViewById(R.id.search_downItem_resImg);
+                resName =  itemView.findViewById(R.id.search_downItem_resName);
+                likeNumber =  itemView.findViewById(R.id.search_downItem_likeNumber);
             }
         }
         @Override
@@ -197,18 +200,16 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         @Override
         public SortViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.sort_as_item, viewGroup, false);
+            View itemView = layoutInflater.inflate(R.layout.search_down_item, viewGroup, false);
             return new SortViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-            viewHolder.likeView.setImageResource(R.drawable.like);
-            viewHolder.imageView.setImageResource(R.drawable.p01);
-            viewHolder.tvName.setText(String.valueOf(sort.getName()));
-            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
-            viewHolder.itemView.setElevation(0);
+            viewHolder.resImg.setImageResource(R.drawable.cf);
+            viewHolder.resName.setText(String.valueOf(sort.getName()));
+            viewHolder.likeNumber.setText(String.valueOf(sort.getNumber()));
         }
     }
 
@@ -224,8 +225,9 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
         class SearchViewHolder extends RecyclerView.ViewHolder {
             ImageView bgImg,leftImg,rightImg;
-            TextView resName,resSort;
+            TextView resName,resSort,mapBt;
             CircleImageView circleImg;
+            MaterialRippleLayout mrLayout;
 
             SearchViewHolder(View itemView) {
                 super(itemView);
@@ -235,6 +237,8 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                 resName = itemView.findViewById(R.id.search_item_resName);
                 resSort = itemView.findViewById(R.id.search_item_resSort);
                 circleImg = itemView.findViewById(R.id.search_item_circleImg);
+                mapBt = itemView.findViewById(R.id.search_item_mapBt);
+                mrLayout = itemView.findViewById(R.id.search_item_ripple);
             }
         }
         @Override
@@ -253,6 +257,18 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         public void onBindViewHolder(SearchViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
             viewHolder.resName.setText(sort.getName());
+            viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(SearchActivity.this,"有喔",Toast.LENGTH_SHORT).show();
+                }
+            });
+            viewHolder.mrLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Toast.makeText(SearchActivity.this,"有喔",Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -300,11 +316,6 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     }
 
     public void hideSoftKeyboard(Activity activity) {
-//        InputMethodManager inputMethodManager =
-//                (InputMethodManager) activity.getSystemService(
-//                        Activity.INPUT_METHOD_SERVICE);
-//        inputMethodManager.hideSoftInputFromWindow(
-//                activity.getCurrentFocus().getWindowToken(), 0);
 
         InputMethodManager imm = (InputMethodManager)getSystemService(activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);

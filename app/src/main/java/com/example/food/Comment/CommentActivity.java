@@ -26,7 +26,7 @@ public class CommentActivity extends AppCompatActivity {
         changeview();
      RecyclerView recyclerView=(RecyclerView)findViewById(R.id.Comment_recycleview);
      recyclerView.setLayoutManager(
-             new StaggeredGri完dLayoutManager(
+             new StaggeredGridLayoutManager(
                      1,StaggeredGridLayoutManager.VERTICAL));
         memberList = getMemberList();
 //        recyclerView.setAdapter(new MemberAdapter(this, memberList));

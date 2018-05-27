@@ -40,16 +40,19 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/search_rvUp"
                     android:layout_width="match_parent"
-                    android:layout_height="320dp" />
+                    android:layout_height="360dp"/>
                 <TextView
+                    android:id="@+id/search_tvAbc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="和魯肉飯相關的留言"/>
+                    android:text="相似結果"
+                    android:visibility="invisible"
+                    android:paddingLeft="10dp"/>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/search_rvDown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:nestedScrollingEnabled="false"/>
 
             </LinearLayout>
 
