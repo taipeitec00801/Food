@@ -29,6 +29,12 @@
         <item name="tvSettingDayNight">@string/settingDaytime</item>
     </style>
 
+    <!--跳脫視窗動畫-->
+    <style name="take_photo_anim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/pop_enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/pop_exit_anim</item>
+    </style>
+
     <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
         <!--A點擊打開B，B的出現動畫-->
         <item name="android:activityOpenEnterAnimation">@transition/next_activity_in</item>
