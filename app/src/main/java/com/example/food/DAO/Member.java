@@ -4,10 +4,18 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class Member implements Serializable {
-    private String userAccount, userPassword, nickName, birthday;
-    private int gender, userId;
+    private int memberId;
+    private String userAccount;
+    private String userPassword;
+    private String nickName;
+    private String birthday;
+    private int gender;
+    private int userRank;
     private byte[] portrait;
-    private String preference, collection, userGift, userFriends;
+    private String preference;
+    private String collection;
+    private String userGift;
+    private String userFriends;
 
     // 註冊用
     // 送出會員資料給 server 不含 portrait(在image方法)
@@ -22,15 +30,18 @@ public class Member implements Serializable {
     }
 
     // 接收 server 給的會員所有資料 不含 portrait(在image方法)
-    public Member(int userId, String userAccount, String userPassword, String nickName, String birthday
-            , int gender, String preference, String collection, String userGift,
-                  String userFriends) {
+    public Member(int memberId, String userAccount, String userPassword,
+                  String nickName, String birthday, int gender,
+                  int userRank, byte[] portrait, String preference,
+                  String collection, String userGift, String userFriends) {
+        this.memberId = memberId;
         this.userAccount = userAccount;
         this.userPassword = userPassword;
         this.nickName = nickName;
         this.birthday = birthday;
         this.gender = gender;
-        this.userId = userId;
+        this.userRank = userRank;
+        this.portrait = portrait;
         this.preference = preference;
         this.collection = collection;
         this.userGift = userGift;
@@ -38,7 +49,8 @@ public class Member implements Serializable {
     }
 
     // 送出 與 接收server給的會員資料 修改會員資料用
-    public Member(String userAccount, String userPassword, String nickName, String birthday, int gender) {
+    public Member(String userAccount, String userPassword, String nickName,
+                  String birthday, int gender) {
         this.userAccount = userAccount;
         this.userPassword = userPassword;
         this.nickName = nickName;
@@ -59,8 +71,8 @@ public class Member implements Serializable {
 
     /*   n用途編號  0=登入用  1=修改喜好  2=新增或移除收藏用
                    3=禮物回饋  4=追蹤好友  */
-    public Member(int n, int userId, String string) {
-        this.userId = userId;
+    public Member(int n, int memberId, String string) {
+        this.memberId = memberId;
         switch (n) {
             case 0:
                 this.userPassword = string;
@@ -123,12 +135,20 @@ public class Member implements Serializable {
         this.gender = gender;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getMemberId() {
+        return memberId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public int getUserRank() {
+        return userRank;
+    }
+
+    public void setUserRank(int userRank) {
+        this.userRank = userRank;
+    }
+
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
     }
 
     public byte[] getPortrait() {
