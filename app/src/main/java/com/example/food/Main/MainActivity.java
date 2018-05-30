@@ -10,7 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +35,9 @@ import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
 import com.example.food.Other.UnderDevelopmentActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
 
@@ -41,16 +48,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int firstTheme;
     private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
 
+    private List<Food> foodList;
+    private ViewPager vpMember;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initFirst();
         initContent();
-
         changepage();
-
         setupNavigationDrawerMenu();
         //Common Test 用
         gotocommon = findViewById(R.id.goToCommon);
@@ -62,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
+
+        List<Food> foodList = getMemberList();
+        FoodAdapter foodAdapter = new FoodAdapter(getSupportFragmentManager(), foodList);
+        vpMember = findViewById(R.id.vp_hottest);
+        vpMember.setAdapter(foodAdapter);
 
     }
 
@@ -275,6 +287,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ActivityCompat.requestPermissions(this, permissions, REQ_PERMISSIONS);
         }
 
+    }
+
+
+
+
+    private List<Food> getMemberList() {
+        foodList = new ArrayList<>();
+        foodList.add(new Food(R.drawable.test1));
+        foodList.add(new Food(R.drawable.test2));
+        foodList.add(new Food(R.drawable.test3));
+        return foodList;
+    }
+
+    private class FoodAdapter extends FragmentStatePagerAdapter {
+        List<Food> foodList;
+
+        private FoodAdapter(FragmentManager fm, List<Food> foodList) {
+            super(fm);
+            this.foodList = foodList;
+        }
+
+        @Override
+        public int getCount() {
+            return foodList.size();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Food food = foodList.get(position);
+            FoodFragment fragment = new FoodFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("food", food);
+            fragment.setArguments(args);
+            return fragment;
+        }
     }
 
 
