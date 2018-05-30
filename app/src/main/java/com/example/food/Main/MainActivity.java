@@ -29,11 +29,11 @@ import com.example.food.Collection.CollectionActivity;
 import com.example.food.Comment.CommentActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
+import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
-import com.example.food.Other.UnderDevelopmentActivity;
 
 import java.util.ArrayList;
 import java.util.List;
