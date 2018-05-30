@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -46,10 +48,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private int firstTheme;
+
+    //首頁主要四個icon
     private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
 
     private List<Food> foodList;
     private ViewPager vpMember;
+
+    private static final long ANIM_VIEWPAGER_DELAY = 3000;
+    private Handler h = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         vpMember.setAdapter(foodAdapter);
 
     }
-
+    //首頁icon跳頁轉換
     private void changepage() {
         imgfork = findViewById(R.id.imgfork);
         imgfork.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +202,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent();
                 switch (menuItem.getItemId()) {
 
+                    case R.id.navHome:
+                        onResume();
+                        break;
                     case R.id.navSettings:
                         intent.setClass(MainActivity.this, SettingsActivity.class);
                         startActivityForResult(intent, 0);
@@ -291,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
+    //viewpage
     private List<Food> getMemberList() {
         foodList = new ArrayList<>();
         foodList.add(new Food(R.drawable.test1));
@@ -322,6 +332,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment.setArguments(args);
             return fragment;
         }
+    }
+
+    private Runnable animateViewPager = new Runnable() {
+        public void run() {
+            if (foodList.size() > 0) {
+                vpMember.setCurrentItem((vpMember.getCurrentItem() + 1)
+                        % foodList.size(), true);
+                h.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
+            }
+        }
+    };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (h != null) {
+            h.removeCallbacks(animateViewPager);
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            if (h != null) {
+                h.removeCallbacks(animateViewPager);
+            }
+        }
+        if (ev.getAction() == MotionEvent.ACTION_UP) {
+            h.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        h.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
     }
 
 
