@@ -1,0 +1,8 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <item android:drawable="@drawable/btn_bg_set" android:state_pressed="true"/>//按下
+    <item android:drawable="@drawable/btn_bg" android:state_focused="true"/>//未按下
+    <item android:drawable="@drawable/btn_bg"/>
+
+</selector>

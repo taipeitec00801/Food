@@ -78,6 +78,7 @@
         <activity android:name=".Comment.CommentActivity" />
         <activity android:name=".Member.LoginActivity" />
         <activity android:name=".Member.MemberActivity" />
+        <activity android:name=".Member.Member2Activity" />
         <activity android:name=".Other.UnderDevelopmentActivity" />
         <activity android:name=".Comment.Comment_interface"/>
         <activity android:name=".Comment.Information"/>

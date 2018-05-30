@@ -11,5 +11,8 @@
     <color name="colorWhite">#ffffff</color>
     <color name="lgColorText">#f0649c</color>
     <color name="ColorAccent">#f0649c</color>
+    <color name="Ripple">#d02e2a2a</color>
+    <color name="Ripple1">#c5b8b8b8</color>
+    <color name="Ripple2">#63b8b8b8</color>
 //#FFC3B3B2
 </resources>

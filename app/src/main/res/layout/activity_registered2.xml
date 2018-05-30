@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_bg_3"
+    android:fitsSystemWindows="true"
+    tools:context=".Member.Member2Activity">
+
+    <TextView
+        android:id="@+id/etCreate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="13dp"
+        android:background="@null"
+        android:drawablePadding="20dp"
+        android:gravity="center"
+        android:text="偏好內容"
+        android:textColor="@color/colorWhite"
+        android:textSize="40dp" />
+
+    <Button
+        android:id="@+id/btLike1"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="105dp"
+        android:background="@drawable/btn_bg"
+        android:text="中式美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike2"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/btLike1"
+        android:layout_marginEnd="30dp"
+        android:layout_marginLeft="30dp"
+        android:background="@drawable/btn_bg"
+        android:text="西式美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike3"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/btLike1"
+        android:layout_marginTop="190dp"
+        android:background="@drawable/btn_bg"
+        android:text="日式美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike4"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/btLike2"
+        android:layout_alignTop="@+id/btLike3"
+        android:background="@drawable/btn_bg"
+        android:text="韓式美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike5"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/btLike1"
+        android:layout_marginTop="275dp"
+        android:background="@drawable/btn_bg"
+        android:text="泰式美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike6"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/btLike2"
+        android:layout_alignTop="@+id/btLike5"
+        android:background="@drawable/btn_bg"
+        android:text="港式美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike7"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/btLike1"
+        android:layout_marginTop="360dp"
+        android:background="@drawable/btn_bg"
+        android:text="小吃美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike8"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/btLike2"
+        android:layout_alignTop="@+id/btLike7"
+        android:background="@drawable/btn_bg"
+        android:text="甜點飲品"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/btLike9"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/btLike1"
+        android:layout_marginTop="445dp"
+        android:background="@drawable/btn_bg"
+        android:text="冰涼好滋味"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/btLike10"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/btLike2"
+        android:layout_alignTop="@+id/btLike9"
+        android:background="@drawable/btn_bg"
+        android:text="隱藏美食"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp" />
+
+
+    <Button
+        android:id="@+id/btConfirm"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="525dp"
+        android:background="@drawable/btn_bg"
+        android:text="完成"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
+
+</RelativeLayout>
