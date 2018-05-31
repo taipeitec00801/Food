@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_bg_3"
+    android:background="@drawable/login_bg_2"
     android:fitsSystemWindows="true"
     tools:context=".Member.MemberActivity">
 
@@ -22,8 +22,8 @@
         android:textColor="@color/colorWhite"
         android:textSize="40dp" />
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cvImage"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cvRegisteredImage"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_below="@+id/etCreate"
@@ -141,7 +141,6 @@
         android:layout_marginLeft="65dp"
         android:layout_marginTop="525dp"
         android:background="@drawable/btn_bg"
-        android:onClick="onConfirmClick"
         android:text="NEXT"
         android:textColor="@color/colorWhite"
         android:textSize="18sp" />

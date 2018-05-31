@@ -30,6 +30,29 @@ public class MemberDAO {
         imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 2;
     }
 
+
+    public boolean checkAccount(String userAccount) {
+        boolean usable = false;
+        if (Common.networkConnected(inputActivity)) {
+            String url = Common.URL + "/MemberServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "CheckAccount");
+            jsonObject.addProperty("UserAccount", userAccount);
+            String jsonOut = jsonObject.toString();
+            CommonTask userLoginTask = new CommonTask(url, jsonOut);
+            try {
+                String result = userLoginTask.execute().get();
+                usable = Boolean.valueOf(result);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+                usable = false;
+            }
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+        return usable;
+    }
+
     public Member getUserDate(String userAccount, ImageView imageView) {
         if (Common.networkConnected(inputActivity)) {
             //建立Gson物件，以便將資料轉成Json格式。

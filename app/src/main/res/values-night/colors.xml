@@ -2,18 +2,20 @@
 <resources>
     <color name="colorPrimary">#ffa037</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#f1f1df</color>
+    <color name="ColorAccent">#f0649c</color>
 
     <color name="colorBody">#757575</color>
     <color name="colorCardBody">#2e2e2e</color>
+    <color name="colorText">#ffffff</color>
 
 
     <color name="colorBlack">#000000</color>
-    <color name="colorText">#ffffff</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="colorTransparent">#802e2e2e</color>
-
-    <color name="lgColorText">#FFC3B3B2</color>
-    <color name="etColorAccent">#f0649c</color>
+    <color name="lgColorText">#f0649c</color>
+    <color name="Ripple">#d02e2a2a</color>
+    <color name="Ripple1">#c5b8b8b8</color>
+    <color name="Ripple2">#63b8b8b8</color>
+    <color name="colorPopupWindow">#80c3b3b2</color>
+    <color name="colorButton">#80ffa037</color>
 
 </resources>

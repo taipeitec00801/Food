@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.food.DAO.MemberDAO;
 import com.example.food.Main.MainActivity;
+import com.example.food.Other.InputFormat;
 import com.example.food.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements
     private GoogleSignInClient mGoogleSignInClient;
     private SignInButton btn_sign_in;
     private Button btn_sign_out;
-    MemderBeanActivity mb = new MemderBeanActivity();
+    InputFormat inputFormat = new InputFormat();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +68,8 @@ public class LoginActivity extends AppCompatActivity implements
         btn_sign_in = findViewById(R.id.btn_sign_in);
         btn_sign_out = findViewById(R.id.btn_sign_out);
         btForgetPassword = findViewById(R.id.btForgetPassword);
-        mb.inputFilter(etPassword,12);
-        mb.inputFilter(etUser,40);
+        inputFormat.inputFilter(etPassword,12);
+        inputFormat.inputFilter(etUser,40);
         //透過mb.inputFilter()來限制帳密字數;
     }
     public void googleSignIn() {
@@ -247,7 +248,7 @@ public class LoginActivity extends AppCompatActivity implements
 //
 //    //從MemderBeanActivity取得帳密布林值
     public void onSubmitClick(View view) {
-        boolean isValid = mb.isValidAccount(etUser) & mb.isValidPassword(etPassword);
+        boolean isValid = inputFormat.isValidAccount(etUser) & inputFormat.isValidPassword(etPassword);
         if (isValid) {
             MemberDAO memberDAO = new MemberDAO(LoginActivity.this);
             boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),

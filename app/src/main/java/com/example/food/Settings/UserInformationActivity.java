@@ -3,27 +3,44 @@ package com.example.food.Settings;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.DAO.Member;
 import com.example.food.DAO.MemberDAO;
-import com.example.food.Member.MemderBeanActivity;
-import com.example.food.Other.TakePhotoPopWin;
 import com.example.food.R;
 
+import java.io.File;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -36,9 +53,9 @@ public class UserInformationActivity extends AppCompatActivity implements
     private String newPassword, newNickName, newBirthday;
     private TextView tvUserNickname, tvUserBirthday;
     private MemberDAO memberDAO;
-    private MemderBeanActivity mb;
+    private File file;
+    private PopupWindow popWindow = new PopupWindow ();
     private CircleImageView cvUserImage;
-    private TakePhotoPopWin takePhotoPopWin = new TakePhotoPopWin();
 
     // 測試用 testUserAccount
     private static final String testUserAccount = "taipeitec00801@gmail.com";
@@ -79,16 +96,88 @@ public class UserInformationActivity extends AppCompatActivity implements
     private void findById() {
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
+        cvUserImage = findViewById(R.id.cvUserImage);
     }
 
     private void selectCardView() {
         /* 個人頭像 */
-        cvUserImage = findViewById(R.id.cvUserImage);
         cvUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                takePhotoPopWin.takePhotoPopWin(UserInformationActivity.this, view);
+                View mView = LayoutInflater.from(UserInformationActivity.this)
+                        .inflate(R.layout.take_photo_pop, null, false);
 
+                popWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+                // 设置弹出窗体可点击
+                popWindow.setFocusable(true);
+                // 设置弹出窗体显示时的动画，从底部向上弹出
+                popWindow.setAnimationStyle(R.style.take_photo_anim);
+
+                // 设置按钮监听
+                //照相
+                Button btn_take_photo =  mView.findViewById(R.id.btn_take_photo);
+                btn_take_photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        file = new File(file, "picture.jpg");
+                        Uri contentUri = FileProvider.getUriForFile(
+                                UserInformationActivity.this, getPackageName() + ".provider", file);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+                        if (isIntentAvailable(UserInformationActivity.this, intent)) {
+                            setResult(10);
+                            startActivityForResult(intent, 1);
+                        } else {
+                            Toast.makeText(UserInformationActivity.this,
+                                    R.string.msg_NoCameraAppsFound,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        popWindow.dismiss();
+                    }
+                });
+                //相簿
+                Button btn_pick_photo =  mView.findViewById(R.id.btn_pick_photo);
+                btn_pick_photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                        setResult(10);
+                        startActivityForResult(intent, 2);
+                        popWindow.dismiss();
+                    }
+                });
+                // 取消按钮
+                Button btn_cancel = mView.findViewById(R.id.btn_cancel);
+                btn_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 销毁弹出框
+                        popWindow.dismiss();
+                    }
+                });
+
+                // 设置外部可点击
+                popWindow.setOutsideTouchable(true);
+                // 添加OnTouchListener监听判断获取触屏位置如果在选择框外面则销毁弹出框
+                popWindow.setTouchInterceptor(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                        // 这里如果返回true的话，touch事件将被拦截
+                        // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+                    }
+                });
+
+                //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
+                popWindow.showAsDropDown(view, -50, 0);
+
+                // 设置弹出窗体的背景
+                // 实例化一个ColorDrawable颜色为半透明
+                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0ffffff));
             }
         });
 
@@ -200,6 +289,13 @@ public class UserInformationActivity extends AppCompatActivity implements
         setSupportActionBar(settingsUserInformationToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
+    //檢查裝置有沒有應用程式可以拍照  若有則 >0
+    public boolean isIntentAvailable(Context context, Intent intent) {
+        PackageManager packageManager = context.getPackageManager();
+        List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
 
     /* 選擇日期的跳脫視窗 */
     public static class DatePickerDialogFragment extends DialogFragment {
@@ -207,7 +303,6 @@ public class UserInformationActivity extends AppCompatActivity implements
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             UserInformationActivity uiActivity = (UserInformationActivity) getActivity();
-            assert uiActivity != null;
             return new DatePickerDialog(uiActivity, uiActivity,
                                     uiActivity.mYear, uiActivity.mMonth, uiActivity.mDay);
         }
@@ -273,4 +368,32 @@ public class UserInformationActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == 10) {
+            int newSize = 512;
+            switch (requestCode) {
+                case 1:
+                    Bitmap srcPicture = BitmapFactory.decodeFile(file.getPath());
+                    Bitmap downsizedPicture = Common.downSize(srcPicture, newSize);
+                    cvUserImage.setImageBitmap(downsizedPicture);
+                    break;
+
+                case 2:
+                    Uri uri = intent.getData();
+                    String[] columns = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(uri, columns,
+                            null, null, null);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        String imagePath = cursor.getString(0);
+                        cursor.close();
+                        Bitmap srcImage = BitmapFactory.decodeFile(imagePath);
+                        Bitmap downsizedImage = Common.downSize(srcImage, newSize);
+                        cvUserImage.setImageBitmap(downsizedImage);
+                    }
+                    break;
+            }
+        }
+    }
 }

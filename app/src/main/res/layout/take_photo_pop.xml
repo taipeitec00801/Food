@@ -10,7 +10,7 @@
         android:id="@+id/pop_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lgColorText"
+        android:background="@color/colorPopupWindow"
         android:layout_alignParentBottom="true"
         android:gravity="center_horizontal"
         android:orientation="vertical">
@@ -35,7 +35,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="200dp"
             android:layout_height="45dp"
-            app:cardBackgroundColor="@color/colorTransparent"
+            app:cardBackgroundColor="@color/colorButton"
             app:cardCornerRadius="20dp"
             android:layout_marginTop="10dp" >
             <Button
@@ -51,7 +51,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="200dp"
             android:layout_height="45dp"
-            app:cardBackgroundColor="@color/colorTransparent"
+            app:cardBackgroundColor="@color/colorButton"
             app:cardCornerRadius="20dp"
             android:layout_marginTop="10dp" >
             <Button
@@ -67,7 +67,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="200dp"
             android:layout_height="45dp"
-            app:cardBackgroundColor="@color/colorTransparent"
+            app:cardBackgroundColor="@color/colorButton"
             app:cardCornerRadius="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp">

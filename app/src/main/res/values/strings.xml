@@ -59,6 +59,7 @@
     <string name="text_btCancel">取消</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="msg_NoCameraAppsFound">找不到相機應用程式</string>
 
     <!-- Button text -->
     <string name="btn_logout_from_google">Logout from Google</string>

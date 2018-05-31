@@ -20,9 +20,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.food.Main.MainActivity;
+import com.example.food.Map.MapActivity;
 import com.example.food.Other.DataCleanManager;
 import com.example.food.Member.LoginActivity;
+import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
+import com.example.food.Search.SearchActivity;
+import com.example.food.Sort.SortActivity;
 
 import java.io.File;
 
@@ -53,9 +58,13 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cvUerInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(SettingsActivity.this, UserInformationActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(SettingsActivity.this, UserInformationActivity.class);
+                startActivityForResult(intent, RESULT_OK);
+//                intent.setClass(SettingsActivity.this, UserInformationActivity.class);
+                /*
+                * Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent, 2);
+                * */
             }
         });
         /* 偏好種類設定 */
@@ -80,16 +89,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
                 if (myTheme == Configuration.UI_MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-                    pref.edit()
-                            .putInt("theme", MODE_NIGHT_NO)
-                            .apply();
+                    pref.edit().putInt("theme", MODE_NIGHT_NO).apply();
                 } else if (myTheme == Configuration.UI_MODE_NIGHT_NO) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
-                    pref.edit()
-                            .putInt("theme", MODE_NIGHT_YES)
-                            .apply();
+                    pref.edit().putInt("theme", MODE_NIGHT_YES).apply();
                 }
-
                 recreate();
             }
         });
@@ -132,24 +136,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     }
 
-    /*   每個 Activity  的要使用
-        @Override
-        protected void onActivityResult ...       */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // requestCode "RESULT_OK" 代表 前一頁
-            // 一定要有   RESULT_OK
-            case RESULT_OK:
-                break;
-            // requestCode "0" 代表 首頁
-            case 0:
-                break;
-            default:
-                break;
-        }
-    }
-
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.settingsNavigationView);
         settingsDrawerLayout = findViewById(R.id.settingsDrawerLayout);
@@ -165,19 +151,47 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 menuItem.setChecked(true);
-                settingsDrawerLayout.closeDrawers();
                 Intent intent = new Intent();
+                settingsDrawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
-
                     case R.id.navHome:
-                        // "0" 代表 首頁的requestCode
-                        setResult(0, intent);
+                        intent.setClass(SettingsActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         SettingsActivity.this.finish();
+                        startActivity(intent);
                         break;
-
-                    default:
+                    case R.id.navMap:
+                        intent.setClass(SettingsActivity.this, MapActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SettingsActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSort:
+                        intent.setClass(SettingsActivity.this, SortActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SettingsActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSearch:
+                        intent.setClass(SettingsActivity.this, SearchActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SettingsActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navCollection:
+                        intent.setClass(SettingsActivity.this, MapActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SettingsActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSettings:
                         initContent();
-                        recreate();
+                        onResume();
+                        break;
+                    default:
+                        intent.setClass(SettingsActivity.this, UnderDevelopmentActivity.class);
+                        SettingsActivity.this.finish();
+                        startActivity(intent);
                         break;
                 }
                 return true;
@@ -261,8 +275,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 case DialogInterface.BUTTON_POSITIVE:
                     Intent intent = new Intent();
                     intent.setClass(getActivity(), LoginActivity.class);
-                    startActivity(intent);
                     getActivity().finish();
+                    startActivity(intent);
                     break;
                 default:
                     dialog.cancel();
