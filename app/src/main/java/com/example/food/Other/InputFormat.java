@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.text.InputFilter;
 import android.widget.EditText;
 
-import com.example.food.DAO.Member;
 import com.example.food.DAO.MemberDAO;
 
 import java.util.regex.Matcher;
@@ -13,12 +12,23 @@ import java.util.regex.Pattern;
 
 public class InputFormat {
     //限制帳號格式
+    public boolean isiInputNotNull(EditText editText) {
+        String text = editText.getText().toString();
+        if (text.length() > 0) {
+            return true;
+        } else {
+            editText.setError("請填入資料");
+            return false;
+        }
+    }
+
+    //限制帳號格式
     public boolean isValidAccount(EditText editText) {
         Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]+@[0-9a-z_-]+([.0-9a-z_-]+)*$");
         String text = editText.getText().toString();
         Matcher matcher = pattern.matcher(text);
-        if (!matcher.find()) {
-            editText.setError("格式錯誤");
+        if (!matcher.find() && text.length() > 0) {
+            editText.setError("帳號格式錯誤");
             return false;
         } else {
             return true;
@@ -43,8 +53,8 @@ public class InputFormat {
         Pattern pattern = Pattern.compile("[a-zA-Z0-9_]*$");
         String text = editText.getText().toString();
         Matcher matcher = pattern.matcher(text);
-        if (!matcher.find()) {
-            editText.setError("格式錯誤");
+        if (!matcher.find() && text.length() >= 6) {
+            editText.setError("密碼格式錯誤");
             return false;
         } else {
             return true;
