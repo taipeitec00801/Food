@@ -78,8 +78,8 @@
             android:id="@+id/cvUserPassword"
             android:layout_width="match_parent"
             android:layout_height="@dimen/userSetting_height"
-            android:layout_marginTop="1dp"
-            android:layout_below="@id/cvUserId">
+            android:layout_below="@id/cvUserId"
+            android:layout_marginTop="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -105,9 +105,9 @@
                     android:id="@+id/tvUserPassword"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
                     android:layout_gravity="center"
                     android:gravity="right"
+                    android:inputType="textPassword"
                     android:text="hello world"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/userSetting_textSize" />
@@ -263,11 +263,12 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:layout_below="@+id/cvUserGender"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             app:cardBackgroundColor="@color/colorTransparent"
             app:cardCornerRadius="20dp"
-            app:cardElevation="25dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp" >
+            app:cardElevation="25dp">
+
             <Button
                 android:id="@+id/btUserDataSetting"
                 android:layout_width="match_parent"
@@ -275,7 +276,7 @@
                 android:background="@drawable/btn_bg_set"
                 android:text="@string/text_btYes"
                 android:textColor="@color/colorText"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
         </android.support.v7.widget.CardView>
 
     </RelativeLayout>

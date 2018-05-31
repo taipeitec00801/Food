@@ -10,7 +10,6 @@ public class Member {
     private String message ;  //會員部分評論
 
     public Member(String name, int image, String message) {
-        super();
         this.name = name;
         this.image = image;
         this.message = message;

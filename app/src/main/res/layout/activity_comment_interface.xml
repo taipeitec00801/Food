@@ -15,29 +15,31 @@
     <LinearLayout
         android:id="@+id/namelayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
-己選照片-->改成可以自己選照片
-        <ImageView
-            android:id="@+id/imageboy"
+<!--改成可以自己選照片-->
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/boy" />
+            android:layout_margin="6dp"
+            android:src="@drawable/person"
+            app:civ_border_color="@color/colorText"
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/MediumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="David "
+            android:text="Username"
             android:textSize="24dp" />
 
         <TextView
             android:id="@+id/SmallText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="25dp"
             android:text="現在位置"
             android:textSize="12dp" />
@@ -45,12 +47,23 @@
 
     </LinearLayout>
 
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/Im"
+    <ImageButton
+        android:id="@+id/ibPickPicture"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:background="@color/colorWhite"
+        android:onClick="onPickPictureClick"
+        android:src="@drawable/addbutton" />
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/food"></ImageView>
+        android:text="選取你的照片"/>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp" />
 
     <EditText
         android:id="@+id/mEditText"
@@ -59,7 +72,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="25dp"
-        android:text="新增評論"></EditText>
+        android:background="@drawable/myedittext"
+        android:hint="新增評論"></EditText>
 
     <Button
         android:id="@+id/Collection"

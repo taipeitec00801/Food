@@ -1,37 +1,42 @@
 package com.example.food.Comment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
 import android.view.View;
-
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentActivity extends AppCompatActivity {
 
+    public static boolean btcont;
+    private View linearlayout_introduce,floatingbutton;
 
-    private View linearlayout_introduce,Comment_recycleview,floatingbutton;
-    private RecyclerView recyclerView;
-    private List<Member> memberList;
-//
-//    private CommentAdapter commentAdapter=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_comment);
         changeview();
-     RecyclerView recyclerView=(RecyclerView)findViewById(R.id.Comment_recycleview);
+     RecyclerView recyclerView=findViewById(R.id.Comment_recycleview);
      recyclerView.setLayoutManager(
              new StaggeredGridLayoutManager(
                      1,StaggeredGridLayoutManager.VERTICAL));
-        memberList = getMemberList();
-//        recyclerView.setAdapter(new MemberAdapter(this, memberList));
+       List<Member> memberList = getMemberList();
+        recyclerView.setAdapter(new MemberAdapter(this, memberList));
 
     }
+
     private void changeview(){
         linearlayout_introduce=findViewById(R.id.linearlayout_introduce);
         linearlayout_introduce.setOnClickListener(new View.OnClickListener() {
@@ -39,15 +44,6 @@ public class CommentActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent=new Intent(CommentActivity.this, Introduce.class);
                 startActivity(intent);
-            }
-        });
-        Comment_recycleview=findViewById(R.id.Comment_recycleview);
-        Comment_recycleview.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent intent =new Intent(CommentActivity.this,Information.class);
-                startActivity(intent);
-
             }
         });
         floatingbutton=findViewById(R.id.floatingbutton);
@@ -59,60 +55,62 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
     }
+    private class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MyViewHolder> {
+        private Context context;
+        private List<Member> MembersList;
 
-    public List<Member> getMemberList() {
-        return memberList;
+        MemberAdapter(Context context, List<Member> MembersList) {
+            this.context = context;
+            this.MembersList = MembersList;
+        }
+
+
+        @Override
+        public  MyViewHolder onCreateViewHolder(ViewGroup viewGroup ,int viewType){
+            LayoutInflater layoutInflater =LayoutInflater.from(context);
+            View itemView =layoutInflater.inflate(R.layout.comment_item,viewGroup,false);
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder viewHolder ,int position){
+            final Member member =MembersList.get(position);
+            viewHolder.textView.setText(member.getName());
+            viewHolder.imageView.setImageResource(member.getImage());
+            viewHolder.textView.setText(member.getMessage());
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(CommentActivity.this, Information.class);
+                    startActivity(intent);
+                }
+            });
+        }
+        @Override
+        public int getItemCount() {
+                return  MembersList.size();
+        }
+
+        class MyViewHolder extends RecyclerView.ViewHolder {
+            TextView textView;
+            ImageView imageView;
+            TextView messageView;
+
+
+            MyViewHolder(View itemview){
+            super(itemview);
+
+            textView=itemview.findViewById(R.id.customname);
+            imageView=itemview.findViewById(R.id.iv);
+            messageView=itemview.findViewById(R.id.custommessage);
+        }
+}
     }
 
-//    private class MemberAdapter extends RecyclerView.Adapter {
-//        public MemberAdapter(CommentActivity commentActivity, List<Member> memberList) {
-//    2018.055完    }
-//    }
-
-
-
-
-//    private class CommentAdapter extends
-//            RecyclerView.Adapter<CommentAdapter.SortViewHolder> {
-//        private Context context;
-//        private List<CommentAs> CommentList;
-//
-//        sortAdapter(Context context, List<SortAs> sortList) {
-//            this.context = context;
-//            this.sortList = sortList;
-//        }
-//
-//        class SortViewHolder extends RecyclerView.ViewHolder {
-//            ImageView imageView ,likeView;
-//            TextView tvName,tvLike;
-//            SortViewHolder(View itemView) {
-//                super(itemView);
-//                imageView = itemView.findViewById(R.id.sortAs_item_iv);
-//                tvName =  itemView.findViewById(R.id.sortAs_item_tv);
-//                tvLike =  itemView.findViewById(R.id.sortAs_item_like_tv);
-//                likeView = itemView.findViewById(R.id.sortAs_item_like_iv);
-//            }
-//        }
-//        @Override
-//        public int getItemCount() {
-//            return sortList.size();
-//        }
-//
-//        @Override
-//        public SortViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-//            LayoutInflater layoutInflater = LayoutInflater.from(context);
-//            View itemView = layoutInflater.inflate(R.layout.sort_as_item, viewGroup, false);
-//            return new SortViewHolder(itemView);
-//        }
-
-//        @Override
-//        public void onBindViewHolder(SortViewHolder viewHolder, int position) {
-//            SortAs sort = sortList.get(position);
-//            viewHolder.likeView.setImageResource(R.drawable.like);
-//            viewHolder.imageView.setImageResource(R.drawable.p01);
-//            viewHolder.tvName.setText(String.valueOf(sort.getName()));
-//            viewHolder.tvLike.setText(String.valueOf(sort.getNumber()));
-//            viewHolder.itemView.setElevation(0);
-//        }
-//}
+    public List<Member> getMemberList() {
+        List<Member> MemberList=new ArrayList<>();
+        MemberList.add(new Member("1",R.drawable.boy,"David"));
+        MemberList.add(new Member("2",R.drawable.boy,"Mary"));
+        return MemberList;
+    }
 }
