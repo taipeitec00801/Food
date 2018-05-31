@@ -28,7 +28,7 @@ public class TakePhotoPopWin {
         // 设置弹出窗体可点击
         popWindow.setFocusable(true);
         // 设置弹出窗体显示时的动画，从底部向上弹出
-        popWindow.setAnimationStyle(R.style.take_photo_anim);
+//        popWindow.setAnimationStyle(R.style.take_photo_anim);
 
         // 设置按钮监听
         //照相

@@ -9,26 +9,34 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
+import com.example.food.Sort.SortAsActivity;
 import com.ldoublem.thumbUplib.ThumbUpView;
 
 public class Information extends AppCompatActivity {
     private AppBarLayout mAppBarLayout;
     private Button button5;
-
+    private RecyclerView recyclerView;
     ThumbUpView  tpv;
     TextView tv;
+
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_comment_information);
         goview();
 
+//          愛心按鈕
         tpv =findViewById(R.id.tpv);
         tpv.setLike();
         tv =findViewById(R.id.tv);
@@ -40,19 +48,15 @@ public class Information extends AppCompatActivity {
         tpv.setOnThumbUp(new ThumbUpView.OnThumbUp() {
             @Override
             public void like(boolean like) {
-                if (like) {
-                    tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) + 1));
+                    if (like) {
+                        tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) + 1));
+                    } else {
+                        tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) - 1));
 
+                    }
                 }
-            }
-        });
-
-    }
-    public void like(View view) {
+            });
         tpv.Like();
-    }
-
-    public void unlike(View view) {
         tpv.UnLike();
     }
 
@@ -67,5 +71,6 @@ public class Information extends AppCompatActivity {
             }
         });
     }
+
 
 }

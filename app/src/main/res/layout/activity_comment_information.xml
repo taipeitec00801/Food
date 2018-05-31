@@ -32,7 +32,7 @@
 
             <TextView
                 android:id="@+id/MediumText"
-                android:layout_width="250sp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
@@ -42,10 +42,11 @@
 
                 <com.ldoublem.thumbUplib.ThumbUpView
                     android:id="@+id/tpv"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
-                    app:bgColor="@color/colorAccent"
+                    app:bgColor="@color/colorWhite"
                     app:cracksColor="#33475f"
                     app:edgeColor="#9d55b8"
                     app:fillColor="#ea8010"
@@ -73,51 +74,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，我又再度到意舍酒店，這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />
-
-
-        <!--<TextView-->
-
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，" />-->
-
-        <!--<TextView-->
-
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="我又再度到意舍酒店，" />-->
-
-        <!--<TextView-->
-
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />-->
-
-        <!--<TextView-->
-
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="吃吧餐廳目前主打的是獨步全台的「底特律披薩」，" />-->
-
-        <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="除了造型與一般大眾概念上披薩不大一樣之外，" />-->
-
-        <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="口感及口味的變化也有其獨到之處，" />-->
-
-        <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="另外這裡最近也主打超級英雄套餐，" />-->
-
-        <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="覺得挺有趣的，所以決定來吃吃看囉。" />-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User留言"/>
         <LinearLayout
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
@@ -126,8 +86,11 @@
             <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.9"
-                android:text="留言" />
+                android:layout_weight="0.85"
+                android:hint="留言"
+                android:singleLine="true"
+                android:background="@drawable/myedittext"
+                android:maxLines="3" />
 
             <Button
                 android:id="@+id/button5"
@@ -135,9 +98,7 @@
                 android:layout_height="50dp"
                 android:layout_weight="0.15"
                 android:background="@drawable/button_rounde"
-                android:text="GO"
-
-                android:textStyle="bold" />
+                android:text="GO" />
         </LinearLayout>
     </LinearLayout>
 
