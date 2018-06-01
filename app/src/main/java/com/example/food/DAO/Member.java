@@ -1,5 +1,7 @@
 package com.example.food.DAO;
 
+import android.util.Base64;
+
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
@@ -32,7 +34,7 @@ public class Member implements Serializable {
     // 接收 server 給的會員所有資料 不含 portrait(在image方法)
     public Member(int memberId, String userAccount, String userPassword,
                   String nickName, String birthday, int gender,
-                  int userRank, byte[] portrait, String preference,
+                  int userRank, String preference,
                   String collection, String userGift, String userFriends) {
         this.memberId = memberId;
         this.userAccount = userAccount;
@@ -41,7 +43,6 @@ public class Member implements Serializable {
         this.birthday = birthday;
         this.gender = gender;
         this.userRank = userRank;
-        this.portrait = portrait;
         this.preference = preference;
         this.collection = collection;
         this.userGift = userGift;
@@ -63,20 +64,11 @@ public class Member implements Serializable {
         this.userAccount = userAccount;
     }
 
-    //登入用
-    public Member(String userAccount, String userPassword) {
-        this.userAccount = userAccount;
-        this.userPassword = userPassword;
-    }
-
-    /*   n用途編號  0=登入用  1=修改喜好  2=新增或移除收藏用
+    /*   n用途編號  1=修改喜好  2=新增或移除收藏用
                    3=禮物回饋  4=追蹤好友  */
-    public Member(int n, int memberId, String string) {
-        this.memberId = memberId;
+    public Member(int n, String userAccount, String string) {
+        this.userAccount = userAccount;
         switch (n) {
-            case 0:
-                this.userPassword = string;
-                break;
             case 1:
                 this.preference = string;
                 break;

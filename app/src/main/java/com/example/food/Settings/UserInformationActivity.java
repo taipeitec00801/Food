@@ -3,6 +3,7 @@ package com.example.food.Settings;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,7 +40,9 @@ import com.example.food.DAO.Member;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -55,7 +58,12 @@ public class UserInformationActivity extends AppCompatActivity implements
     private MemberDAO memberDAO;
     private File file;
     private PopupWindow popWindow = new PopupWindow ();
+    private byte[] image;
     private CircleImageView cvUserImage;
+    private Uri contentUri, croppedImageUri;
+    private static final int REQ_TAKE_PICTURE = 0;
+    private static final int REQ_PICK_IMAGE = 1;
+    private static final int REQ_CROP_PICTURE = 2;
 
     // 測試用 testUserAccount
     private static final String testUserAccount = "hikarumiyasaki@gmail.com";
@@ -79,8 +87,9 @@ public class UserInformationActivity extends AppCompatActivity implements
         btUserDataSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                memberDAO.updateMemberDate(testUserAccount, newPassword, newNickName,
-                        newBirthday, newGender);
+
+                memberDAO.updateMemberDate(testUserAccount, newPassword,
+                        newNickName, newBirthday, newGender, image);
             }
         });
 
@@ -122,14 +131,14 @@ public class UserInformationActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        file = UserInformationActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                         file = new File(file, "picture.jpg");
-                        Uri contentUri = FileProvider.getUriForFile(
-                                UserInformationActivity.this, getPackageName() + ".provider", file);
+                        contentUri = FileProvider.getUriForFile(
+                                UserInformationActivity.this,
+                                getPackageName() + ".provider", file);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                         if (isIntentAvailable(UserInformationActivity.this, intent)) {
-                            setResult(10);
-                            startActivityForResult(intent, 1);
+                            startActivityForResult(intent, REQ_TAKE_PICTURE);
                         } else {
                             Toast.makeText(UserInformationActivity.this,
                                     R.string.msg_NoCameraAppsFound,
@@ -145,8 +154,7 @@ public class UserInformationActivity extends AppCompatActivity implements
                     public void onClick(View v) {
                         Intent intent = new Intent(Intent.ACTION_PICK,
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                        setResult(10);
-                        startActivityForResult(intent, 2);
+                        startActivityForResult(intent, REQ_PICK_IMAGE);
                         popWindow.dismiss();
                     }
                 });
@@ -379,29 +387,60 @@ public class UserInformationActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (resultCode == 10) {
-            int newSize = 512;
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case 1:
-                    Bitmap srcPicture = BitmapFactory.decodeFile(file.getPath());
-                    Bitmap downsizedPicture = Common.downSize(srcPicture, newSize);
-                    cvUserImage.setImageBitmap(downsizedPicture);
+                case REQ_TAKE_PICTURE:
+                    crop(contentUri);
                     break;
-
-                case 2:
+                case REQ_PICK_IMAGE:
                     Uri uri = intent.getData();
-                    String[] columns = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getContentResolver().query(uri, columns,
-                            null, null, null);
-                    if (cursor != null && cursor.moveToFirst()) {
-                        String imagePath = cursor.getString(0);
-                        cursor.close();
-                        Bitmap srcImage = BitmapFactory.decodeFile(imagePath);
-                        Bitmap downsizedImage = Common.downSize(srcImage, newSize);
-                        cvUserImage.setImageBitmap(downsizedImage);
+                    crop(uri);
+                    break;
+                case REQ_CROP_PICTURE:
+                    try {
+                        Bitmap picture = BitmapFactory.decodeStream(
+                                UserInformationActivity.this.getContentResolver().openInputStream(croppedImageUri));
+                        cvUserImage.setImageBitmap(picture);
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                        image = out.toByteArray();
+                    } catch (FileNotFoundException e) {
                     }
                     break;
             }
+        }
+    }
+    private void crop(Uri sourceImageUri) {
+        File file = UserInformationActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        file = new File(file, "picture_cropped.jpg");
+        croppedImageUri = Uri.fromFile(file);
+        // take care of exceptions
+        try {
+            // call the standard crop action intent (the user device may not support it)
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // the recipient of this Intent can read soruceImageUri's data
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            // set image source Uri and type
+            cropIntent.setDataAndType(sourceImageUri, "image/*");
+            // send crop message
+            cropIntent.putExtra("crop", "true");
+            // aspect ratio of the cropped area, 0 means user define
+            cropIntent.putExtra("aspectX", 0); // this sets the max width
+            cropIntent.putExtra("aspectY", 0); // this sets the max height
+            // output with and height, 0 keeps original size
+            cropIntent.putExtra("outputX", 0);
+            cropIntent.putExtra("outputY", 0);
+            // whether keep original aspect ratio
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, croppedImageUri);
+            // whether return data by the intent
+            cropIntent.putExtra("return-data", true);
+            // start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, REQ_CROP_PICTURE);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            Common.showToast(UserInformationActivity.this, "This device doesn't support the crop action!");
         }
     }
 }

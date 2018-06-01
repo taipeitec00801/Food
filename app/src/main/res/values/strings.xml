@@ -23,7 +23,7 @@
     <string name="textBirthday">生日</string>
     <string name="textMale">男</string>
     <string name="textFemale">女</string>
-    <string name="textDoNotShow">不顯示</string>
+    <string name="textNotFind">找不到資料</string>
 
 
     <!-- setting -->

@@ -251,6 +251,7 @@ public class LoginActivity extends AppCompatActivity implements
         boolean isValid = inputFormat.isValidAccount(etUser) & inputFormat.isValidPassword(etPassword);
         if (isValid) {
             MemberDAO memberDAO = new MemberDAO(LoginActivity.this);
+
             boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),
                     etPassword.getText().toString().trim());
             if (isUser) {

@@ -109,12 +109,13 @@ public class MemberDAO {
         return member;
     }
 
-    public void updateMemberDate(String userAccount, String password, String nickName, String birthday, int gender) {
+    public void updateMemberDate(String userAccount, String userPassword, String nickName,
+                                 String birthday, int gender, byte[] portrait) {
         if (Common.networkConnected(inputActivity)) {
             //透過IP和資料庫名稱找到資料庫。
             String url = Common.URL + "/MemberServlet";
-
-            Member newMember = new Member(userAccount, password, nickName, birthday, gender);
+            Member newMember = new Member(userAccount, userPassword,
+                    nickName, birthday, gender);
 
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
@@ -126,6 +127,10 @@ public class MemberDAO {
             //伺服器會找到在伺服器內部的updateMemberDate方法
             // 找 member table  傳入修改後的資料newMember
             jsonObject.addProperty("Member", new Gson().toJson(newMember));
+//            if (portrait != null) {
+                String imageBase64 = Base64.encodeToString(portrait, Base64.DEFAULT);
+                jsonObject.addProperty("updatePortrait", imageBase64);
+//            }
             int count = 0;
             try {
                 String result = new CommonTask(url, jsonObject.toString()).execute().get();
