@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -36,6 +38,9 @@ import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
+import com.jude.rollviewpager.RollPagerView;
+import com.jude.rollviewpager.adapter.StaticPagerAdapter;
+import com.jude.rollviewpager.hintview.ColorPointHintView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //首頁主要四個icon
     private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
 
-    private List<Food> foodList;
-    private ViewPager vpMember;
+    private RollPagerView mRollViewPager;
 
-    private static final long ANIM_VIEWPAGER_DELAY = 3000;
-    private Handler h = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +79,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        List<Food> foodList = getMemberList();
-        FoodAdapter foodAdapter = new FoodAdapter(getSupportFragmentManager(), foodList);
-        vpMember = findViewById(R.id.vp_hottest);
-        vpMember.setAdapter(foodAdapter);
+        mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
+        //設定播放時間間隔
+        mRollViewPager.setPlayDelay(1000);
+        //設定透明度
+        mRollViewPager.setAnimationDurtion(500);
+        //設定配置器
+        mRollViewPager.setAdapter(new TestNormalAdapter());
+
+        mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
 
     }
     //首頁icon跳頁轉換
@@ -301,75 +308,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-    //viewpage
-    private List<Food> getMemberList() {
-        foodList = new ArrayList<>();
-        foodList.add(new Food(R.drawable.test1));
-        foodList.add(new Food(R.drawable.test2));
-        foodList.add(new Food(R.drawable.test3));
-        return foodList;
-    }
+    //rollpageview
+    private class TestNormalAdapter extends StaticPagerAdapter {
+        private int[] imgs = {
+                R.drawable.test1,
+                R.drawable.test2,
+                R.drawable.test3,
+        };
 
-    private class FoodAdapter extends FragmentStatePagerAdapter {
-        List<Food> foodList;
-
-        private FoodAdapter(FragmentManager fm, List<Food> foodList) {
-            super(fm);
-            this.foodList = foodList;
+        @Override
+        public View getView(ViewGroup container, int position) {
+            ImageView view = new ImageView(container.getContext());
+            view.setImageResource(imgs[position]);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            return view;
         }
 
         @Override
         public int getCount() {
-            return foodList.size();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Food food = foodList.get(position);
-            FoodFragment fragment = new FoodFragment();
-            Bundle args = new Bundle();
-            args.putSerializable("food", food);
-            fragment.setArguments(args);
-            return fragment;
+            return imgs.length;
         }
     }
 
-    private Runnable animateViewPager = new Runnable() {
-        public void run() {
-            if (foodList.size() > 0) {
-                vpMember.setCurrentItem((vpMember.getCurrentItem() + 1)
-                        % foodList.size(), true);
-                h.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
-            }
-        }
-    };
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (h != null) {
-            h.removeCallbacks(animateViewPager);
-        }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            if (h != null) {
-                h.removeCallbacks(animateViewPager);
-            }
-        }
-        if (ev.getAction() == MotionEvent.ACTION_UP) {
-            h.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        h.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
-    }
 
 
 }
