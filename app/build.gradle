@@ -52,4 +52,8 @@ dependencies {
     implementation 'com.ldoublem.thumbUplib:ThumbUplib:0.5'
     /*GoogleSignIn:auth*/
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    /*Maps Utility for Android*/
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+    /*rollviewpager*/
+    compile 'com.jude:rollviewpager:1.2.9'
 }

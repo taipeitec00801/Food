@@ -9,15 +9,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -32,7 +33,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.food.Comment.CommentActivity;
+import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -47,15 +48,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.example.food.R;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.ui.IconGenerator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private int overallXScrol = 0;
     private int scrollPosition = 0;
     private LatLng markerPosition;
+    private IconGenerator iconFactory;
+    private TextView listid;
+    private ImageView selectMarker;
 
 
     @Override //Create Menu
@@ -105,7 +109,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     return false;
                 }
             });
-
+            /*  接收Search結果 並執行
+                        locationToMarker(String StoreAddress)*/
         }
     }
 
@@ -132,10 +137,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 overallXScrol = recyclerView.computeHorizontalScrollExtent();
-                Log.d("overallXScrol",""+overallXScrol);
-                Log.d("ScrollExtent",""+recyclerView.computeHorizontalScrollExtent());
-                Log.d("ScrollOffset",""+recyclerView.computeHorizontalScrollOffset());
-                Log.d("ScrollRange",""+recyclerView.computeHorizontalScrollRange());
+//                Log.d("overallXScrol",""+overallXScrol);
+//                Log.d("ScrollExtent",""+recyclerView.computeHorizontalScrollExtent());
+//                Log.d("ScrollOffset",""+recyclerView.computeHorizontalScrollOffset());
+//                Log.d("ScrollRange",""+recyclerView.computeHorizontalScrollRange());
                 scrollPosition = recyclerView.computeHorizontalScrollOffset()/overallXScrol;
             }
         });
@@ -174,10 +179,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         @Override
         public void onBindViewHolder(@NonNull final mViewHolder holder, final int position) {
             final StoreInfo storeInfo = storeInfoList.get(position);
-            holder.imageView.setImageResource(storeInfo.getStore_img());
-            holder.tvName.setText(storeInfo.getStrore_Name());
-            holder.tvinfo.setText(storeInfo.getStore_simpinfo()+", id is :"+storeInfo.getStor_id());
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.imageView.setImageResource(storeInfo.getStoreImg());
+            holder.tvName.setText(storeInfo.getStoreName());
+            holder.tvinfo.setText(storeInfo.getStoreAddress()+", id is :"+storeInfo.getStoreID());
+            holder.itemView.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                  send Data to 店家評價頁面
@@ -281,15 +286,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                Log.d("Marker ID:",""+marker.getId());
                 markerPosition = marker.getPosition();
+                String markerId = marker.getId();
+                String pos[] = markerId.split("m");
+                int markert = Integer.parseInt(pos[1]);
                 int selectMarker = -1;
-                for(int i =0;i< storeInfoList.size();i++) {
-                    if(markerPosition.latitude == storeInfoList.get(i).getLatitude() && markerPosition.longitude == storeInfoList.get(i).getLongitude()) {
-                        selectMarker = i;
-                    }
+                LatLng changeposition = null;
+                if(markert >= storeInfoList.size()){
+                    // Do Nothing
+                } else {
+                    //marker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
+                    recyclerView.smoothScrollToPosition(markert);
+                    recyclePosition(markert,defaultMarker);
                 }
-                recyclerView.smoothScrollToPosition(selectMarker);
-                recyclePosition(selectMarker,defaultMarker);
                 return true;
             }
         });
@@ -368,43 +378,75 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         }
     }
+
     //MapMarkers
     private void makeMarkers() {
+        iconFactory = new IconGenerator(MapActivity.this);
         List<StoreInfo> markers = getStoreInfoList();
+        // inflate custom_marker
+        LayoutInflater inflater = (LayoutInflater) MapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View markerview = inflater.inflate(R.layout.custom_marker,null);
+        BitmapDrawable bitmapdraw = new BitmapDrawable(getResources(),smallMarker());
+        listid = markerview.findViewById(R.id.listid);
         Bitmap smallMarker = smallMarker();
         //MapMarker
         for(int i=0;i<markers.size();i++) {
+                String address = markers.get(i).getStoreAddress();
+                LatLng position = storeAddresstoLatlng(address);
+                String id = String.valueOf(markers.get(i).getStoreID()+1); //店家ID
+                listid.setText(id);
+                iconFactory.setContentView(markerview);
+                iconFactory.setBackground(null);
                 Store_Marker = mgoogleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(markers.get(i).getLatitude(),markers.get(i).getLongitude()))
-                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+                   //     .position(new LatLng(markers.get(i).getLatitude(),markers.get(i).getLongitude()))
+                        .position(position)
+                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon())));
+
         }
         defaultMarker = mgoogleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(markers.get(0).getLatitude(),markers.get(0).getLongitude()))
+                //.position(new LatLng(markers.get(0).getLatitude(),markers.get(0).getLongitude()))
+                .position(storeAddresstoLatlng(markers.get(0).getStoreAddress()))
+                .zIndex(1.0f)
                 .icon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker())));
     }
+
     //Custom Marker
     private Bitmap smallMarker() {
-        int height = 50;
-        int width = 50;
+        int height = 60;
+        int width = 60;
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_marker);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b,width,height,false);
         return smallMarker;
     }
+
     //Custom Select Marker
     private Bitmap SelectsmallMarker() {
-        int height = 60;
-        int width = 60;
+        int height = 80;
+        int width = 80;
         BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_maker_item);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap SelectsmallMarker = Bitmap.createScaledBitmap(b,width,height,false);
         return SelectsmallMarker;
     }
+    private void selectMarker(int position) {
+        iconFactory = new IconGenerator(MapActivity.this);
+        LayoutInflater inflater = (LayoutInflater) MapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View markerview = inflater.inflate(R.layout.custom_marker,null);
+        selectMarker = markerview.findViewById(R.id.MarkerIcon);
+        int stoerId = Integer.parseInt(String.valueOf(Store_Marker.getId()));
+
+
+    }
+
     //顯示Select Markers
     private void recyclePosition(int position,Marker marker){
+         iconFactory = new IconGenerator(MapActivity.this);
+         iconFactory.setBackground(MapActivity.this.getResources().getDrawable(R.drawable.map_marker));
          defaultMarker = marker;
          scrollPosition = position;
-         markerPosition  = new LatLng(storeInfoList.get(scrollPosition).getLatitude(),storeInfoList.get(scrollPosition).getLongitude());
+        // markerPosition  = new LatLng(storeInfoList.get(scrollPosition).getLatitude(),storeInfoList.get(scrollPosition).getLongitude());
+         markerPosition = storeAddresstoLatlng(storeInfoList.get(scrollPosition).getStoreAddress());
          defaultMarker.setPosition(markerPosition);
          defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
          if(lastClicked != null) {
@@ -414,20 +456,61 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
          lastClicked = defaultMarker;
     }
 
+    //地址轉換成座標
+    private LatLng storeAddresstoLatlng(String StoreAddress) {
+        Geocoder geocoder = new Geocoder(this);
+        int maxResult = 1;
+        LatLng position = null;
+        List<Address> addressList;
+        try {
+            addressList = geocoder.getFromLocationName(StoreAddress,maxResult);
+            Address address = addressList.get(0);
+            position = new LatLng(address.getLatitude(),address.getLongitude());
+        } catch (IOException e) {
+            Log.e("storeAddress",e.toString());
+        }
+        return position;
+    }
+
+    //接收Search Result並顯示Marker
+    private  void locationToMarker(String StoreAddress) {
+        mgoogleMap.clear();
+        Geocoder geocoder = new Geocoder(this);
+        List<Address> addressList = null;
+        int maxResults = 1;
+        try {
+            addressList = geocoder.getFromLocationName(StoreAddress,maxResults);
+        } catch (IOException e) {
+            Log.e("locationToMarker",e.toString());
+        }
+        //如果addressList不為NULL 鏡頭移動到該地點
+        if(addressList == null || addressList.isEmpty()) {
+            Toast.makeText(this,"addressList Error",Toast.LENGTH_SHORT).show();
+        }else {
+            Address address = addressList.get(0);
+            LatLng position = new LatLng(address.getLatitude(),address.getLongitude());
+            mgoogleMap.addMarker(new MarkerOptions().position(position));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                            .target(position).zoom(15).build();
+            mgoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+    }
+
     //StoreInfoList
     public List<StoreInfo> getStoreInfoList() {
         List<StoreInfo> StoreInfoList = new ArrayList<>();
-        StoreInfoList.add(new StoreInfo(0,R.drawable.drinks_and_desserts,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.042685,121.539954));
-        StoreInfoList.add(new StoreInfo(1,R.drawable.ice_cream,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.040197,121.535736));
-        StoreInfoList.add(new StoreInfo(2,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.041201,121.531548));
-        StoreInfoList.add(new StoreInfo(3,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04380758,121.53599093));
-        StoreInfoList.add(new StoreInfo(4,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04417695,121.53433869));
-        StoreInfoList.add(new StoreInfo(5,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04061933,121.53543303));
-        StoreInfoList.add(new StoreInfo(6,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04281612,121.53886626));
-        StoreInfoList.add(new StoreInfo(7,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04629592,121.53508562));
-        StoreInfoList.add(new StoreInfo(8,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04240787,121.53021473));
-        StoreInfoList.add(new StoreInfo(9,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.04011386,121.536463));
-        StoreInfoList.add(new StoreInfo(10,R.drawable.korea_food,"XXX甜點","dsfdfdsfdjfoie wfjhnvujdhhencvjvkjnjsbkjdbvghkj hvofj o",25.03844193,121.53856585));
+        StoreInfoList.add(new StoreInfo(0, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區新生南路一段103-2號"));
+        StoreInfoList.add(new StoreInfo(1, R.drawable.drinks_and_desserts,"忠貞小館","台北市中正區新生南路一段12巷"));
+        StoreInfoList.add(new StoreInfo(2, R.drawable.drinks_and_desserts,"忠貞小館","台北市中正區新生南路一段12巷2號"));
+        StoreInfoList.add(new StoreInfo(3, R.drawable.drinks_and_desserts,"忠貞小館","台北市中山區新生南路一段15號"));
+        StoreInfoList.add(new StoreInfo(4, R.drawable.drinks_and_desserts,"忠貞小館","台北市八德路二段36號"));
+        StoreInfoList.add(new StoreInfo(5, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區市民大道三段178號"));
+        StoreInfoList.add(new StoreInfo(6, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區市民大道三段150巷16號"));
+        StoreInfoList.add(new StoreInfo(7, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區建國南路一段65巷7號"));
+        StoreInfoList.add(new StoreInfo(8, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段67號"));
+        StoreInfoList.add(new StoreInfo(9, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段66號"));
+        StoreInfoList.add(new StoreInfo(10, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
         return StoreInfoList;
     }
 }

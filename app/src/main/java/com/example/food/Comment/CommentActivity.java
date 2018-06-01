@@ -2,9 +2,9 @@ package com.example.food.Comment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -12,29 +12,63 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.balysv.materialripple.MaterialRippleLayout;
+import com.jude.rollviewpager.RollPagerView;
+import com.jude.rollviewpager.adapter.StaticPagerAdapter;
+import com.jude.rollviewpager.hintview.ColorPointHintView;
 import com.example.food.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommentActivity extends AppCompatActivity {
 
-    public static boolean btcont;
-    private View linearlayout_introduce,floatingbutton;
 
+    private View linearlayout_introduce,floatingbutton;
+    private RollPagerView mRollViewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_comment);
         changeview();
-     RecyclerView recyclerView=findViewById(R.id.Comment_recycleview);
-     recyclerView.setLayoutManager(
-             new StaggeredGridLayoutManager(
-                     1,StaggeredGridLayoutManager.VERTICAL));
-       List<Member> memberList = getMemberList();
+        RecyclerView recyclerView=findViewById(R.id.Comment_recycleview);
+        recyclerView.setLayoutManager(
+                new StaggeredGridLayoutManager(
+                        1,StaggeredGridLayoutManager.VERTICAL));
+        List<Member> memberList = getMemberList();
         recyclerView.setAdapter(new MemberAdapter(this, memberList));
 
+
+        mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
+
+        //设置播放时间间隔
+        mRollViewPager.setPlayDelay(3000);
+        //设置透明度
+        mRollViewPager.setAnimationDurtion(500);
+        //设置适配器
+        mRollViewPager.setAdapter(new TestNormalAdapter());
+        mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
+    }
+
+    private class TestNormalAdapter extends StaticPagerAdapter {
+        private int[] imgs = {
+                R.drawable.food,
+                R.drawable.food1,
+                R.drawable.food2,
+                R.drawable.food,
+        };
+        @Override
+        public View getView(ViewGroup container, int position) {
+            ImageView view = new ImageView(container.getContext());
+            view.setImageResource(imgs[position]);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            return imgs.length;
+        }
     }
 
     private void changeview(){
@@ -52,6 +86,7 @@ public class CommentActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent=new Intent(CommentActivity.this, Comment_interface.class);
                 startActivity(intent);
+//                Map intent還沒連結
             }
         });
     }
@@ -88,7 +123,7 @@ public class CommentActivity extends AppCompatActivity {
         }
         @Override
         public int getItemCount() {
-                return  MembersList.size();
+            return  MembersList.size();
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
@@ -98,13 +133,13 @@ public class CommentActivity extends AppCompatActivity {
 
 
             MyViewHolder(View itemview){
-            super(itemview);
+                super(itemview);
 
-            textView=itemview.findViewById(R.id.customname);
-            imageView=itemview.findViewById(R.id.iv);
-            messageView=itemview.findViewById(R.id.custommessage);
+                textView=itemview.findViewById(R.id.customname);
+                imageView=itemview.findViewById(R.id.iv);
+                messageView=itemview.findViewById(R.id.custommessage);
+            }
         }
-}
     }
 
     public List<Member> getMemberList() {

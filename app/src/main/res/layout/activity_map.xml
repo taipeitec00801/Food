@@ -37,8 +37,8 @@
                     android:id="@+id/map_recycleView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp">
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp">
 
                 </android.support.v7.widget.RecyclerView>
 
