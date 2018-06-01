@@ -1,18 +1,12 @@
 package com.example.food.Member;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.food.DAO.Member;
-import com.example.food.Main.MainActivity;
 import com.example.food.R;
-
-import static com.example.food.R.drawable.btn_bg_set;
 
 
 public class Member2Activity extends AppCompatActivity {
@@ -35,11 +29,6 @@ public class Member2Activity extends AppCompatActivity {
         click(btLike8);
         click(btLike9);
         click(btLike10);
-
-
-
-
-
     }
 
     private void findViews() {
@@ -67,7 +56,7 @@ public class Member2Activity extends AppCompatActivity {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
-                if(i == true){
+                if(i){
                     v.setBackgroundResource(R.drawable.ripple_sample);
 //                    v.setTextDirection(R.);
 //                    v.setBackgroundColor(R.color.lgColorText);
@@ -79,7 +68,6 @@ public class Member2Activity extends AppCompatActivity {
 
             }
         });
-        //demo
 
     }
 

@@ -68,17 +68,10 @@ public class MemberActivity extends AppCompatActivity implements
         btNext.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //確認輸入的帳號與密碼
-                boolean inputAccount =
-                        (inputFormat.isValidAccount(etUser) &
-                         inputFormat.unUsableAccount(MemberActivity.this, etUser));
-
-//                boolean inputPassword = inputFormat.isValidPassword(etPassword) &
-//                         inputFormat.isValidPassword(cfPassword)
-                if (inputAccount) {
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                if (inputDataCheck()) {
                     //將輸入資料 傳到下一頁
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
                     intent.setClass(MemberActivity.this, Member2Activity.class);
                     bundle.putString("UserAccount",etUser.getText().toString().trim());
                     bundle.putString("UserPassword",etPassword.getText().toString().trim());
@@ -218,6 +211,25 @@ public class MemberActivity extends AppCompatActivity implements
         }//被呼叫時代表下拉式選單有問題
     };
 
+    private boolean inputDataCheck() {
+        boolean inputPassword = false;
+        boolean inputNotNull = false;
+        //確認輸入的帳號格式與重複性
+        boolean inputAccount = (inputFormat.isValidAccount(etUser) &
+                inputFormat.unUsableAccount(MemberActivity.this, etUser));
+
+        if (inputAccount) {
+            //確認輸入的密碼
+            inputPassword = inputFormat.isValidPassword(etPassword) &
+                    inputFormat.isValidPassword(cfPassword);
+        }
+        if (inputPassword && etPassword.equals(cfPassword)) {
+            //確認輸入的生日與性別非空值
+            inputNotNull = inputFormat.isiInputNotNull(etBirthday) &
+                    inputFormat.isiInputNotNull(etGender);
+        }
+        return inputNotNull;
+    }
 
     //birthDay
     //----------------------------------------------------------------------------
@@ -243,10 +255,10 @@ public class MemberActivity extends AppCompatActivity implements
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            MemberActivity memberactivity = (MemberActivity) getActivity();
+            MemberActivity memberActivity = (MemberActivity) getActivity();
             return new DatePickerDialog(
-                    memberactivity, memberactivity, memberactivity.mYear, memberactivity.mMonth,
-                    memberactivity.mDay);
+                    memberActivity, memberActivity, memberActivity.mYear, memberActivity.mMonth,
+                    memberActivity.mDay);
         }
     }
     public void onDateClick(View view) {
