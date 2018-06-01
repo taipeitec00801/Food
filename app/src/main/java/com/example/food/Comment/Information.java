@@ -48,14 +48,14 @@ public class Information extends AppCompatActivity {
         tpv.setOnThumbUp(new ThumbUpView.OnThumbUp() {
             @Override
             public void like(boolean like) {
-                    if (like) {
-                        tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) + 1));
-                    } else {
-                        tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) - 1));
+                if (like) {
+                    tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) + 1));
+                } else {
+                    tv.setText(String.valueOf(Integer.valueOf(tv.getText().toString()) - 1));
 
-                    }
                 }
-            });
+            }
+        });
         tpv.Like();
         tpv.UnLike();
     }

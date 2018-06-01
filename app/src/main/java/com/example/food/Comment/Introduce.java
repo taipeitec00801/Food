@@ -9,15 +9,15 @@ import com.example.food.R;
  */
 
 
-    public class Introduce  extends AppCompatActivity {
+public class Introduce  extends AppCompatActivity {
 
 
 
-        @Override
-        protected void onCreate(final Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_information);
-
-        }
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_information);
 
     }
+
+}
