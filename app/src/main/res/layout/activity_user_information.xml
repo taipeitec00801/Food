@@ -265,7 +265,7 @@
             android:layout_below="@+id/cvUserGender"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            app:cardBackgroundColor="@color/colorTransparent"
+            app:cardBackgroundColor="@color/colorButton"
             app:cardCornerRadius="20dp"
             app:cardElevation="25dp">
 

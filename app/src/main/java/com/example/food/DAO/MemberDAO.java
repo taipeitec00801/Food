@@ -36,7 +36,7 @@ public class MemberDAO {
         if (Common.networkConnected(inputActivity)) {
             String url = Common.URL + "/MemberServlet";
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "CheckAccount");
+            jsonObject.addProperty("action", "checkAccount");
             jsonObject.addProperty("UserAccount", userAccount);
             String jsonOut = jsonObject.toString();
             CommonTask userLoginTask = new CommonTask(url, jsonOut);
@@ -190,7 +190,7 @@ public class MemberDAO {
         if (Common.networkConnected(inputActivity)) {
             String url = Common.URL + "/MemberServlet";
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "UserLogin");
+            jsonObject.addProperty("action", "userLogin");
             jsonObject.addProperty("UserAccount", userAccount);
             jsonObject.addProperty("UserPassword", userPassword);
             String jsonOut = jsonObject.toString();
