@@ -5,16 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,18 +30,13 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.widget.PullRefreshLayout;
-import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Map.StoreInfo;
+import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
-import com.example.food.Sort.Common;
 import com.example.food.Sort.SortActivity;
-import com.example.food.Other.UnderDevelopmentActivity;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -272,12 +265,12 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
                 item_view = layoutInflater.inflate(R.layout.collection_list,viewGroup,false);
             }
             ImageView imageView = item_view.findViewById(R.id.collection_image);
-            imageView.setImageResource(storeInfo.getStore_img());
+            imageView.setImageResource(storeInfo.getStoreImg());
             TextView tvName = item_view.findViewById(R.id.collection_name);
-            tvName.setText(storeInfo.getStrore_Name());
+            tvName.setText(storeInfo.getStoreName());
             //anim
             long aniTime = position * 10;
-            Animation animation = AnimationUtils.loadAnimation(CollectionActivity.this,R.anim.collection_slide);
+            Animation animation = AnimationUtils.loadAnimation(CollectionActivity.this, R.anim.collection_slide);
             animation.setStartOffset(aniTime);
             item_view.startAnimation(animation);
             return item_view;
@@ -288,7 +281,7 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
     public List<StoreInfo> getStoreInfoList() {
         List<StoreInfo> StoreInfoList = new ArrayList<>();
         for(int i = 0;i<25;i++){
-            StoreInfoList.add(new StoreInfo(i,R.drawable.drinks_and_desserts,"XXX甜點","dsfdfdsfdjfoie",25.042685,121.539954));
+            StoreInfoList.add(new StoreInfo(i, R.drawable.drinks_and_desserts,"XXX甜點","dsfdfdsfdjfoie"));
         }
         //get Data From DataBase
         return StoreInfoList;
