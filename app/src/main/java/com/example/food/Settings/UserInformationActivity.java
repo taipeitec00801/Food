@@ -58,7 +58,7 @@ public class UserInformationActivity extends AppCompatActivity implements
     private CircleImageView cvUserImage;
 
     // 測試用 testUserAccount
-    private static final String testUserAccount = "taipeitec00801@gmail.com";
+    private static final String testUserAccount = "hikarumiyasaki@gmail.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -326,8 +326,8 @@ public class UserInformationActivity extends AppCompatActivity implements
     }
 
     private void showMemberData(Member member) {
+        TextView tvUserId = findViewById(R.id.tvUserId);
         if (member != null) {
-            TextView tvUserId = findViewById(R.id.tvUserId);
             tvUserId.setText(testUserAccount);
 
             discernMemberPassword(member.getUserPassword(),"");
@@ -336,6 +336,12 @@ public class UserInformationActivity extends AppCompatActivity implements
             newBirthday = member.getBirthday();
             tvUserBirthday.setText(newBirthday);
             discernMemberGender(member.getGender());
+        } else {
+            tvUserId.setText(testUserAccount);
+            discernMemberPassword("1234567890","");
+            tvUserNickname.setText(newNickName);
+            tvUserBirthday.setText(newBirthday);
+            discernMemberGender(0);
         }
     }
 
@@ -363,8 +369,10 @@ public class UserInformationActivity extends AppCompatActivity implements
         newGender = gender;
         if (gender == 0) {
             tvUserGender.setText(R.string.textFemale);
-        } else {
+        } else if (gender == 1) {
             tvUserGender.setText(R.string.textMale);
+        } else {
+            tvUserGender.setText(R.string.textNotFind);
         }
     }
 
