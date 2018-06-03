@@ -89,10 +89,10 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                             Collections.sort(sortItemList, new Comparator<SortAs>() {
                                 @Override
                                 public int compare(SortAs o1, SortAs o2) {
-                                    if (o1.getNumber() > o2.getNumber()) {
+                                    if (o1.getStoreRecomCount() > o2.getStoreRecomCount()) {
                                         //o1 排到 o2 之前
                                         return -1;
-                                    } else if (o1.getNumber() < o2.getNumber()) {
+                                    } else if (o1.getStoreRecomCount() < o2.getStoreRecomCount()) {
                                         //o1 排到 o2 之後
                                         return 1;
                                     } else {
@@ -105,10 +105,10 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                             Collections.sort(sortItemList, new Comparator<SortAs>() {
                                 @Override
                                 public int compare(SortAs o1, SortAs o2) {
-                                    if (o1.getNumber() > o2.getNumber()) {
+                                    if (o1.getStoreRecomCount() > o2.getStoreRecomCount()) {
                                         //o2 排到 o1 之前
                                         return 1;
-                                    } else if (o1.getNumber() < o2.getNumber()) {
+                                    } else if (o1.getStoreRecomCount() < o2.getStoreRecomCount()) {
                                         //o2 排到 o1 之後
                                         return -1;
                                     } else {
@@ -208,8 +208,8 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
             viewHolder.resImg.setImageResource(R.drawable.cf);
-            viewHolder.resName.setText(String.valueOf(sort.getName()));
-            viewHolder.likeNumber.setText(String.valueOf(sort.getNumber()));
+            viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
+            viewHolder.likeNumber.setText(String.valueOf(sort.getSortNumber()));
         }
     }
 
@@ -256,7 +256,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(SearchViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-            viewHolder.resName.setText(sort.getName());
+            viewHolder.resName.setText(sort.getStoreName());
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

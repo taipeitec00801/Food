@@ -3,41 +3,97 @@ package com.example.food.Sort;
 import java.io.Serializable;
 
 public class SortAs implements Serializable{
-    private int sortRes;
-    private String name;
-    private int likeNumber;
+    Integer StoreId;
+    String StoreName;
+    String StoreAddress;
+    String StorePhone;
+    String ServiceHours;
+    String StorePicture;
+    Integer SortNumber;
+    Integer StoreRecomCount;
+    Integer StoreCommentCount;
 
-
-
-
-
-    public SortAs(int sortRes, String name, int likeNumber) {
-        this.sortRes = sortRes;
-        this.name = name;
-        this.likeNumber = likeNumber;
+    public SortAs(Integer storeId, String storeName, String storeAddress, String storePhone, String serviceHours, String storePicture, Integer sortNumber, Integer storeRecomCount, Integer storeCommentCount) {
+        StoreId = storeId;
+        StoreName = storeName;
+        StoreAddress = storeAddress;
+        StorePhone = storePhone;
+        ServiceHours = serviceHours;
+        StorePicture = storePicture;
+        SortNumber = sortNumber;
+        StoreRecomCount = storeRecomCount;
+        StoreCommentCount = storeCommentCount;
     }
 
-    public int getSortRes() {
-        return sortRes;
+    public Integer getStoreId() {
+        return StoreId;
     }
 
-    public void setSortRes(int sortRes) {
-        this.sortRes = sortRes;
+    public void setStoreId(Integer storeId) {
+        StoreId = storeId;
     }
 
-    public String getName() {
-        return name;
+    public String getStoreName() {
+        return StoreName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStoreName(String storeName) {
+        StoreName = storeName;
     }
 
-    public int getNumber() {
-        return likeNumber;
+    public String getStoreAddress() {
+        return StoreAddress;
     }
 
-    public void setNumber(int likeNumber) {
-        this.likeNumber = likeNumber;
+    public void setStoreAddress(String storeAddress) {
+        StoreAddress = storeAddress;
+    }
+
+    public String getStorePhone() {
+        return StorePhone;
+    }
+
+    public void setStorePhone(String storePhone) {
+        StorePhone = storePhone;
+    }
+
+    public String getServiceHours() {
+        return ServiceHours;
+    }
+
+    public void setServiceHours(String serviceHours) {
+        ServiceHours = serviceHours;
+    }
+
+    public String getStorePicture() {
+        return StorePicture;
+    }
+
+    public void setStorePicture(String storePicture) {
+        StorePicture = storePicture;
+    }
+
+    public Integer getSortNumber() {
+        return SortNumber;
+    }
+
+    public void setSortNumber(Integer sortNumber) {
+        SortNumber = sortNumber;
+    }
+
+    public Integer getStoreRecomCount() {
+        return StoreRecomCount;
+    }
+
+    public void setStoreRecomCount(Integer storeRecomCount) {
+        StoreRecomCount = storeRecomCount;
+    }
+
+    public Integer getStoreCommentCount() {
+        return StoreCommentCount;
+    }
+
+    public void setStoreCommentCount(Integer storeCommentCount) {
+        StoreCommentCount = storeCommentCount;
     }
 }

@@ -5,7 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:layout_marginTop="2dp">
+    android:layout_marginTop="2dp"
+    app:cardBackgroundColor="@android:color/transparent">
 
     <com.balysv.materialripple.MaterialRippleLayout
         android:id="@+id/sortAs_item_ripple"
@@ -39,7 +40,6 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:layout_weight="0.1"
-                android:background="@android:color/transparent"
                 android:src="@drawable/like" />
 
             <TextView

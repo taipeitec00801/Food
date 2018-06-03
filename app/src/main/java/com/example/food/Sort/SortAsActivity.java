@@ -144,8 +144,8 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         public void onBindViewHolder(SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
             viewHolder.resImg.setImageResource(R.drawable.food3);
-            viewHolder.resName.setText(String.valueOf(sort.getName()));
-            viewHolder.likeNumber.setText(String.valueOf(sort.getNumber()));
+            viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
+            viewHolder.likeNumber.setText(String.valueOf(sort.getSortNumber()));
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

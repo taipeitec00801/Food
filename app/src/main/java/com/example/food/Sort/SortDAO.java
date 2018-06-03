@@ -34,11 +34,11 @@ public class SortDAO {
             //將收到的餐廳編號轉成字串。
             String sortNumbers = String.valueOf(sortNumber);
             //透過IP和資料庫名稱找到資料庫。
-            String url = Common.URL + "/ssServlet";
+            String url = Common.URL + "/StoreDataServlet";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
             //jsonObject新增屬性action其值為findSortByRes
-            jsonObject.addProperty("action", "findSortByRes");
+            jsonObject.addProperty("action", "findStoreByNumber");
             //jsonObject新增屬性sortNumber其值為sortNumbers
             jsonObject.addProperty("sortNumber", sortNumbers);
             //將jsonObject轉成json格式的字串。
@@ -113,30 +113,31 @@ public class SortDAO {
 
 
     public List<SortAs> findResByName(String resName){
-        if (Common.networkConnected(inputActivity)) {
-            sortAsList = null;
-            Gson gson = new Gson();
-            String url = Common.URL + "/ssServlet";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "findByName");
-            jsonObject.addProperty("resName",resName);
-            String jsonOut = jsonObject.toString();
-            spotGetAllTask = new CommonTask(url, jsonOut);
-            try {
-                String jsonIn = spotGetAllTask.execute().get();
-                Type listType = new TypeToken<List<SortAs>>() {}.getType();
-                sortAsList = gson.fromJson(jsonIn, listType);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-            if (sortAsList == null || sortAsList.isEmpty()) {
-                Common.showToast(inputActivity, "No spots found");
-            } else {
-                return sortAsList;
-            }
-        } else {
-            Common.showToast(inputActivity, "no network connection available");
-        }
-        return sortAsList;
+//        if (Common.networkConnected(inputActivity)) {
+//            sortAsList = null;
+//            Gson gson = new Gson();
+//            String url = Common.URL + "/ssServlet";
+//            JsonObject jsonObject = new JsonObject();
+//            jsonObject.addProperty("action", "findByName");
+//            jsonObject.addProperty("resName",resName);
+//            String jsonOut = jsonObject.toString();
+//            spotGetAllTask = new CommonTask(url, jsonOut);
+//            try {
+//                String jsonIn = spotGetAllTask.execute().get();
+//                Type listType = new TypeToken<List<SortAs>>() {}.getType();
+//                sortAsList = gson.fromJson(jsonIn, listType);
+//            } catch (Exception e) {
+//                Log.e(TAG, e.toString());
+//            }
+//            if (sortAsList == null || sortAsList.isEmpty()) {
+//                Common.showToast(inputActivity, "No spots found");
+//            } else {
+//                return sortAsList;
+//            }
+//        } else {
+//            Common.showToast(inputActivity, "no network connection available");
+//        }
+        return  null;
+//        return sortAsList;
     }
 }

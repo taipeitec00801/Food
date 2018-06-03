@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sort_item_cv"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="?attr/colorBackground">
+    app:cardBackgroundColor="@android:color/transparent">
 
 
     <!--最外一層LinearLayout用來設定兩組cardView的比例-->

@@ -3,9 +3,13 @@
     android:shape="rectangle" >
 
     <gradient
-        android:angle="0"
-        android:endColor="#FA9D9D"
-        android:startColor="#750000"
+        android:angle="135"
+        android:endColor="#aaFF5F6D"
+        android:startColor="#aaFFC371"
         android:type="linear" />
 
+
+    <!--background: #FF5F6D;-->
+    <!--background: -webkit-linear-gradient(to right, #FFC371, #FF5F6D);-->
+    <!--background: linear-gradient(to right, #FFC371, #FF5F6D);-->
 </shape>
