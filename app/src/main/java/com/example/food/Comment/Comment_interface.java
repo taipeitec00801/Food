@@ -5,6 +5,7 @@ package com.example.food.Comment;
  */
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,17 +36,23 @@ import com.example.food.R;
 import com.example.food.Settings.*;
 import com.example.food.Settings.Common;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class Comment_interface extends AppCompatActivity {
     private AppBarLayout mAppBarLayout;
     private Button button2;
-    private ImageView imageView;
-    private static final int REQUEST_PICK_PICTURE = 2;
     private PopupWindow popWindow = new PopupWindow ();
     private File file;
     private ImageButton ibPickPicture;
+    private ImageView ivComment;
+    private static final int REQ_TAKE_PICTURE = 0;
+    private static final int REQ_PICK_IMAGE = 1;
+    private static final int REQ_CROP_PICTURE = 2;
+    private Uri contentUri, croppedImageUri;
+    private byte[] image;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +61,12 @@ public class Comment_interface extends AppCompatActivity {
         findViews();
         selectCardView();
     }
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+        Common.askPermissions(Comment_interface.this, permissions, Common.PERMISSION_READ_EXTERNAL_STORAGE);
+    }
     private void review() {
         button2=findViewById(R.id.Collection);
         button2.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +78,7 @@ public class Comment_interface extends AppCompatActivity {
         });
     }
     private void findViews() {
+        ivComment=findViewById(R.id.ivComment);
         ibPickPicture = findViewById(R.id.ibPickPicture);
     }
     private void selectCardView() {
@@ -97,8 +110,7 @@ public class Comment_interface extends AppCompatActivity {
                                 Comment_interface.this, getPackageName() + ".provider", file);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                         if (isIntentAvailable(Comment_interface.this, intent)) {
-                            setResult(12);
-                            startActivityForResult(intent, 1);
+                            startActivityForResult(intent, REQ_TAKE_PICTURE);
                         } else {
                             Toast.makeText(Comment_interface.this,
                                     R.string.msg_NoCameraAppsFound,
@@ -114,8 +126,7 @@ public class Comment_interface extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent intent = new Intent(Intent.ACTION_PICK,
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                        setResult(10);
-                        startActivityForResult(intent, 2);
+                        startActivityForResult(intent, REQ_PICK_IMAGE);
                         popWindow.dismiss();
                     }
                 });
@@ -163,29 +174,60 @@ public class Comment_interface extends AppCompatActivity {
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
             super.onActivityResult(requestCode, resultCode, intent);
-            if (resultCode == 10) {
-                int newSize = 512;
+            if (resultCode == RESULT_OK) {
                 switch (requestCode) {
-                    case 1:
-                        Bitmap srcPicture = BitmapFactory.decodeFile(file.getPath());
-                        Bitmap downsizedPicture = Common.downSize(srcPicture, newSize);
-                        ibPickPicture.setImageBitmap(downsizedPicture);
+                    case REQ_TAKE_PICTURE:
+                        crop(contentUri);
                         break;
-
-                    case 2:
+                    case REQ_PICK_IMAGE:
                         Uri uri = intent.getData();
-                        String[] columns = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = getContentResolver().query(uri, columns,
-                                null, null, null);
-                        if (cursor != null && cursor.moveToFirst()) {
-                            String imagePath = cursor.getString(0);
-                            cursor.close();
-                            Bitmap srcImage = BitmapFactory.decodeFile(imagePath);
-                            Bitmap downsizedImage = Common.downSize(srcImage, newSize);
-                            ibPickPicture.setImageBitmap(downsizedImage);
+                        crop(uri);
+                        break;
+                    case REQ_CROP_PICTURE:
+                        try {
+                            Bitmap picture = BitmapFactory.decodeStream(
+                                    Comment_interface.this.getContentResolver().openInputStream(croppedImageUri));
+                            ivComment.setImageBitmap(picture);
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                            image = out.toByteArray();
+                        } catch (FileNotFoundException e) {
                         }
                         break;
                 }
             }
         }
+    private void crop(Uri sourceImageUri) {
+        File file = Comment_interface.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        file = new File(file, "picture_cropped.jpg");
+        croppedImageUri = Uri.fromFile(file);
+        // take care of exceptions
+        try {
+            // call the standard crop action intent (the user device may not support it)
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // the recipient of this Intent can read soruceImageUri's data
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            // set image source Uri and type
+            cropIntent.setDataAndType(sourceImageUri, "image/*");
+            // send crop message
+            cropIntent.putExtra("crop", "true");
+            // aspect ratio of the cropped area, 0 means user define
+            cropIntent.putExtra("aspectX", 0); // this sets the max width
+            cropIntent.putExtra("aspectY", 0); // this sets the max height
+            // output with and height, 0 keeps original size
+            cropIntent.putExtra("outputX", 0);
+            cropIntent.putExtra("outputY", 0);
+            // whether keep original aspect ratio
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, croppedImageUri);
+            // whether return data by the intent
+            cropIntent.putExtra("return-data", true);
+            // start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, REQ_CROP_PICTURE);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            Common.showToast(Comment_interface.this, "This device doesn't support the crop action!");
+        }
     }
+}

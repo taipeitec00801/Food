@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Comment.Comment_interface"
     android:orientation="vertical"
-    android:background="?attr/colorBackground"
-    android:padding="5dp">
+    android:background="?attr/colorBackground">
 
     <include
         android:id="@+id/settingsPreferencesToolbar"
@@ -47,18 +46,18 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="選取你的照片"/>
     <ImageButton
         android:id="@+id/ibPickPicture"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:background="@color/colorWhite"
         android:src="@drawable/addbutton" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="選取你的照片"/>
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/ivComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

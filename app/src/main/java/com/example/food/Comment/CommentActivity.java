@@ -38,7 +38,7 @@ public class CommentActivity extends AppCompatActivity {
         recyclerView.setAdapter(new MemberAdapter(this, memberList));
 
 
-        mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
+        mRollViewPager =findViewById(R.id.roll_view_pager);
 
         //设置播放时间间隔
         mRollViewPager.setPlayDelay(3000);
@@ -137,7 +137,7 @@ public class CommentActivity extends AppCompatActivity {
 
                 textView=itemview.findViewById(R.id.customname);
                 imageView=itemview.findViewById(R.id.iv);
-                messageView=itemview.findViewById(R.id.custommessage);
+                messageView=itemview.findViewById(R.id.Usermessage);
             }
         }
     }

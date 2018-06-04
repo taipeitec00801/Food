@@ -1,4 +1,10 @@
 package com.example.food.DAO;
 
-public class Comment {
+import java.io.Serializable;
+
+public class Comment implements Serializable {
+    private String Username,Usermessage,Usercomment;
+
+
+
 }
