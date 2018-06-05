@@ -2,7 +2,7 @@
 <resources>
 
     <attr name="colorBackground" format="reference|color" />
-    <attr name="colorCardBody" format="reference|color" />
+    <attr name="colorCardBackground" format="reference|color" />
     <attr name="textColor" format="color|reference" />
 
 

@@ -6,15 +6,14 @@ import android.os.Environment;
 
 import java.io.File;
 
-public class DataCleanManager {
+public class DataClearManager {
     //清除内部缓存(/data/data/com.example.food/cache)
-    public static void cleanInternalCache(Context context) {
+    public static void clearInternalCache(Context context) {
         deleteFilesByDirectory(context.getCacheDir());
     }
 
     //清除外部cache下的内容(/mnt/sdcard/android/data/com.example.food/cache)
-
-    public static void cleanExternalCache(Context context) {
+    public static void clearExternalCache(Context context) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             deleteFilesByDirectory(context.getExternalCacheDir());
         }

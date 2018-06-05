@@ -4,13 +4,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorBackground">@color/colorBody</item>
-        <item name="colorCardBody">@color/colorCardBody</item>
+        <item name="colorBackground">@drawable/background_color</item>
+        <item name="colorCardBackground">@drawable/cardview_background_color</item>
         <!-- 切換 Activity動畫 -->
         <!--<item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>-->
 
-        <!-- hamburger -->
-        <item name="colorControlNormal">@color/colorBlack</item>
+        <!-- system -->
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="android:windowBackground">@color/rawerLayoutBackground</item>
 
         <!-- 切換 image -->
         <item name="ivSettingDayNight">@drawable/sun</item>
@@ -36,14 +37,14 @@
     </style>
 
     <!--<style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">-->
-        <!--&lt;!&ndash;A點擊打開B，B的出現動畫&ndash;&gt;-->
-        <!--<item name="android:activityOpenEnterAnimation">@transition/next_activity_in</item>-->
-        <!--&lt;!&ndash;A點擊打開B，A的消失動畫&ndash;&gt;-->
-        <!--<item name="android:activityOpenExitAnimation">@transition/past_activity_out</item>-->
-        <!--&lt;!&ndash;B離開回到A，A的出現動畫&ndash;&gt;-->
-        <!--<item name="android:activityCloseEnterAnimation">@transition/past_activity_in</item>-->
-        <!--&lt;!&ndash;B離開回到A，B的消失動畫&ndash;&gt;-->
-        <!--<item name="android:activityCloseExitAnimation">@transition/next_activity_out</item>-->
+    <!--&lt;!&ndash;A點擊打開B，B的出現動畫&ndash;&gt;-->
+    <!--<item name="android:activityOpenEnterAnimation">@transition/next_activity_in</item>-->
+    <!--&lt;!&ndash;A點擊打開B，A的消失動畫&ndash;&gt;-->
+    <!--<item name="android:activityOpenExitAnimation">@transition/past_activity_out</item>-->
+    <!--&lt;!&ndash;B離開回到A，A的出現動畫&ndash;&gt;-->
+    <!--<item name="android:activityCloseEnterAnimation">@transition/past_activity_in</item>-->
+    <!--&lt;!&ndash;B離開回到A，B的消失動畫&ndash;&gt;-->
+    <!--<item name="android:activityCloseExitAnimation">@transition/next_activity_out</item>-->
     <!--</style>-->
 
 </resources>

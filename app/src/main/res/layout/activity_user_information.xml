@@ -24,7 +24,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
             android:src="@drawable/person"
-            app:civ_border_color="@color/colorText"
+            app:civ_border_color="@color/colorWhite"
             app:civ_border_width="2dp" />
 
         <ImageView
@@ -32,8 +32,8 @@
             android:layout_height="40dp"
             android:layout_alignBottom="@+id/cvUserImage"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="115dp"
-            android:src="@drawable/add" />
+            android:layout_marginEnd="121dp"
+            android:src="@drawable/camera_white" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cvUserId"
@@ -45,12 +45,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorCardBody"
+                android:background="?attr/colorCardBackground"
                 android:padding="3dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:src="?attr/ivSettingId" />
 
@@ -60,7 +61,7 @@
                     android:layout_gravity="center"
                     android:text="@string/textUserId"
                     android:textColor="@color/colorText"
-                    android:textSize="24sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tvUserId"
@@ -84,12 +85,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorCardBody"
+                android:background="?attr/colorCardBackground"
                 android:padding="3dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:src="?attr/ivSettingPassword" />
 
@@ -131,12 +133,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorCardBody"
+                android:background="?attr/colorCardBackground"
                 android:padding="3dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:src="?attr/ivSettingNickname" />
 
@@ -177,12 +180,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorCardBody"
+                android:background="?attr/colorCardBackground"
                 android:padding="3dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:src="?attr/ivSettingBirthday" />
 
@@ -223,12 +227,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/colorCardBody"
+                android:background="?attr/colorCardBackground"
                 android:padding="3dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="10dp"
                     android:src="?attr/ivSettingGender" />
 
@@ -265,7 +270,7 @@
             android:layout_below="@+id/cvUserGender"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            app:cardBackgroundColor="@color/colorButton"
+            app:cardBackgroundColor="@color/colorPrimary"
             app:cardCornerRadius="20dp"
             app:cardElevation="25dp">
 
@@ -275,7 +280,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/btn_bg_set"
                 android:text="@string/text_btYes"
-                android:textColor="@color/colorText"
+                android:textColor="@color/colorWhite"
                 android:textSize="20sp" />
         </android.support.v7.widget.CardView>
 

@@ -1,27 +1,23 @@
 package com.example.food.DAO;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.example.food.Settings.Common;
 import com.example.food.Settings.task.CommonTask;
-import com.example.food.Settings.task.ImageTask;
+import com.example.food.Settings.task.MemberImageTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 
 public class MemberDAO {
     private Activity inputActivity;
     private String TAG;
-    private Member member = null;
-    private ImageTask memberImageTask;
+    private MemberImageTask memberImageTask;
     private int imageSize;
 
     public MemberDAO(Activity inputActivity) {
@@ -54,10 +50,12 @@ public class MemberDAO {
     }
 
     public Member getUserDate(String userAccount, ImageView imageView) {
+        Member member = null;
         if (Common.networkConnected(inputActivity)) {
             //建立Gson物件，以便將資料轉成Json格式。
             Gson gson = new Gson();
             //透過IP和資料庫名稱找到資料庫。
+
             String url = Common.URL + "/MemberServlet";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
@@ -73,7 +71,7 @@ public class MemberDAO {
             CommonTask memberGetAllTask = new CommonTask(url, jsonOut);
             //CommonTask會將傳入的jsonOut字串送給伺服器
 
-            memberImageTask = new ImageTask(url, userAccount, imageSize, imageView);
+            memberImageTask = new MemberImageTask(url, userAccount, imageSize, imageView);
             memberImageTask.execute();
 
             //ImageTask會將傳入的userAccount字串送給伺服器
@@ -127,10 +125,10 @@ public class MemberDAO {
             //伺服器會找到在伺服器內部的updateMemberDate方法
             // 找 member table  傳入修改後的資料newMember
             jsonObject.addProperty("Member", new Gson().toJson(newMember));
-//            if (portrait != null) {
+            if (portrait != null) {
                 String imageBase64 = Base64.encodeToString(portrait, Base64.DEFAULT);
                 jsonObject.addProperty("updatePortrait", imageBase64);
-//            }
+            }
             int count = 0;
             try {
                 String result = new CommonTask(url, jsonObject.toString()).execute().get();
@@ -160,7 +158,7 @@ public class MemberDAO {
                 nickName = userAccount.substring(0,userAccount.indexOf("@"));
             }
             Member newMember = new Member(userAccount, password, nickName, birthday,
-                                            gender, preference);
+                    gender, preference);
 
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();

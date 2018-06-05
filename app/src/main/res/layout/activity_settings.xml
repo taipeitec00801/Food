@@ -20,9 +20,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
             android:orientation="vertical"
             android:padding="3dp"
             android:layout_below="@+id/settingsToolbar">
+
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -35,9 +37,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="3dp"
-                    android:background="?attr/colorCardBody">
+                    android:layout_height="match_parent"
+                    android:background="?attr/colorCardBackground"
+                    android:padding="3dp">
 
                     <ImageView
                         android:layout_width="60dp"
@@ -69,9 +71,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:padding="3dp"
-                    android:background="?attr/colorCardBody">
+                    android:background="?attr/colorCardBackground">
 
                     <ImageView
                         android:layout_width="60dp"
@@ -103,9 +105,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:padding="3dp"
-                    android:background="?attr/colorCardBody">
+                    android:background="?attr/colorCardBackground">
 
                     <ImageView
                         android:layout_width="60dp"
@@ -137,9 +139,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:padding="3dp"
-                    android:background="?attr/colorCardBody">
+                    android:background="?attr/colorCardBackground">
 
                     <ImageView
                         android:layout_width="40dp"
@@ -181,9 +183,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:padding="3dp"
-                    android:background="?attr/colorCardBody">
+                    android:background="?attr/colorCardBackground">
 
                     <ImageView
                         android:layout_width="40dp"

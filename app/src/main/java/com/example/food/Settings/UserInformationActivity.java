@@ -8,9 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,13 +40,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.DAO.Member;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
+import com.example.food.Settings.task.MemberImageTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,12 +54,14 @@ public class UserInformationActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener {
     private int mYear, mMonth, mDay, newGender;
     private Member member;
+    //    private Button btUserDataSetting;O
     private String newPassword, newNickName, newBirthday;
     private TextView tvUserNickname, tvUserBirthday;
     private MemberDAO memberDAO;
     private File file;
-    private PopupWindow popWindow = new PopupWindow ();
+    private PopupWindow popWindow = new PopupWindow();
     private byte[] image;
+    private boolean imageChange;
     private CircleImageView cvUserImage;
     private Uri contentUri, croppedImageUri;
     private static final int REQ_TAKE_PICTURE = 0;
@@ -78,29 +81,67 @@ public class UserInformationActivity extends AppCompatActivity implements
         // 讀取  資料庫內的會員資料
         memberDAO = new MemberDAO(UserInformationActivity.this);
         ImageView imageView = findViewById(R.id.cvUserImage);
+
         member = memberDAO.getUserDate(testUserAccount, imageView);
         showMemberData(member);
 
         selectCardView();
 
+
         Button btUserDataSetting = findViewById(R.id.btUserDataSetting);
+        //點擊確認鍵後，建立新的執行緒，並且將Button關閉，等到onPause()、onStart()時重新開啟。
         btUserDataSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("測試 updateMemberDate = ", "開始");
+                Log.e("測試 newPassword = ", newPassword);
+                Log.e("測試 newNickName = ", newNickName);
+                Log.e("測試 newBirthday = ", newBirthday);
+                String s = String.valueOf(newGender);
+                Log.e("測試 newGender = ", s);
 
                 memberDAO.updateMemberDate(testUserAccount, newPassword,
                         newNickName, newBirthday, newGender, image);
+
+//                if (btUserDataSetting.isEnabled()) {
+//                    mThread = new HandlerThread("aa");
+//                    mThread.start();
+//                    mThreadHandler = new Handler(mThread.getLooper());
+//                    mThreadHandler.post(runnable);
+//                }
+//                btUserDataSetting.setEnabled(false);
             }
         });
 
     }
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        if (mThreadHandler != null) {
+//            mThreadHandler.removeCallbacks(runnable);
+//        }
+//        if (mThread != null) {
+//            mThread.quit();
+//        }
+//    }
 
     @Override
     protected void onStart() {
         super.onStart();
         String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
         Common.askPermissions(UserInformationActivity.this, permissions, Common.PERMISSION_READ_EXTERNAL_STORAGE);
+//        btUserDataSetting.setEnabled(true);
     }
+
+    //執行緒
+//    private Runnable runnable = new Runnable() {
+////        public void run() {
+////            //這裡放執行緒要執行的程式。
+////            memberDAO.updateMemberDate(testUserAccount, newPassword,
+////                    newNickName, newBirthday, newGender, image);
+////        }
+////    };
 
     private void findById() {
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
@@ -126,7 +167,7 @@ public class UserInformationActivity extends AppCompatActivity implements
 
                 // 设置按钮监听
                 //照相
-                Button btn_take_photo =  mView.findViewById(R.id.btn_take_photo);
+                Button btn_take_photo = mView.findViewById(R.id.btn_take_photo);
                 btn_take_photo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -148,7 +189,7 @@ public class UserInformationActivity extends AppCompatActivity implements
                     }
                 });
                 //相簿
-                Button btn_pick_photo =  mView.findViewById(R.id.btn_pick_photo);
+                Button btn_pick_photo = mView.findViewById(R.id.btn_pick_photo);
                 btn_pick_photo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -197,19 +238,19 @@ public class UserInformationActivity extends AppCompatActivity implements
                 new MaterialDialog.Builder(UserInformationActivity.this)
                         .title(R.string.textPassword)
                         .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                        .inputRange(6,12,0)
-                        .widgetColorRes(R.color.colorBody)
-                        .input(0, 0,  new MaterialDialog.InputCallback() {
+                        .inputRange(6, 12, 0)
+                        .widgetColorRes(R.color.cardBackgroundStart)
+                        .input(0, 0, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
 
                                 //  密碼是否與資料庫內相同
-                                if (discernMemberPassword(newPassword,input.toString())) {
+                                if (discernMemberPassword(newPassword, input.toString())) {
                                     // 確認密碼 視窗
                                     new MaterialDialog.Builder(UserInformationActivity.this)
                                             .title(R.string.confirmPassword)
                                             .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                                            .widgetColorRes(R.color.colorBody)
+                                            .widgetColorRes(R.color.cardBackgroundStart)
                                             .input(0, 0, new MaterialDialog.InputCallback() {
                                                 @Override
                                                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -220,7 +261,7 @@ public class UserInformationActivity extends AppCompatActivity implements
                                     new MaterialDialog.Builder(UserInformationActivity.this)
                                             .title("")
                                             .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                                            .widgetColorRes(R.color.colorBody)
+                                            .widgetColorRes(R.color.cardBackgroundStart)
                                             .input(0, 0, new MaterialDialog.InputCallback() {
                                                 @Override
                                                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -240,8 +281,8 @@ public class UserInformationActivity extends AppCompatActivity implements
                 new MaterialDialog.Builder(UserInformationActivity.this)
                         .title(R.string.textNickname)
                         .inputType(InputType.TYPE_CLASS_TEXT)
-                        .widgetColorRes(R.color.colorBody)
-                        .input(0, 0,  new MaterialDialog.InputCallback() {
+                        .widgetColorRes(R.color.cardBackgroundStart)
+                        .input(0, 0, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 newNickName = input.toString();
@@ -297,6 +338,7 @@ public class UserInformationActivity extends AppCompatActivity implements
         setSupportActionBar(settingsUserInformationToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
+
     //檢查裝置有沒有應用程式可以拍照  若有則 >0
     public boolean isIntentAvailable(Context context, Intent intent) {
         PackageManager packageManager = context.getPackageManager();
@@ -312,14 +354,14 @@ public class UserInformationActivity extends AppCompatActivity implements
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             UserInformationActivity uiActivity = (UserInformationActivity) getActivity();
             return new DatePickerDialog(uiActivity, uiActivity,
-                                    uiActivity.mYear, uiActivity.mMonth, uiActivity.mDay);
+                    uiActivity.mYear, uiActivity.mMonth, uiActivity.mDay);
         }
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         mYear = year;
-        mMonth = month+1;
+        mMonth = month + 1;
         mDay = day;
         newBirthday = mYear + "-" + pad(mMonth) + "-" + pad(mDay);
         tvUserBirthday.setText(newBirthday);
@@ -338,27 +380,32 @@ public class UserInformationActivity extends AppCompatActivity implements
         if (member != null) {
             tvUserId.setText(testUserAccount);
 
-            discernMemberPassword(member.getUserPassword(),"");
+            discernMemberPassword(member.getUserPassword(), "");
             newNickName = member.getNickName();
             tvUserNickname.setText(newNickName);
             newBirthday = member.getBirthday();
             tvUserBirthday.setText(newBirthday);
             discernMemberGender(member.getGender());
+
+            Bitmap bitmap = ((BitmapDrawable) cvUserImage.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            image = baos.toByteArray();
         } else {
             tvUserId.setText(testUserAccount);
-            discernMemberPassword("1234567890","");
+            discernMemberPassword("1234567890", "");
             tvUserNickname.setText(newNickName);
             tvUserBirthday.setText(newBirthday);
-            discernMemberGender(0);
+            discernMemberGender(2);
         }
     }
 
     // 未完成
     // 判斷密碼 original與input相關關係
     private boolean discernMemberPassword(String original, String input) {
-        Pattern pattern = Pattern.compile("[ \\t\\n\\x0B\\f\\r]");
         TextView tvUserPassword = findViewById(R.id.tvUserPassword);
-        if (input != null || input.length() !=0) {
+        if (input == null || input.length() == 0) {
+            newPassword = original;
             return false;
         } else if (!original.equals(input)) {
             tvUserPassword.setText(input);
@@ -405,11 +452,13 @@ public class UserInformationActivity extends AppCompatActivity implements
                         picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
                         image = out.toByteArray();
                     } catch (FileNotFoundException e) {
+                        e.getMessage();
                     }
                     break;
             }
         }
     }
+
     private void crop(Uri sourceImageUri) {
         File file = UserInformationActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         file = new File(file, "picture_cropped.jpg");
@@ -442,5 +491,7 @@ public class UserInformationActivity extends AppCompatActivity implements
         catch (ActivityNotFoundException anfe) {
             Common.showToast(UserInformationActivity.this, "This device doesn't support the crop action!");
         }
+        // 頭像有變更
+        imageChange = true;
     }
 }

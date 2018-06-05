@@ -16,14 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
-import com.example.food.Other.DataCleanManager;
 import com.example.food.Member.LoginActivity;
+import com.example.food.Other.DataClearManager;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -52,19 +53,14 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void selectCardView() {
-
         /* 更改個人資料 */
         CardView cvUerInformation = findViewById(R.id.userInformation);
         cvUerInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SettingsActivity.this, UserInformationActivity.class);
-                startActivityForResult(intent, RESULT_OK);
-//                intent.setClass(SettingsActivity.this, UserInformationActivity.class);
-                /*
-                * Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(intent, 2);
-                * */
+                Intent intent = new Intent();
+                intent.setClass(SettingsActivity.this, UserInformationActivity.class);
+                startActivity(intent);
             }
         });
         /* 偏好種類設定 */
@@ -104,10 +100,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             public void onClick(View view) {
                 CleanCacheDialog cleanCacheDialog = new CleanCacheDialog();
                 cleanCacheDialog.show(getSupportFragmentManager(), "alert");
-                if (cleanCache) {
-                    DataCleanManager.cleanInternalCache(getApplicationContext());
-                    DataCleanManager.cleanExternalCache(getApplicationContext());
-                }
             }
         });
         /* 登出 */
@@ -129,11 +121,17 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         File file = new File(this.getCacheDir().getPath());
         TextView tvClearApplicationCache = findViewById(R.id.tvClearApplicationCache);
         try {
-            tvClearApplicationCache.setText(DataCleanManager.getCacheSize(file));
+            tvClearApplicationCache.setText(DataClearManager.getCacheSize(file));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    /* 清除内部 外部 快取 */
+    public void cleanCache() {
+        DataClearManager.clearInternalCache(getApplicationContext());
+        DataClearManager.clearExternalCache(getApplicationContext());
     }
 
     private void setupNavigationDrawerMenu() {
@@ -245,11 +243,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    SettingsActivity.cleanCache = true;
+                    SettingsActivity activity = new SettingsActivity();
+                    activity.cleanCache();
                     break;
                 default:
                     dialog.cancel();
-                    SettingsActivity.cleanCache = false;
                     break;
             }
         }
@@ -275,6 +273,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 case DialogInterface.BUTTON_POSITIVE:
                     Intent intent = new Intent();
                     intent.setClass(getActivity(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     getActivity().finish();
                     startActivity(intent);
                     break;

@@ -1,7 +1,5 @@
 package com.example.food.DAO;
 
-import android.util.Base64;
-
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
