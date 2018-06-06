@@ -2,6 +2,7 @@ package com.example.food.Settings;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +25,7 @@ import com.github.ybq.android.spinkit.SpinKitView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreferencesSettingsActivity extends AppCompatActivity {
+public class  PreferencesSettingsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
 
     @Override
@@ -34,7 +35,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
 
         initContent();
 
-        recyclerView = findViewById(R.id.pref_rv);
+        recyclerView = findViewById(R.id.rvSetting_pref);
         recyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
@@ -88,25 +89,21 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         }
 
         @Override
-        public SortActivity.prefAdapter.SortViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public PreferencesSettingsActivity.prefAdapter.PrefViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View itemView = layoutInflater.inflate(R.layout.sort_item, viewGroup, false);
 
-            return new SortActivity.prefAdapter.SortViewHolder(itemView);
+            return new PreferencesSettingsActivity.prefAdapter.PrefViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(final SortActivity.prefAdapter.SortViewHolder viewHolder, final int position) {
-            final Sort sort = sortList.get(position);
+        public void onBindViewHolder(final PrefViewHolder prefViewHolder, final int position) {
+            final PreferencesSet preferencesSet = prefList.get(position);
             viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
             viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
-            viewHolder.tvNameLeft.setTextColor(colorL);
-            viewHolder.cvLeft.setCardBackgroundColor(colorL);
 
             viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
             viewHolder.tvNameRight.setText(String.valueOf(sort.getTvRname()));
-            viewHolder.tvNameRight.setTextColor(colorR);
-            viewHolder.cvRight.setCardBackgroundColor(colorR);
 
             //點擊左item後將資料寫上Button上，此方法將會點擊背後outBt一次。
             // outBt寫上position以分辨是哪一個Item點擊

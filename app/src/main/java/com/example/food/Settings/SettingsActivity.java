@@ -125,7 +125,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /* 清除内部 外部 快取 */
