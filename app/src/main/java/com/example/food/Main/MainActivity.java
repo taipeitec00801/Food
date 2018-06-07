@@ -68,16 +68,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initContent();
         changepage();
         setupNavigationDrawerMenu();
-        //Common Test 用
-        gotocommon = findViewById(R.id.goToCommon);
-        gotocommon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, CommentActivity.class);
-                startActivity(intent);
-            }
-        });
+//        //Common Test 用
+//        gotocommon = findViewById(R.id.goToCommon);
+//        gotocommon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent();
+//                intent.setClass(MainActivity.this, CommentActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
         //設定播放時間間隔
@@ -149,11 +149,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
         int currentVersion = info.versionCode;
-        SharedPreferences prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         int lastVersion = prefs.getInt("versionKey", 0);
         //如果當前版本大於上次版本，該版本屬於第一次啟動
         if (currentVersion > lastVersion) {
+            //紀錄主題 初始化
             prefs.edit().putInt("theme", 0).apply();
+            //紀錄會員資料 初始化
+            prefs.edit().putInt("memberId", 0).apply();
+            prefs.edit().putString("userAccount", "").apply();
+            prefs.edit().putString("userPassword", "").apply();
+            prefs.edit().putString("nickName", "").apply();
+            prefs.edit().putString("birthday", "").apply();
+            prefs.edit().putInt("gender", 0).apply();
+            prefs.edit().putInt("userRank", 1).apply();
+            prefs.edit().putString("preference", "").apply();
 
             //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
             prefs.edit().putInt("versionKey", currentVersion).apply();

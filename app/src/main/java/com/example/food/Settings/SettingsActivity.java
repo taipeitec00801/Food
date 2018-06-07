@@ -63,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
             }
         });
-        /* 偏好種類設定 */
+        /* 喜好種類設定 */
         CardView cvSettingsPreferences = findViewById(R.id.settingsPreferences);
 
         cvSettingsPreferences.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
             @Override
             public void onClick(View view) {
-                SharedPreferences pref = getSharedPreferences("MyTheme", MODE_PRIVATE);
+                SharedPreferences pref = getSharedPreferences("MyApp", MODE_PRIVATE);
                 int myTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
                 if (myTheme == Configuration.UI_MODE_NIGHT_YES) {
