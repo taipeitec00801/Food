@@ -2,7 +2,6 @@ package com.example.food.Settings;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
 import com.example.food.Sort.Sort;
-import com.example.food.Sort.SortActivity;
 import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.util.ArrayList;
@@ -40,15 +38,15 @@ public class  PreferencesSettingsActivity extends AppCompatActivity {
                 new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
 
-        List<PreferencesSet> prefList = getPreferencesSetList();
+        List<Sort> prefList = getPreferencesSetList();
         recyclerView.setAdapter(new prefAdapter(PreferencesSettingsActivity.this, prefList));
     }
     private class prefAdapter extends
             RecyclerView.Adapter<PreferencesSettingsActivity.prefAdapter.PrefViewHolder> {
         private Context context;
-        private List<PreferencesSet> prefList;
+        private List<Sort> prefList;
 
-        prefAdapter(Context context, List<PreferencesSet> prefList) {
+        prefAdapter(Context context, List<Sort> prefList) {
             this.context = context;
             this.prefList = prefList;
         }
@@ -98,42 +96,42 @@ public class  PreferencesSettingsActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final PrefViewHolder prefViewHolder, final int position) {
-            final PreferencesSet preferencesSet = prefList.get(position);
-            viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
-            viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
+            final Sort prefSet = prefList.get(position);
+            prefViewHolder.ivImageLeft.setImageResource(prefSet.getIvLsrc());
+            prefViewHolder.tvNameLeft.setText(String.valueOf(prefSet.getTvLname()));
 
-            viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
-            viewHolder.tvNameRight.setText(String.valueOf(sort.getTvRname()));
+            prefViewHolder.ivImageRight.setImageResource(prefSet.getIvRsrc());
+            prefViewHolder.tvNameRight.setText(String.valueOf(prefSet.getTvRname()));
 
             //點擊左item後將資料寫上Button上，此方法將會點擊背後outBt一次。
             // outBt寫上position以分辨是哪一個Item點擊
             // comeBt的開啟狀態(true)決定送來的Item是經由左邊送來的。
-            viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
+            prefViewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(outBt.isEnabled()){
-                        String number = String.valueOf(position);
-                        outBt.setText(number);
-                        comeBt.setEnabled(true);
-                        outBt.performClick();
-                        viewHolder.skvL.setVisibility(View.VISIBLE);
-                    }
+//                    if(outBt.isEnabled()){
+//                        String number = String.valueOf(position);
+//                        outBt.setText(number);
+//                        comeBt.setEnabled(true);
+//                        outBt.performClick();
+//                        prefViewHolder.skvL.setVisibility(View.VISIBLE);
+//                    }
 
                 }
             });
             //點擊右item後將資料寫上Button上，此方法將會點擊背後outBt一次。
             // outBt寫上position以分辨是哪一個Item點擊
             // comeBt的開啟狀態(false)決定送來的Item是經由右邊送來的。
-            viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
+            prefViewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    if(outBt.isEnabled()){
-                        String number = String.valueOf(position);
-                        outBt.setText(number);
-                        comeBt.setEnabled(false);
-                        outBt.performClick();
-                        viewHolder.skvR.setVisibility(View.VISIBLE);
-                    }
+//                    if(outBt.isEnabled()){
+//                        String number = String.valueOf(position);
+//                        outBt.setText(number);
+//                        comeBt.setEnabled(false);
+//                        outBt.performClick();
+//                        prefViewHolder.skvR.setVisibility(View.VISIBLE);
+//                    }
                 }
             });
 
@@ -142,10 +140,10 @@ public class  PreferencesSettingsActivity extends AppCompatActivity {
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(PreferencesSettingsActivity.this, R.anim.sort_item_down);
                 am.setStartOffset(aniTime);
-                viewHolder.cvMoveL.setAnimation(am);
+                prefViewHolder.cvMoveL.setAnimation(am);
                 am = AnimationUtils.loadAnimation(PreferencesSettingsActivity.this, R.anim.sort_item_up);
                 am.setStartOffset(aniTime);
-                viewHolder.cvMoveR.setAnimation(am);
+                prefViewHolder.cvMoveR.setAnimation(am);
             }
         }
     }
@@ -157,21 +155,21 @@ public class  PreferencesSettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     //分類的資料庫
-    public List<PreferencesSet> getPreferencesSetList() {
-        List<PreferencesSet> prefList = new ArrayList<>();
-        prefList.add(new PreferencesSet(R.drawable.s03,0,"中式餐廳",
+    public List<Sort> getPreferencesSetList() {
+        List<Sort> prefList = new ArrayList<>();
+        prefList.add(new Sort(R.drawable.s03,0,"中式餐廳",
                 R.drawable.s02,1,"西式餐廳"));
 
-        prefList.add(new PreferencesSet(R.drawable.s05,2,"韓式餐廳",
+        prefList.add(new Sort(R.drawable.s05,2,"韓式餐廳",
                 R.drawable.s04,3,"日式餐廳"));
 
-        prefList.add(new PreferencesSet(R.drawable.s06,4,"港式餐廳",
+        prefList.add(new Sort(R.drawable.s06,4,"港式餐廳",
                 R.drawable.s07,5,"泰式餐廳"));
 
-        prefList.add(new PreferencesSet(R.drawable.s08,6,"小吃美食",
+        prefList.add(new Sort(R.drawable.s08,6,"小吃美食",
                 R.drawable.s09,7,"冰涼滋味"));
 
-        prefList.add(new PreferencesSet(R.drawable.s10,8,"甜點飲品",
+        prefList.add(new Sort(R.drawable.s10,8,"甜點飲品",
                 R.drawable.s01,9,"隱藏美食"));
 
         return prefList;
