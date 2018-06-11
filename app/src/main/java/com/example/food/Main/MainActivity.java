@@ -1,7 +1,6 @@
 package com.example.food.Main;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -22,18 +21,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.food.Collection.CollectionActivity;
 import com.example.food.Comment.CommentActivity;
@@ -74,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initContent();
         changepage();
         setupNavigationDrawerMenu();
-        //Common Test 用
-//        gotocommon = findViewById(R.id.Comment_recycleview);
+//        //Common Test 用
+//        gotocommon = findViewById(R.id.goToCommon);
 //        gotocommon.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -84,12 +78,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                startActivity(intent);
 //            }
 //        });
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(
-                        1, StaggeredGridLayoutManager.VERTICAL));
-        List<Food> foodList = getFoodList();
-        recyclerView.setAdapter(new MemberAdapter(this, foodList));
 
         mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
         //設定播放時間間隔
@@ -161,11 +149,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
         int currentVersion = info.versionCode;
-        SharedPreferences prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         int lastVersion = prefs.getInt("versionKey", 0);
         //如果當前版本大於上次版本，該版本屬於第一次啟動
         if (currentVersion > lastVersion) {
+            //紀錄主題 初始化
             prefs.edit().putInt("theme", 0).apply();
+            //紀錄會員資料 初始化
+            prefs.edit().putInt("memberId", 0).apply();
+            prefs.edit().putString("userAccount", "").apply();
+            prefs.edit().putString("userPassword", "").apply();
+            prefs.edit().putString("nickName", "").apply();
+            prefs.edit().putString("birthday", "").apply();
+            prefs.edit().putInt("gender", 0).apply();
+            prefs.edit().putInt("userRank", 1).apply();
+            prefs.edit().putString("preference", "").apply();
 
             //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
             prefs.edit().putInt("versionKey", currentVersion).apply();
@@ -341,63 +339,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public int getCount() {
             return imgs.length;
         }
-    }
-
-
-
-
-
-
-    private class MemberAdapter extends
-            RecyclerView.Adapter<MemberAdapter.MyViewHolder> {
-        private Context context;
-        private List<Food> foodList;
-
-        MemberAdapter(Context context, List<Food> foodList) {
-            this.context = context;
-            this.foodList = foodList;
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            ImageView ivImage;
-            TextView tvId, tvName;
-
-            MyViewHolder(View itemView) {
-                super(itemView);
-                ivImage = itemView.findViewById(R.id.ivImage);
-                tvId = itemView.findViewById(R.id.tvId);
-                tvName = itemView.findViewById(R.id.tvName);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return foodList.size();
-        }
-
-        @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.mainfood_view, viewGroup, false);
-            return new MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(MyViewHolder viewHolder, int position) {
-            final Food food = foodList.get(position);
-            viewHolder.ivImage.setImageResource(food.getImage());
-            viewHolder.tvId.setText(String.valueOf(food.getshop()));
-            viewHolder.tvName.setText(food.getName());
-
-        }
-    }
-
-    public List<Food> getFoodList() {
-        List<Food> foodList = new ArrayList<>();
-        foodList.add(new Food("店名", R.drawable.food1, "shop1"));
-        foodList.add(new Food("店名", R.drawable.food3, "shop1"));
-
-        return foodList;
     }
 
 

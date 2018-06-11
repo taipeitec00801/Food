@@ -1,165 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pref_context"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/gfnf65t"
+    android:background="?attr/colorBackground"
     tools:context=".Settings.PreferencesSettingsActivity">
+    <Button
+        android:id="@+id/pref_bt"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <Button
+        android:id="@+id/pref_comebt"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 
     <include
         android:id="@+id/settingsPreferencesToolbar"
         layout="@layout/toolbar" />
 
-
-    <Button
-        android:id="@+id/btSetLike1"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
+    <!--被點擊後將會跑出載入動畫，預設狀態為invisible(隱藏)-->
+    <com.github.ybq.android.spinkit.SpinKitView
+        style="@style/SpinKitView.Large.FadingCircle"
         android:layout_below="@+id/settingsPreferencesToolbar"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/btn_bg"
-        android:text="中式美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
+        android:id="@+id/pref_spinKit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="120dp"
+        app:SpinKit_Color="@color/colorWhite"
+        android:background="#aa000000"
+        android:visibility="invisible"
+        android:translationZ="50dp"/>
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="3dp"
+        android:layout_below="@+id/settingsPreferencesToolbar"
+        android:id="@+id/rvSetting_pref"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/btSetLike2"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/btSetLike1"
-        android:layout_marginEnd="30dp"
-        android:layout_marginLeft="30dp"
-        android:background="@drawable/btn_bg"
-        android:text="西式美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike3"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/btSetLike1"
-        android:layout_alignStart="@+id/btSetLike1"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/btn_bg"
-        android:text="日式美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike4"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignStart="@+id/btSetLike2"
-        android:layout_alignTop="@+id/btSetLike3"
-        android:background="@drawable/btn_bg"
-        android:text="韓式美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike5"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/btSetLike3"
-        android:layout_marginTop="30dp"
-        android:layout_alignStart="@+id/btSetLike1"
-        android:background="@drawable/btn_bg"
-        android:text="泰式美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike6"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignStart="@+id/btSetLike2"
-        android:layout_alignTop="@+id/btSetLike5"
-        android:background="@drawable/btn_bg"
-        android:text="港式美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike7"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignStart="@+id/btSetLike1"
-        android:layout_below="@+id/btSetLike5"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/btn_bg"
-        android:text="小吃美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike8"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignStart="@+id/btSetLike2"
-        android:layout_alignTop="@+id/btSetLike7"
-        android:background="@drawable/btn_bg"
-        android:text="甜點飲品"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetLike9"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignStart="@+id/btSetLike1"
-        android:layout_below="@+id/btSetLike7"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/btn_bg"
-        android:text="冰涼好滋味"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/btSetLike10"
-        android:layout_width="140dp"
-        android:layout_height="50dp"
-        android:layout_alignStart="@+id/btSetLike2"
-        android:layout_alignTop="@+id/btSetLike9"
-        android:background="@drawable/btn_bg"
-        android:text="隱藏美食"
-        android:textAlignment="center"
-        android:textColor="@color/colorText"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/btSetAll"
+        android:id="@+id/bt_set_by"
         android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:background="@drawable/btn_bg"
-        android:layout_below="@+id/btSetLike9"
-        android:layout_alignStart="@+id/btSetLike1"
-        android:layout_marginTop="40dp"
-        android:text="全選"
-        android:textColor="@color/colorText"
+        android:layout_height="56dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/btn_bg_set"
+        android:text="儲存"
+        android:textColor="@color/colorWhite"
         android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/btSetConfirm"
-        android:layout_width="160dp"
-        android:layout_height="50dp"
-        android:layout_alignTop="@+id/btSetAll"
-        android:layout_toEndOf="@+id/btSetAll"
-        android:layout_marginStart="40dp"
-        android:background="@drawable/btn_bg"
-        android:text="完成"
-        android:textColor="@color/colorText"
-        android:textSize="18sp" />
 
 </RelativeLayout>

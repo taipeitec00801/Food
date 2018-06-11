@@ -136,12 +136,12 @@ public class UserInformationActivity extends AppCompatActivity implements
 
     //執行緒
 //    private Runnable runnable = new Runnable() {
-////        public void run() {
-////            //這裡放執行緒要執行的程式。
-////            memberDAO.updateMemberDate(testUserAccount, newPassword,
-////                    newNickName, newBirthday, newGender, image);
-////        }
-////    };
+//        public void run() {
+//            //這裡放執行緒要執行的程式。
+//            memberDAO.updateMemberDate(testUserAccount, newPassword,
+//                    newNickName, newBirthday, newGender, image);
+//        }
+//    };
 
     private void findById() {
         tvUserBirthday = findViewById(R.id.tvUserBirthday);

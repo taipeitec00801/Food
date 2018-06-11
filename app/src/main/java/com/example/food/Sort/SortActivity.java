@@ -30,7 +30,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.example.food.Main.MainActivity;
+import com.example.food.Map.MapActivity;
+import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
+import com.example.food.Search.SearchActivity;
+import com.example.food.Settings.SettingsActivity;
 import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.io.Serializable;
@@ -44,7 +49,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private Button outBt,comeBt;
+    private Button outBt, comeBt;
     private Handler mThreadHandler;
     private HandlerThread mThread;
     private RecyclerView recyclerView;
@@ -52,13 +57,14 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
-        if(!outBt.isEnabled()){
+        if (!outBt.isEnabled()) {
             int i = Integer.parseInt(outBt.getText().toString());
 
             recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_L).setVisibility(View.INVISIBLE);
             recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_R).setVisibility(View.INVISIBLE);
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,10 +78,10 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         outBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(outBt.isEnabled()){
-                    mThread=new HandlerThread("aa");
+                if (outBt.isEnabled()) {
+                    mThread = new HandlerThread("aa");
                     mThread.start();
-                    mThreadHandler=new Handler(mThread.getLooper());
+                    mThreadHandler = new Handler(mThread.getLooper());
                     mThreadHandler.post(r1);
                 }
                 outBt.setEnabled(false);
@@ -91,31 +97,29 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
         List<Sort> sortList = getSortList();
         recyclerView.setAdapter(new sortAdapter(this, sortList));
-
     }
 
-    private Runnable r1 = new Runnable(){
+    private Runnable r1 = new Runnable() {
 
-        public void run(){
-
+        public void run() {
             //這裡放執行緒要執行的程式。
             int i = Integer.parseInt(outBt.getText().toString());
-            portalToSortAs(getSortList().get(i),comeBt.isEnabled());
-
+            portalToSortAs(getSortList().get(i), comeBt.isEnabled());
         }
     };
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
-        if(mThreadHandler != null){
+        if (mThreadHandler != null) {
             mThreadHandler.removeCallbacks(r1);
         }
-        if(mThread != null){
+        if (mThread != null) {
             mThread.quit();
         }
     }
-//
+
+    //
     @Override
     protected void onStart() {
         super.onStart();
@@ -137,6 +141,56 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
                 R.string.drawer_open,
                 R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                menuItem.setChecked(true);
+                Intent intent = new Intent();
+                drawerLayout.closeDrawers();
+                switch (menuItem.getItemId()) {
+                    case R.id.navHome:
+                        intent.setClass(SortActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SortActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navMap:
+                        intent.setClass(SortActivity.this, MapActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SortActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSearch:
+                        intent.setClass(SortActivity.this, SearchActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SortActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navCollection:
+                        intent.setClass(SortActivity.this, MapActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SortActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSettings:
+                        intent.setClass(SortActivity.this, SettingsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SortActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSort:
+                        initContent();
+                        onResume();
+                        break;
+                    default:
+                        intent.setClass(SortActivity.this, UnderDevelopmentActivity.class);
+                        SortActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                }
+                return true;
+            }
+        });
         actionBarDrawerToggle.syncState();
     }
 
@@ -181,9 +235,9 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             ImageView ivImageLeft, ivImageRight;
             TextView tvNameRight, tvNameLeft;
             CardView cvLeft, cvRight;
-            CardView cvMoveL,cvMoveR;
-            MaterialRippleLayout mrlL,mrlR;
-            SpinKitView skvL , skvR;
+            CardView cvMoveL, cvMoveR;
+            MaterialRippleLayout mrlL, mrlR;
+            SpinKitView skvL, skvR;
 
             SortViewHolder(View itemView) {
                 super(itemView);
@@ -225,20 +279,20 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             final Sort sort = sortList.get(position);
             int colorL;
             int colorR;
-            if(position % 2 == 0){
+            if (position % 2 == 0) {
                 colorL = 0xff34CCD6;//藍色
                 colorR = 0xffFF7676;//紅色
                 Drawable drawable = getDrawable(R.drawable.sb);
-                viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+                viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
                 drawable = getDrawable(R.drawable.sr);
-                viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
-            }else{
+                viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+            } else {
                 colorL = 0xffFF7676;
                 colorR = 0xff34CCD6;
                 Drawable drawable = getDrawable(R.drawable.sr);
-                viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+                viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
                 drawable = getDrawable(R.drawable.sb);
-                viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null,null,drawable,null);
+                viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
             }
             viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
             viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
@@ -256,7 +310,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(outBt.isEnabled()){
+                    if (outBt.isEnabled()) {
                         String number = String.valueOf(position);
                         outBt.setText(number);
                         comeBt.setEnabled(true);
@@ -272,7 +326,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    if(outBt.isEnabled()){
+                    if (outBt.isEnabled()) {
                         String number = String.valueOf(position);
                         outBt.setText(number);
                         comeBt.setEnabled(false);
@@ -283,7 +337,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             });
 
             //設定每個item動畫延遲時間，position超過3，不使用動畫。
-            if(position <= 3){
+            if (position <= 3) {
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(SortActivity.this, R.anim.sort_item_down);
                 am.setStartOffset(aniTime);
@@ -294,19 +348,20 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
+
     //傳送門，將送進來的資料傳到下一頁還有將資料送給SortDAO物件的方法
     //此方法將由執行續執行，否則會造成畫面凍結。
-    public void portalToSortAs(Sort sort ,Boolean whereCome){
+    public void portalToSortAs(Sort sort, Boolean whereCome) {
         final SortDAO sortDAO = new SortDAO(SortActivity.this);
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         List<SortAs> sortAsList = null;
         String name = null;
         int number = 0;
-        if(whereCome){
+        if (whereCome) {
             name = sort.getTvLname();
             number = sort.getSortLnum();
-        }else{
+        } else {
             name = sort.getTvRname();
             number = sort.getSortRnum();
         }
@@ -322,20 +377,20 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     //分類的資料庫
     public List<Sort> getSortList() {
         List<Sort> sortList = new ArrayList<>();
-        sortList.add(new Sort(R.drawable.s03,0,"中式餐廳",
-                R.drawable.s02,1,"西式餐廳"));
+        sortList.add(new Sort(R.drawable.s03, 0, "中式餐廳",
+                R.drawable.s02, 1, "西式餐廳"));
 
-        sortList.add(new Sort(R.drawable.s05,2,"韓式餐廳",
-                R.drawable.s04,3,"日式餐廳"));
+        sortList.add(new Sort(R.drawable.s05, 2, "韓式餐廳",
+                R.drawable.s04, 3, "日式餐廳"));
 
-        sortList.add(new Sort(R.drawable.s06,4,"港式餐廳",
-                R.drawable.s07,5,"泰式餐廳"));
+        sortList.add(new Sort(R.drawable.s06, 4, "港式餐廳",
+                R.drawable.s07, 5, "泰式餐廳"));
 
-        sortList.add(new Sort(R.drawable.s08,6,"小吃",
-                R.drawable.s09,7,"冰品"));
+        sortList.add(new Sort(R.drawable.s08, 6, "小吃",
+                R.drawable.s09, 7, "冰品"));
 
-        sortList.add(new Sort(R.drawable.s10,8,"飲料甜點",
-                R.drawable.s01,9,"其他"));
+        sortList.add(new Sort(R.drawable.s10, 8, "飲料甜點",
+                R.drawable.s01, 9, "其他"));
 
 
         return sortList;

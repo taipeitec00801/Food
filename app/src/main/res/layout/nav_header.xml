@@ -8,46 +8,38 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivUser"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:src="@drawable/man"
         app:civ_border_color="@color/colorWhite"
-        app:civ_border_width="2dp"/>
+        app:civ_border_width="2dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:paddingBottom="15dp"
-        android:paddingLeft="20dp">
+    <TextView
+        android:id="@+id/txvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignStart="@+id/ivUser"
+        android:layout_below="@+id/ivUser"
+        android:text="訪客"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/txvName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="bottom"
-            android:text="訪客"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/txvEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_alignStart="@+id/ivUser"
+        android:layout_below="@+id/txvName"
+        android:fontFamily="sans-serif"
+        android:text="userEmail@.gmail.com"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/txvEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif"
-            android:gravity="bottom"
-            android:text="userEmail@.gmail.com"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"/>
-
-    </LinearLayout>
 
 </RelativeLayout>

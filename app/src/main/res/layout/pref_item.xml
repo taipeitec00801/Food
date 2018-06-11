@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pref_item_cv"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardElevation="0dp">
+
+
+    <!--最外一層LinearLayout用來設定兩組cardView的比例-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <!--此層cardView用來設定邊框顏色和動畫可以用Id附著-->
+        <android.support.v7.widget.CardView
+            android:id="@+id/pref_item_cv_moveL"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorText">
+
+            <!--第一組主要的cardView-->
+            <android.support.v7.widget.CardView
+                android:id="@+id/pref_item_Lift_cv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                app:cardBackgroundColor="#fbd786">
+
+                <!--設定被點擊的水波紋動畫。-->
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:id="@+id/pref_item_ripple_L"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mrl_rippleColor="#000000">
+
+                    <!--用來設定ImageView和TextView的比例-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/pref_item_Left_iv"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_margin="3dp"
+                            android:layout_weight="2"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/logo" />
+
+                        <TextView
+                            android:id="@+id/pref_item_Left_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:background="#aaffffff"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text=""
+                            android:textColor="@color/colorText"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+            </android.support.v7.widget.CardView>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/pref_item_cv_moveR"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorText">
+
+
+            <!--第二組主要的cardView-->
+            <android.support.v7.widget.CardView
+                android:id="@+id/pref_item_Right_cv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                app:cardBackgroundColor="#fbd786">
+
+                <com.balysv.materialripple.MaterialRippleLayout
+                    android:id="@+id/pref_item_ripple_R"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:mrl_rippleColor="#000000">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/pref_item_Right_iv"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_margin="3dp"
+                            android:layout_weight="2"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/logo" />
+
+                        <TextView
+                            android:id="@+id/pref_item_Right_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:background="#aaffffff"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text=""
+                            android:textColor="@color/colorText"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+                </com.balysv.materialripple.MaterialRippleLayout>
+            </android.support.v7.widget.CardView>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

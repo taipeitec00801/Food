@@ -2,11 +2,12 @@ package com.example.food.Member;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -35,7 +36,9 @@ import com.example.food.Other.InputFormat;
 import com.example.food.R;
 import com.example.food.Settings.Common;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,19 +51,22 @@ public class MemberActivity extends AppCompatActivity implements
     private Spinner spGender;
     private CircleImageView cvRegisteredImage;
     private File file;
+    private byte[] regImage;
     private PopupWindow popWindow = new PopupWindow ();
     private InputFormat inputFormat = new InputFormat();
+    private Uri contentUri, croppedImageUri;
+    private static final int REQ_TAKE_PICTURE = 0;
+    private static final int REQ_PICK_IMAGE = 1;
+    private static final int REQ_CROP_PICTURE = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registered);
         findViews();
         showSpinner();
-//        getDropDownView();
 
         //點擊事件
         clickEvent();
-
     }
 
     private void clickEvent() {
@@ -71,14 +77,25 @@ public class MemberActivity extends AppCompatActivity implements
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
                 if (inputDataCheck()) {
-                    //將輸入資料 傳到下一頁
+                    //紀錄會員資料
+                    SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+                    prefs.edit().putString("userAccount", etUser.getText().toString().trim()).apply();
+                    prefs.edit().putString("userPassword", etPassword.getText().toString().trim()).apply();
+                    prefs.edit().putString("birthday", etBirthday.getText().toString().trim()).apply();
+                    //預設 暱稱為帳號 @ 前字串
+                    int mos = etUser.getText().toString().trim().indexOf("@");
+                    String defaultNickName = etUser.getText().toString().trim().substring(0, mos);
+                    prefs.edit().putString("nickName", defaultNickName).apply();
+                    //判斷性別 並存入性別編號
+                    int genderNumber = 2;
+                    if (etGender.getText().toString().trim().equals("女姓")) {
+                        genderNumber = 0;
+                    } else if (etGender.getText().toString().trim().equals("男姓")) {
+                        genderNumber = 1;
+                    }
+                    prefs.edit().putInt("gender", genderNumber).apply();
+
                     intent.setClass(MemberActivity.this, Member2Activity.class);
-                    bundle.putString("UserAccount",etUser.getText().toString().trim());
-                    bundle.putString("UserPassword",etPassword.getText().toString().trim());
-                    bundle.putString("Birthday",etBirthday.getText().toString().trim());
-                    bundle.putString("Gender",etGender.getText().toString().trim());
-//                    bundle.putByte("Portrait",????);  //圖片 Byte[]
-                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
             }
@@ -101,19 +118,19 @@ public class MemberActivity extends AppCompatActivity implements
 
                 // 设置按钮监听
                 //照相
-                Button btn_take_photo =  mView.findViewById(R.id.btn_take_photo);
+                Button btn_take_photo = mView.findViewById(R.id.btn_take_photo);
                 btn_take_photo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        file = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        file = MemberActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
                         file = new File(file, "picture.jpg");
-                        Uri contentUri = FileProvider.getUriForFile(
-                                MemberActivity.this, getPackageName() + ".provider", file);
+                        contentUri = FileProvider.getUriForFile(
+                                MemberActivity.this,
+                                getPackageName() + ".provider", file);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
                         if (isIntentAvailable(MemberActivity.this, intent)) {
-                            setResult(11);
-                            startActivityForResult(intent, 1);
+                            startActivityForResult(intent, REQ_TAKE_PICTURE);
                         } else {
                             Toast.makeText(MemberActivity.this,
                                     R.string.msg_NoCameraAppsFound,
@@ -123,14 +140,13 @@ public class MemberActivity extends AppCompatActivity implements
                     }
                 });
                 //相簿
-                Button btn_pick_photo =  mView.findViewById(R.id.btn_pick_photo);
+                Button btn_pick_photo = mView.findViewById(R.id.btn_pick_photo);
                 btn_pick_photo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Intent.ACTION_PICK,
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        setResult(11);
-                        startActivityForResult(intent, 2);
+                        startActivityForResult(intent, REQ_PICK_IMAGE);
                         popWindow.dismiss();
                     }
                 });
@@ -272,29 +288,62 @@ public class MemberActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (resultCode == 11) {
-            int newSize = 512;
+        if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case 1:
-                    Bitmap srcPicture = BitmapFactory.decodeFile(file.getPath());
-                    Bitmap downsizedPicture = Common.downSize(srcPicture, newSize);
-                    cvRegisteredImage.setImageBitmap(downsizedPicture);
+                case REQ_TAKE_PICTURE:
+                    crop(contentUri);
                     break;
-
-                case 2:
+                case REQ_PICK_IMAGE:
                     Uri uri = intent.getData();
-                    String[] columns = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = getContentResolver().query(uri, columns,
-                            null, null, null);
-                    if (cursor != null && cursor.moveToFirst()) {
-                        String imagePath = cursor.getString(0);
-                        cursor.close();
-                        Bitmap srcImage = BitmapFactory.decodeFile(imagePath);
-                        Bitmap downsizedImage = Common.downSize(srcImage, newSize);
-                        cvRegisteredImage.setImageBitmap(downsizedImage);
+                    crop(uri);
+                    break;
+                case REQ_CROP_PICTURE:
+                    try {
+                        Bitmap picture = BitmapFactory.decodeStream(
+                                MemberActivity.this.getContentResolver().openInputStream(croppedImageUri));
+                        cvRegisteredImage.setImageBitmap(picture);
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                        regImage = out.toByteArray();
+                    } catch (FileNotFoundException e) {
+                        e.getMessage();
                     }
                     break;
             }
+        }
+    }
+
+    private void crop(Uri sourceImageUri) {
+        File file = MemberActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        file = new File(file, "picture_cropped.jpg");
+        croppedImageUri = Uri.fromFile(file);
+        // take care of exceptions
+        try {
+            // call the standard crop action intent (the user device may not support it)
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            // the recipient of this Intent can read soruceImageUri's data
+            cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            // set image source Uri and type
+            cropIntent.setDataAndType(sourceImageUri, "image/*");
+            // send crop message
+            cropIntent.putExtra("crop", "true");
+            // aspect ratio of the cropped area, 0 means user define
+            cropIntent.putExtra("aspectX", 0); // this sets the max width
+            cropIntent.putExtra("aspectY", 0); // this sets the max height
+            // output with and height, 0 keeps original size
+            cropIntent.putExtra("outputX", 0);
+            cropIntent.putExtra("outputY", 0);
+            // whether keep original aspect ratio
+            cropIntent.putExtra("scale", true);
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, croppedImageUri);
+            // whether return data by the intent
+            cropIntent.putExtra("return-data", true);
+            // start the activity - we handle returning in onActivityResult
+            startActivityForResult(cropIntent, REQ_CROP_PICTURE);
+        }
+        // respond to users whose devices do not support the crop action
+        catch (ActivityNotFoundException anfe) {
+            Common.showToast(MemberActivity.this, "This device doesn't support the crop action!");
         }
     }
 }
