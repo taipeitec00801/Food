@@ -1,6 +1,7 @@
 package com.example.food.Settings;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -31,8 +32,12 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
     private Button outBt, comeBt;
     private Button btSetBy;
     private SpinKitView skvSetBy;
+    private SharedPreferences prefs;
+    private int colorCvRip, colorCvNoRip, colorTvRip, colorTvNoRip;
+    private int prefNum;
+    private int[] yesOrNo = new int[10];
     private String newPreference;
-    private int colorRip, colorNoRip;
+//    private boolean yesOrNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,19 +45,24 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_preferences_settings);
 
         initContent();
-        skvSetBy = findViewById(R.id.pref_spinKit);
-        outBt = findViewById(R.id.pref_bt);
-        comeBt = findViewById(R.id.pref_comebt);
+        findById();
+
         //儲存按鈕
-        btSetBy = findViewById(R.id.bt_set_by);
         btSetBy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                skvSetBy.setVisibility(View.VISIBLE);
+                //Demo
+                for (int i = 0; i< yesOrNo.length;i++) {
+                    Log.e("測試----" + i,String.valueOf(yesOrNo[i]));
+                }
+
+                newPreference = String.valueOf(yesOrNo);
+                prefs.edit().putString("preference", newPreference).apply();
+
+
             }
         });
 
-        recyclerView = findViewById(R.id.rvSetting_pref);
         recyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
@@ -61,10 +71,20 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         recyclerView.setAdapter(new prefAdapter(PreferencesSettingsActivity.this, prefList));
     }
 
+    private void findById() {
+        skvSetBy = findViewById(R.id.pref_spinKit);
+        outBt = findViewById(R.id.pref_bt);
+        comeBt = findViewById(R.id.pref_comebt);
+        btSetBy = findViewById(R.id.bt_set_by);
+        recyclerView = findViewById(R.id.rvSetting_pref);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-//        outBt.setEnabled(true);
+        outBt.setEnabled(true);
+        newPreference = prefs.getString("preference", "0,0,0,0,0,0,0,0,0,0");
     }
 
     private class prefAdapter extends
@@ -84,7 +104,6 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             CardView cvLeft, cvRight;
             CardView cvMoveL, cvMoveR;
             MaterialRippleLayout mrlL, mrlR;
-            CardView cvrL, cvrR;
 
             PrefViewHolder(View itemView) {
                 super(itemView);
@@ -125,8 +144,10 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final PrefViewHolder viewHolder, final int position) {
             final Sort prefSet = prefList.get(position);        //position = index
-            colorRip = 0xd02e2a2a;
-            colorNoRip = 0xfffbd786;
+            colorCvRip = 0xd02e2a2a;
+            colorCvNoRip = 0xfffbd786;
+            colorTvRip = 0xaa444444;
+            colorTvNoRip = 0xaaffffff;
 
             viewHolder.ivImageLeft.setImageResource(prefSet.getIvLsrc());
             viewHolder.tvNameLeft.setText(String.valueOf(prefSet.getTvLname()));
@@ -137,50 +158,55 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             viewHolder.mrlL.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    outBt.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String isS = String.valueOf(viewHolder.cvLeft.getCardBackgroundColor());
-                            int isR = Integer.parseInt(isS);
-                            Log.e("CardBackgroundColor", isS);
-                            if (isR == colorRip) {
+                    if (outBt.isEnabled()) {
+                        String number = String.valueOf(position);
+                        outBt.setText(number);
+                        outBt.performClick();
 
-                            } else if (isR == colorNoRip) {
-
-                            }
-//                    if (outBt.isEnabled()) {
-//                        String number = String.valueOf(position);
-//                        outBt.setText(number);
-////                        comeBt.setEnabled(true);
-////                        outBt.performClick();
-//                        viewHolder.cvLeft.setCardBackgroundColor(colorRip);
-//                        outBt.setEnabled(false);
-//                    } else {
-//                        viewHolder.cvLeft.setCardBackgroundColor(colorNoRip);
-//                        outBt.setEnabled(true);
-//                    }
+                        prefNum = 2 * position;
+                        //判斷是點擊狀態 1=已點擊 0=未點擊
+                        if (yesOrNo[prefNum] == 0) {
+                            //被點擊
+                            viewHolder.cvLeft.setCardBackgroundColor(colorCvRip);
+                            viewHolder.tvNameLeft.setBackgroundColor(colorTvRip);
+                            yesOrNo[prefNum] = 1;
+                        } else if (yesOrNo[prefNum] == 1) {
+                            //取消
+                            viewHolder.cvLeft.setCardBackgroundColor(colorCvNoRip);
+                            viewHolder.tvNameLeft.setBackgroundColor(colorTvNoRip);
+                            yesOrNo[prefNum] = 0;
                         }
-                    });
+                    }
                 }
             });
 
             viewHolder.mrlR.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(final View v) {
+                public void onClick(View v) {
                     if (outBt.isEnabled()) {
                         String number = String.valueOf(position);
                         outBt.setText(number);
-//                        comeBt.setEnabled(false);
-//                        outBt.performClick();
-                        viewHolder.cvRight.setCardBackgroundColor(colorRip);
-                    } else {
-                        viewHolder.cvRight.setCardBackgroundColor(colorNoRip);
+                        outBt.performClick();
+
+                        prefNum = (2 * position) + 1;
+                        //判斷是點擊狀態 1=已點擊 0=未點擊
+                        if (yesOrNo[prefNum] == 0) {
+                            //被點擊
+                            viewHolder.cvRight.setCardBackgroundColor(colorCvRip);
+                            viewHolder.tvNameRight.setBackgroundColor(colorTvRip);
+                            yesOrNo[prefNum] = 1;
+                        } else if (yesOrNo[prefNum] == 1) {
+                            //取消
+                            viewHolder.cvRight.setCardBackgroundColor(colorCvNoRip);
+                            viewHolder.tvNameRight.setBackgroundColor(colorTvNoRip);
+                            yesOrNo[prefNum] = 0;
+                        }
                     }
                 }
             });
 
             //設定每個item動畫延遲時間，position超過3，不使用動畫。
-            if (position <= 3) {
+            if (position <= 4) {
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(PreferencesSettingsActivity.this, R.anim.sort_item_down);
                 am.setStartOffset(aniTime);
