@@ -1,7 +1,7 @@
 package com.example.food.Main;
 
 public class Food {
-    private String shop;
+    private int id;
     private int image;
     private String name;
 
@@ -9,9 +9,9 @@ public class Food {
         super();
     }
 
-    public Food(String shop, int image, String name) {
+    public Food(int id, int image, String name) {
         super();
-        this.shop = shop;
+        this.id = id;
         this.image = image;
         this.name = name;
     }
@@ -32,9 +32,11 @@ public class Food {
         this.name = name;
     }
 
-    public String getshop() {return shop;}
+    public int getId() {
+        return id;
+    }
 
-    public void setShop(String shop) {
-        this.shop = shop;
+    public void setId(int id) {
+        this.id = id;
     }
 }
