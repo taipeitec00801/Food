@@ -154,18 +154,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
         int currentVersion = info.versionCode;
-        SharedPreferences prefs = getSharedPreferences("MyTheme", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         int lastVersion = prefs.getInt("versionKey", 0);
         //如果當前版本大於上次版本，該版本屬於第一次啟動
         if (currentVersion > lastVersion) {
             prefs.edit().putInt("theme", 0).apply();
+            // 初始化 會員
+            //是否登入 預設 false
+            prefs.edit().putBoolean("login", false).apply();
+            //  會員資料
+            prefs.edit().putInt("memberId", 0).apply();
+            prefs.edit().putString("userAccount", "").apply();
+            prefs.edit().putString("userPassword", "").apply();
+            prefs.edit().putString("nickname", "").apply();
+            prefs.edit().putString("birthday", "").apply();
+            // 預設會員性別 為2 查無資料
+            prefs.edit().putInt("gender", 2).apply();
+            prefs.edit().putInt("userRank", 1).apply();
+            prefs.edit().putString("preference", "0,0,0,0,0,0,0,0,0,0").apply();
+            prefs.edit().putString("collection", "").apply();
+            prefs.edit().putString("userGift", "").apply();
+            prefs.edit().putString("userFriends", "").apply();
 
             //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
             prefs.edit().putInt("versionKey", currentVersion).apply();
         } else {
             firstTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            //  讀取 SharedPreferences 中的會員資料
 
-            //  讀取 SharedPreferences 中的模式
+            //  讀取 SharedPreferences 中的主題模式
             int myTheme = prefs.getInt("theme", 0);
             if (firstTheme == 32 || myTheme == 2) {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
