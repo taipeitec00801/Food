@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
 
     }
-    //首頁icon跳頁轉換
+    //首頁icon跳頁
     private void changepage() {
         imgfork = findViewById(R.id.imgfork);
         imgfork.setOnClickListener(new View.OnClickListener() {
