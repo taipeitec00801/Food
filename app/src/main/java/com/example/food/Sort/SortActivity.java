@@ -17,6 +17,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,6 +105,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         public void run() {
             //這裡放執行緒要執行的程式。
             int i = Integer.parseInt(outBt.getText().toString());
+
             portalToSortAs(getSortList().get(i), comeBt.isEnabled());
         }
     };

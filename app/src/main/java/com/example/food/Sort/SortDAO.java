@@ -45,45 +45,6 @@ public class SortDAO {
             String jsonOut = jsonObject.toString();
             spotGetAllTask = new CommonTask(url, jsonOut);
 
-            //CommonTask會將傳入的jsonOut字串送給伺服器
-            //而伺服器判斷字串對應的方法後，對資料庫做出方法內的動作。
-            //伺服器會找到在伺服器內部的findSortByRes方法，傳入參數sortNumbers，
-            //以下為寫在伺服器的方法
-            //public List<Sort> findSortByRes(int sortNumbers) {
-            //		String sql = "SELECT SORTNAME,LIKENUMBER FROM RESTAURANT WHERE SORTRES=?;";
-            //		Connection conn = null;
-            //		PreparedStatement ps = null;
-            //		List<Sort> sorts = new ArrayList<Sort>();
-            //		try {
-            //			conn = DriverManager.getConnection(Common.URL, Common.USER,
-            //					Common.PASSWORD);
-            //			ps = conn.prepareStatement(sql);
-            //			ps.setInt(1, sortNumbers);
-            //			ResultSet rs = ps.executeQuery();
-            //			if (rs.next()) {
-            //       /*********將查詢結果取出後寫入Sort物件在加進List<Sort>中回傳。********/
-            //				String sortName = rs.getString(1);
-            //				int likeNumber = rs.getInt(2);
-            //				Sort sort = new Sort(sortNumbers,sortName,likeNumber);
-            //				sorts.add(sort);
-            //			}
-            //		} catch (SQLException e) {
-            //			e.printStackTrace();
-            //		} finally {
-            //			try {
-            //				if (ps != null) {
-            //					ps.close();
-            //				}
-            //				if (conn != null) {
-            //					conn.close();
-            //				}
-            //			} catch (SQLException e) {
-            //				e.printStackTrace();
-            //			}
-            //		}
-            //		return sorts;
-            //	}
-            //}
             try {
                 //用字串儲存伺服器回應的json格式字串。
 //                spotGetAllTask.get(500, TimeUnit.MILLISECONDS);
