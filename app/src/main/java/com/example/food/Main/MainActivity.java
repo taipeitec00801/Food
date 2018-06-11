@@ -382,10 +382,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onClick(View v) {
                     ImageView imageView = new ImageView(context);
                     imageView.setImageResource(food.getImage());
-                    Toast toast = new Toast(context);
-                    toast.setView(imageView);
-                    toast.setDuration(Toast.LENGTH_SHORT);
-                    toast.show();
                 }
             });
         }
