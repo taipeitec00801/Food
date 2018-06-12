@@ -47,7 +47,7 @@ public class Member implements Serializable {
         this.userFriends = userFriends;
     }
 
-    // 送出 與 接收server給的會員資料 修改會員資料用
+    // 修改會員資料用
     public Member(String userAccount, String userPassword, String nickName,
                   String birthday, int gender) {
         this.userAccount = userAccount;
@@ -60,28 +60,6 @@ public class Member implements Serializable {
     // 傳 userAccount 來搜尋
     public Member(String userAccount) {
         this.userAccount = userAccount;
-    }
-
-    /*   n用途編號  1=修改喜好  2=新增或移除收藏用
-                   3=禮物回饋  4=追蹤好友  */
-    public Member(int n, String userAccount, String string) {
-        this.userAccount = userAccount;
-        switch (n) {
-            case 1:
-                this.preference = string;
-                break;
-            case 2:
-                this.collection = string;
-                break;
-            case 3:
-                this.userGift = string;
-                break;
-            case 4:
-                this.userFriends = string;
-                break;
-            default:
-                break;
-        }
     }
 
     //-------getter--setter---------------------------------------------------------------

@@ -3,13 +3,14 @@ package com.example.food.Settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
 import com.example.food.Sort.Sort;
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -29,15 +33,18 @@ import java.util.List;
 
 public class PreferencesSettingsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private Button outBt, comeBt;
+    private Button outBt;
     private Button btSetBy;
     private SpinKitView skvSetBy;
     private SharedPreferences prefs;
     private int colorCvRip, colorCvNoRip, colorTvRip, colorTvNoRip;
     private int prefNum;
-    private int[] yesOrNo = new int[10];
-    private String newPreference;
-//    private boolean yesOrNo;
+    private int[] nowPreference = new int[10];
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
+
+    // 測試用 testUserAccount
+    private static final String testUserAccount = "hikarumiyasaki@gmail.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +58,11 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         btSetBy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Demo
-                for (int i = 0; i< yesOrNo.length;i++) {
-                    Log.e("測試----" + i,String.valueOf(yesOrNo[i]));
-                }
-
-                newPreference = String.valueOf(yesOrNo);
-                prefs.edit().putString("preference", newPreference).apply();
-
-
+                skvSetBy.setVisibility(View.VISIBLE);
+                mThread = new HandlerThread("pp");
+                mThread.start();
+                mThreadHandler = new Handler(mThread.getLooper());
+                mThreadHandler.post(runnable);
             }
         });
 
@@ -71,20 +74,71 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         recyclerView.setAdapter(new prefAdapter(PreferencesSettingsActivity.this, prefList));
     }
 
+
+    //這裡放執行緒要執行的程式。
+    private Runnable runnable = new Runnable() {
+
+        public void run() {
+            //編寫Preference 內容
+            String newPreference = "";
+            for (int i = 0; i < nowPreference.length; i++) {
+                if (nowPreference[i] == 1) {  newPreference += i + ",";  }
+            }
+            newPreference = newPreference.substring(0, newPreference.length()-1);
+
+            prefs.edit().putString("preference", newPreference).apply();
+            String userAccount = prefs.getString("userAccount", "");
+            MemberDAO memberDAO = new MemberDAO(PreferencesSettingsActivity.this);
+//            boolean updateResult = memberDAO.updatePreference(userAccount, newPreference);
+
+            //用假帳號測試
+            boolean updateResult = memberDAO.updatePreference(testUserAccount, newPreference);
+            comfirmDialog(updateResult);
+        }
+    };
+
+    private void comfirmDialog(boolean updateResult) {
+        String result = "更新失敗";
+        if (updateResult) {
+            result = "更新成功";
+        }
+        new MaterialDialog.Builder(PreferencesSettingsActivity.this)
+                .title(R.string.textPreferencesSettings)
+                .content(result)
+                .positiveText(R.string.textIKnow)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        skvSetBy.setVisibility(View.INVISIBLE);
+                        PreferencesSettingsActivity.this.finish();
+                    }
+                }).show();
+    }
+
     private void findById() {
         skvSetBy = findViewById(R.id.pref_spinKit);
         outBt = findViewById(R.id.pref_bt);
-        comeBt = findViewById(R.id.pref_comebt);
         btSetBy = findViewById(R.id.bt_set_by);
         recyclerView = findViewById(R.id.rvSetting_pref);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //離開時把執行序關掉
+        if (mThreadHandler != null) {
+            mThreadHandler.removeCallbacks(runnable);
+        }
+        if (mThread != null) {
+            mThread.quit();
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         outBt.setEnabled(true);
-        newPreference = prefs.getString("preference", "0,0,0,0,0,0,0,0,0,0");
     }
 
     private class prefAdapter extends
@@ -165,16 +219,16 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
 
                         prefNum = 2 * position;
                         //判斷是點擊狀態 1=已點擊 0=未點擊
-                        if (yesOrNo[prefNum] == 0) {
+                        if (nowPreference[prefNum] == 0) {
                             //被點擊
                             viewHolder.cvLeft.setCardBackgroundColor(colorCvRip);
                             viewHolder.tvNameLeft.setBackgroundColor(colorTvRip);
-                            yesOrNo[prefNum] = 1;
-                        } else if (yesOrNo[prefNum] == 1) {
+                            nowPreference[prefNum] = 1;
+                        } else if (nowPreference[prefNum] == 1) {
                             //取消
                             viewHolder.cvLeft.setCardBackgroundColor(colorCvNoRip);
                             viewHolder.tvNameLeft.setBackgroundColor(colorTvNoRip);
-                            yesOrNo[prefNum] = 0;
+                            nowPreference[prefNum] = 0;
                         }
                     }
                 }
@@ -190,16 +244,16 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
 
                         prefNum = (2 * position) + 1;
                         //判斷是點擊狀態 1=已點擊 0=未點擊
-                        if (yesOrNo[prefNum] == 0) {
+                        if (nowPreference[prefNum] == 0) {
                             //被點擊
                             viewHolder.cvRight.setCardBackgroundColor(colorCvRip);
                             viewHolder.tvNameRight.setBackgroundColor(colorTvRip);
-                            yesOrNo[prefNum] = 1;
-                        } else if (yesOrNo[prefNum] == 1) {
+                            nowPreference[prefNum] = 1;
+                        } else if (nowPreference[prefNum] == 1) {
                             //取消
                             viewHolder.cvRight.setCardBackgroundColor(colorCvNoRip);
                             viewHolder.tvNameRight.setBackgroundColor(colorTvNoRip);
-                            yesOrNo[prefNum] = 0;
+                            nowPreference[prefNum] = 0;
                         }
                     }
                 }

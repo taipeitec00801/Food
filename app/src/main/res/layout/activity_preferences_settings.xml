@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:padding="120dp"
+        android:padding="180dp"
         app:SpinKit_Color="@color/colorWhite"
         android:background="#aa000000"
         android:visibility="invisible"

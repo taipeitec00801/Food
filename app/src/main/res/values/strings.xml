@@ -30,9 +30,10 @@
     <string name="textLogout">登出</string>
     <string name="settingDayNight">夜間模式</string>
     <string name="settingDaytime">日間模式</string>
-    <string name="settingPreferences">偏好種類設定</string>
     <string name="settingUserData">更改個人資料</string>
     <string name="textCleanCache">清除快取</string>
+    <string name="textPreferencesSettings">喜好種類設定</string>
+    <string name="textIKnow">我知道了</string>
 
 
     <string name="textJapaneseStyle">日式</string>
@@ -45,7 +46,6 @@
     <string name="textGuangdongStyle">港式</string>
     <string name="textDrinksDesserts"><![CDATA[飲品 & 甜點]]></string>
     <string name="textIceCream">冰品</string>
-    <string name="textPreferencesSettings">喜好種類設定</string>
     <string name="textSort">分類</string>
     <string name="textAddStore">分享店家</string>
     <string name="textMember">會員</string>
