@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.example.food.Collection.CollectionActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
+import com.example.food.Other.MySharedPreferences;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private int firstTheme;
+    private SharedPreferences prefs;
 
     //首頁主要四個icon
     private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
@@ -148,39 +150,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //  首次 執行App 或是 重開App  的偏好設定
     private void initFirst() {
         PackageInfo info = null;
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         try {
             info = getPackageManager().getPackageInfo("com.example.food", 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         int currentVersion = info.versionCode;
-        SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+
         int lastVersion = prefs.getInt("versionKey", 0);
         //如果當前版本大於上次版本，該版本屬於第一次啟動
         if (currentVersion > lastVersion) {
             prefs.edit().putInt("theme", 0).apply();
             // 初始化 會員
-            //是否登入 預設 false
-            prefs.edit().putBoolean("login", false).apply();
-            //  會員資料
-            prefs.edit().putInt("memberId", 0).apply();
-            prefs.edit().putString("userAccount", "").apply();
-            prefs.edit().putString("userPassword", "").apply();
-            prefs.edit().putString("nickname", "").apply();
-            prefs.edit().putString("birthday", "").apply();
-            // 預設會員性別 為2 查無資料
-            prefs.edit().putInt("gender", 2).apply();
-            prefs.edit().putInt("userRank", 1).apply();
-            prefs.edit().putString("preference", "0,0,0,0,0,0,0,0,0,0").apply();
-            prefs.edit().putString("collection", "").apply();
-            prefs.edit().putString("userGift", "").apply();
-            prefs.edit().putString("userFriends", "").apply();
+            MySharedPreferences.initSharedPreferences(prefs);
 
             //將當前版本寫入preference中，則下次啟動的時候，判断不再是首次啟動
             prefs.edit().putInt("versionKey", currentVersion).apply();
         } else {
             firstTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
             //  讀取 SharedPreferences 中的會員資料
+                //...
 
             //  讀取 SharedPreferences 中的主題模式
             int myTheme = prefs.getInt("theme", 0);

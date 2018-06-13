@@ -87,17 +87,17 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             newPreference = newPreference.substring(0, newPreference.length()-1);
 
             prefs.edit().putString("preference", newPreference).apply();
-            String userAccount = prefs.getString("userAccount", "");
             MemberDAO memberDAO = new MemberDAO(PreferencesSettingsActivity.this);
+            String userAccount = prefs.getString("userAccount", "");
 //            boolean updateResult = memberDAO.updatePreference(userAccount, newPreference);
 
             //用假帳號測試
             boolean updateResult = memberDAO.updatePreference(testUserAccount, newPreference);
-            comfirmDialog(updateResult);
+            checkDialog(updateResult);
         }
     };
 
-    private void comfirmDialog(boolean updateResult) {
+    private void checkDialog(boolean updateResult) {
         String result = "更新失敗";
         if (updateResult) {
             result = "更新成功";
