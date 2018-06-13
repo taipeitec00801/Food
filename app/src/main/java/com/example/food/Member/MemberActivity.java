@@ -76,28 +76,28 @@ public class MemberActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
-                if (inputDataCheck()) {
-                    //紀錄會員資料
-                    SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-                    prefs.edit().putString("userAccount", etUser.getText().toString().trim()).apply();
-                    prefs.edit().putString("userPassword", etPassword.getText().toString().trim()).apply();
-                    prefs.edit().putString("birthday", etBirthday.getText().toString().trim()).apply();
-                    //預設 暱稱為帳號 @ 前字串
-                    int mos = etUser.getText().toString().trim().indexOf("@");
-                    String defaultNickName = etUser.getText().toString().trim().substring(0, mos);
-                    prefs.edit().putString("nickName", defaultNickName).apply();
-                    //判斷性別 並存入性別編號
-                    int genderNumber = 2;
-                    if (etGender.getText().toString().trim().equals("女姓")) {
-                        genderNumber = 0;
-                    } else if (etGender.getText().toString().trim().equals("男姓")) {
-                        genderNumber = 1;
-                    }
-                    prefs.edit().putInt("gender", genderNumber).apply();
+//                if (inputDataCheck()) {
+//                    //紀錄會員資料
+//                    SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+//                    prefs.edit().putString("userAccount", etUser.getText().toString().trim()).apply();
+//                    prefs.edit().putString("userPassword", etPassword.getText().toString().trim()).apply();
+//                    prefs.edit().putString("birthday", etBirthday.getText().toString().trim()).apply();
+//                    //預設 暱稱為帳號 @ 前字串
+//                    int mos = etUser.getText().toString().trim().indexOf("@");
+//                    String defaultNickName = etUser.getText().toString().trim().substring(0, mos);
+//                    prefs.edit().putString("nickName", defaultNickName).apply();
+//                    //判斷性別 並存入性別編號
+//                    int genderNumber = 2;
+//                    if (etGender.getText().toString().trim().equals("女姓")) {
+//                        genderNumber = 0;
+//                    } else if (etGender.getText().toString().trim().equals("男姓")) {
+//                        genderNumber = 1;
+//                    }
+//                    prefs.edit().putInt("gender", genderNumber).apply();
 
                     intent.setClass(MemberActivity.this, Member2Activity.class);
                     startActivity(intent);
-                }
+//                }
             }
         });
 

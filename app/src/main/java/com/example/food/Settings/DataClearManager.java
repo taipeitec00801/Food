@@ -1,4 +1,4 @@
-package com.example.food.Other;
+package com.example.food.Settings;
 
 import android.content.Context;
 import android.icu.math.BigDecimal;

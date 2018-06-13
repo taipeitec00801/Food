@@ -16,15 +16,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
-import com.example.food.Other.DataClearManager;
+import com.example.food.Other.MySharedPreferences;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -39,6 +40,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private Toolbar settingsToolbar;
     private DrawerLayout settingsDrawerLayout;
+    private SharedPreferences prefs;
+    private boolean isMember;
+    private CardView settingLogout;
     public static boolean cleanCache;
 
     @Override
@@ -46,10 +50,18 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        findById();
         initContent();
         setupNavigationDrawerMenu();
+
         //  點選不同的 CardView
         selectCardView();
+    }
+
+    private void findById() {
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+        settingsToolbar = findViewById(R.id.settingsToolbar);
+        settingLogout = findViewById(R.id.settingLogout);
     }
 
     private void selectCardView() {
@@ -58,6 +70,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cvUerInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                //執行 登入狀態判斷
+//                isLogin(UserInformationActivity.class);
+
                 Intent intent = new Intent();
                 intent.setClass(SettingsActivity.this, UserInformationActivity.class);
                 startActivity(intent);
@@ -65,30 +80,31 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         });
         /* 喜好種類設定 */
         CardView cvSettingsPreferences = findViewById(R.id.settingsPreferences);
-
         cvSettingsPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                //執行 登入狀態判斷
+//                isLogin(PreferencesSettingsActivity.class);
+
                 Intent intent = new Intent();
                 intent.setClass(SettingsActivity.this, PreferencesSettingsActivity.class);
                 startActivity(intent);
             }
         });
+
         /* 日夜間模式 */
         CardView cvChangeDayTimeOrNight = findViewById(R.id.changeDayTimeOrNight);
         cvChangeDayTimeOrNight.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                SharedPreferences pref = getSharedPreferences("MyApp", MODE_PRIVATE);
                 int myTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-
                 if (myTheme == Configuration.UI_MODE_NIGHT_YES) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
-                    pref.edit().putInt("theme", MODE_NIGHT_NO).apply();
+                    prefs.edit().putInt("theme", MODE_NIGHT_NO).apply();
                 } else if (myTheme == Configuration.UI_MODE_NIGHT_NO) {
                     AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
-                    pref.edit().putInt("theme", MODE_NIGHT_YES).apply();
+                    prefs.edit().putInt("theme", MODE_NIGHT_YES).apply();
                 }
                 recreate();
             }
@@ -103,19 +119,42 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             }
         });
         /* 登出 */
-        CardView settingLogout = findViewById(R.id.settingLogout);
         settingLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LogoutDialog logoutDialog = new LogoutDialog();
-                logoutDialog.show(getSupportFragmentManager(), "alert");
+
+                new MaterialDialog.Builder(SettingsActivity.this)
+                        .title(R.string.textLogout)
+                        .icon(getDrawable(R.drawable.warn_icon))
+                        .content("你確定要登出嗎？")
+                        .neutralText(R.string.text_btCancel)
+                        .positiveText(R.string.text_btYes)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                //登出  初始化偏好設定中的會員資料
+                                MySharedPreferences.initSharedPreferences(prefs);
+
+                                Intent intent = new Intent();
+                                intent.setClass(SettingsActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                SettingsActivity.this.finish();
+                                startActivity(intent);
+                            }
+                        })
+                        .show();
             }
         });
     }
 
     private void initContent() {
-        settingsToolbar = findViewById(R.id.settingsToolbar);
         settingsToolbar.setTitle(R.string.textSettings);
+
+        // 是否登入
+        isMember = prefs.getBoolean("login", false);
+//        if (isMember) {
+        settingLogout.setVisibility(View.VISIBLE);
+//        }
 
         // 讀取快取大小
         File file = new File(this.getCacheDir().getPath());
@@ -126,6 +165,35 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             e.printStackTrace();
         }
     }
+
+    //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
+    private void isLogin(Class wantToGo) {
+
+        final Intent intent = new Intent();
+
+        if (isMember) {
+            intent.setClass(SettingsActivity.this, wantToGo);
+            startActivity(intent);
+
+        } else {
+            new MaterialDialog.Builder(SettingsActivity.this)
+                    .title(R.string.textPreferencesSettings)
+                    .content("")
+                    .positiveText(R.string.textIKnow)
+                    .neutralText(R.string.textGoTo)
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            intent.setClass(SettingsActivity.this, LoginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            SettingsActivity.this.finish();
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+        }
+    }
+
 
     /* 清除内部 外部 快取 */
     public void cleanCache() {
@@ -232,8 +300,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     .setTitle(R.string.textCleanCache)
                     .setIcon(R.drawable.warn_icon)
                     .setMessage("Do you really want to clear cache?")
-                    .setPositiveButton(R.string.text_btYes,this)
-                    .setNegativeButton(R.string.text_btCancel,this)
+                    .setPositiveButton(R.string.text_btYes, this)
+                    .setNegativeButton(R.string.text_btCancel, this)
                     .create();
         }
 
@@ -251,36 +319,4 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
             }
         }
     }
-
-    //登出 Dialog
-    public static class LogoutDialog extends DialogFragment implements DialogInterface.OnClickListener {
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new android.app.AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.textLogout)
-                    .setIcon(R.drawable.warn_icon)
-                    .setMessage("Do you really want to logout?")
-                    .setPositiveButton(R.string.text_btYes,this)
-                    .setNegativeButton(R.string.text_btCancel,this)
-                    .create();
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    Intent intent = new Intent();
-                    intent.setClass(getActivity(), LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    getActivity().finish();
-                    startActivity(intent);
-                    break;
-                default:
-                    dialog.cancel();
-                    break;
-            }
-        }
-    }
-
 }

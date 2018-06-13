@@ -23,7 +23,6 @@ public class MemberDAO {
     public MemberDAO(Activity inputActivity) {
         this.inputActivity = inputActivity;
         TAG = inputActivity.getClass().getName();
-        imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 2;
     }
 
 
@@ -107,6 +106,20 @@ public class MemberDAO {
         return member;
     }
 
+    public void getPortrait(String userAccount, ImageView imageView) {
+        if (Common.networkConnected(inputActivity)) {
+            String url = Common.URL + "/MemberServlet";
+
+            imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 2;
+
+            memberImageTask = new MemberImageTask(url, userAccount, imageSize, imageView);
+            memberImageTask.execute();
+
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+    }
+
     public Boolean updatePortrait(String userAccount, byte[] portrait) {
         Boolean updateSuccess = false;
         if (Common.networkConnected(inputActivity)) {
@@ -140,7 +153,7 @@ public class MemberDAO {
         return updateSuccess;
     }
 
-    public void updateMemberDate(String userAccount, String userPassword, String nickName,
+    public boolean updateMemberDate(String userAccount, String userPassword, String nickName,
                                  String birthday, int gender) {
         Boolean updateSuccess = false;
         if (Common.networkConnected(inputActivity)) {
@@ -170,13 +183,14 @@ public class MemberDAO {
                 Log.e(TAG, e.toString());
             }
             if (count == 0) {
-                Common.showToast(inputActivity, "Update fail");
+                updateSuccess = false;
             } else {
-                Common.showToast(inputActivity, "Update successfully");
+                updateSuccess = true;
             }
         } else {
             Common.showToast(inputActivity, "no network connection available");
         }
+        return updateSuccess;
     }
 
     public boolean updatePreference(String userAccount, String preference) {
