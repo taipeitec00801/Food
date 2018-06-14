@@ -56,4 +56,6 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
     /*rollviewpager*/
     implementation 'com.jude:rollviewpager:1.2.9'
+    /* lottieAnimation */
+    implementation 'com.airbnb.android:lottie:2.5.1'
 }

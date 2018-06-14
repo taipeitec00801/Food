@@ -14,9 +14,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PagerSnapHelper;
@@ -33,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.food.Comment.CommentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.google.android.gms.common.ConnectionResult;
@@ -59,18 +63,20 @@ import com.google.maps.android.ui.IconGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoadedCallback, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private GoogleMap mgoogleMap; //儲存地圖資訊
     private LocationManager mlocationManager;//LocationManager物件
     private Marker Store_Marker,lastClicked,defaultMarker;
-    private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private List<StoreInfo> storeInfoList;
     private double latitude, longitude;
     private GoogleApiClient mgoogleApiClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ProgressDialog mprogressDialog;
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
     private int overallXScrol = 0;
     private int scrollPosition = 0;
     private LatLng markerPosition;
@@ -89,13 +95,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (googleServicesAvailable()) {
+            System.out.println("Start APP!!!!!!!!!!!!");
             setContentView(R.layout.activity_map);
+            System.out.println("Load UI Complete!!!!!!!!!!!!");
+            mThread = new HandlerThread("aa");
+            mThread.start();
+            mThreadHandler = new Handler(mThread.getLooper());
+            mThreadHandler.post(r1);
+            mprogressDialog = new ProgressDialog(MapActivity.this);
+            mprogressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mprogressDialog.setCancelable(false);
+            mprogressDialog.setCanceledOnTouchOutside(false);
+            mprogressDialog.show();
             initMap();
+
+            /*  接收Search結果 並執行
+                        locationToMarker(String StoreAddress)*/
+        }
+    }
+
+    private Runnable r1 = new Runnable() {
+        public void run() {
+            //這裡放執行緒要執行的程式。
             handViews();
             Toolbar mtoolbar = findViewById(R.id.map_toolbar);
             mtoolbar.setTitle(getString(R.string.textMap));
             setSupportActionBar(mtoolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
             //SearchIcon點擊跳至搜尋頁
             mtoolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
@@ -105,13 +131,44 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             Intent intent = new Intent();
                             intent.setClass(MapActivity.this, SearchActivity.class);
                             startActivity(intent);
+                        case android.R.id.home:
+                            finish();
                     }
                     return false;
                 }
             });
-            /*  接收Search結果 並執行
-                        locationToMarker(String StoreAddress)*/
         }
+    };
+
+    @Override
+    public void onMapLoaded() {
+        //取得位置
+        getDeviceLocation();
+        //產生店家Marker
+        makeMarkers();
+        //Init Markers
+        mprogressDialog.dismiss();
+        recyclerView = findViewById(R.id.map_recycleView);
+        recyclerView.setVisibility(View.VISIBLE);
+
+    }
+
+    public void animateIntent(View view) {
+       // Toast.makeText(MapActivity.this,"Click",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MapActivity.this,CommentActivity.class);
+        String transitionName = getString(R.string.map_transition_string);
+        View viewStart = findViewById(R.id.map_cardView);
+//        ActivityOptionsCompat options =
+//                ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+//                        viewStart,   // Starting view
+//                        transitionName    // The String
+//                );
+//        //Start the Intent
+//        ActivityCompat.startActivity(this, intent, options.toBundle());
+        ActivityOptionsCompat option = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(MapActivity.this, viewStart,transitionName );
+
+        startActivity(intent, option.toBundle());
     }
 
     private void handViews() {
@@ -182,16 +239,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             holder.imageView.setImageResource(storeInfo.getStoreImg());
             holder.tvName.setText(storeInfo.getStoreName());
             holder.tvinfo.setText(storeInfo.getStoreAddress()+", id is :"+storeInfo.getStoreID());
-            holder.itemView.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                  send Data to 店家評價頁面
+//            holder.itemView.setOnClickListener( new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+////                  send Data to 店家評價頁面
 //                    Intent intent = new Intent();
 //                    intent.setClass(MapActivity.this, CommentActivity.class);
-//                    startActivity(intent);
+//                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MapActivity.this,holder.imageView, "StoreImg");
+//                    startActivity(intent,options.toBundle());
 //                    MapActivity.this.finish();
-                }
-            });
+//                    Toast.makeText(MapActivity.this,""+ViewCompat.getTransitionName(holder.imageView),Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
 
         @Override
@@ -203,7 +262,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fmMap);
         mapFragment.getMapAsync(MapActivity.this);
-      //  Toast.makeText(MapActivity.this,"Map Ready!",Toast.LENGTH_SHORT).show();
+
     }
 
     //check googleServicesAvailable
@@ -261,6 +320,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mgoogleMap = googleMap;
+        mgoogleMap.setOnMapLoadedCallback(this);
         mlocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //判斷GPS或WIFI是否開啟
         boolean isGPSEnable = mlocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -274,14 +334,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
         mgoogleMap.setMyLocationEnabled(true);
-        getDeviceLocation();
         mgoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        //Init Markers
-        makeMarkers();
         //MakerClick(CardView ScrollToPosition)
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -291,15 +348,15 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 String markerId = marker.getId();
                 String pos[] = markerId.split("m");
                 int markert = Integer.parseInt(pos[1]);
-                int selectMarker = -1;
-                LatLng changeposition = null;
+              //  int selectMarker = -1;
+              //  LatLng changeposition = null;
                 if(markert >= storeInfoList.size()){
                     // Do Nothing
                 } else {
-                    //marker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
                     recyclerView.smoothScrollToPosition(markert);
                     recyclePosition(markert,defaultMarker);
                 }
+
                 return true;
             }
         });
@@ -325,8 +382,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(10000);
         //Ask Permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(MapActivity.this,"請准許使用位置",Toast.LENGTH_SHORT).show();
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mgoogleApiClient, mLocationRequest, this);
     }
@@ -386,9 +446,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // inflate custom_marker
         LayoutInflater inflater = (LayoutInflater) MapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View markerview = inflater.inflate(R.layout.custom_marker,null);
-        BitmapDrawable bitmapdraw = new BitmapDrawable(getResources(),smallMarker());
         listid = markerview.findViewById(R.id.listid);
-        Bitmap smallMarker = smallMarker();
+        selectMarker = markerview.findViewById(R.id.MarkerIcon);
         //MapMarker
         for(int i=0;i<markers.size();i++) {
                 String address = markers.get(i).getStoreAddress();
@@ -398,16 +457,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 iconFactory.setContentView(markerview);
                 iconFactory.setBackground(null);
                 Store_Marker = mgoogleMap.addMarker(new MarkerOptions()
-                   //     .position(new LatLng(markers.get(i).getLatitude(),markers.get(i).getLongitude()))
                         .position(position)
                         .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon())));
 
         }
+        String id = String.valueOf(markers.get(0).getStoreID()+1); //店家ID
+        listid.setText(id);
+        //selectMarker = markerview.findViewById(R.id.MarkerIcon);
+        selectMarker.setImageResource(R.drawable.map_maker_item);
+        iconFactory.setContentView(markerview);
+        //default_marker
         defaultMarker = mgoogleMap.addMarker(new MarkerOptions()
                 //.position(new LatLng(markers.get(0).getLatitude(),markers.get(0).getLongitude()))
                 .position(storeAddresstoLatlng(markers.get(0).getStoreAddress()))
                 .zIndex(1.0f)
-                .icon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker())));
+                .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon())));
     }
 
     //Custom Marker
@@ -421,38 +485,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     //Custom Select Marker
-    private Bitmap SelectsmallMarker() {
-        int height = 80;
-        int width = 80;
-        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_maker_item);
-        Bitmap b = bitmapdraw.getBitmap();
-        Bitmap SelectsmallMarker = Bitmap.createScaledBitmap(b,width,height,false);
-        return SelectsmallMarker;
-    }
-    private void selectMarker(int position) {
-        iconFactory = new IconGenerator(MapActivity.this);
-        LayoutInflater inflater = (LayoutInflater) MapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View markerview = inflater.inflate(R.layout.custom_marker,null);
-        selectMarker = markerview.findViewById(R.id.MarkerIcon);
-        int stoerId = Integer.parseInt(String.valueOf(Store_Marker.getId()));
-
-
-    }
+//    private Bitmap SelectsmallMarker() {
+//        int height = 80;
+//        int width = 80;
+//        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.map_maker_item);
+//        Bitmap b = bitmapdraw.getBitmap();
+//        Bitmap SelectsmallMarker = Bitmap.createScaledBitmap(b,width,height,false);
+//        return SelectsmallMarker;
+//    }
 
     //顯示Select Markers
     private void recyclePosition(int position,Marker marker){
          iconFactory = new IconGenerator(MapActivity.this);
-         iconFactory.setBackground(MapActivity.this.getResources().getDrawable(R.drawable.map_marker));
+         LayoutInflater inflater = (LayoutInflater) MapActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+         View markerview = inflater.inflate(R.layout.custom_marker,null);
+         listid = markerview.findViewById(R.id.listid);
+         selectMarker = markerview.findViewById(R.id.MarkerIcon);
+         String id = String.valueOf(position+1); //店家ID
+         listid.setText(id);
          defaultMarker = marker;
          scrollPosition = position;
-        // markerPosition  = new LatLng(storeInfoList.get(scrollPosition).getLatitude(),storeInfoList.get(scrollPosition).getLongitude());
+         selectMarker.setImageResource(R.drawable.map_maker_item);
          markerPosition = storeAddresstoLatlng(storeInfoList.get(scrollPosition).getStoreAddress());
          defaultMarker.setPosition(markerPosition);
-         defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
-         if(lastClicked != null) {
+         iconFactory.setContentView(markerview);
+         iconFactory.setBackground(null);
+         defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon()));
+          if(lastClicked != null) {
              lastClicked.setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker()));
          }
-         defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(SelectsmallMarker()));
+         defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon()));
          lastClicked = defaultMarker;
     }
 

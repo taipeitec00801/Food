@@ -6,7 +6,9 @@
     android:padding="6dp"
     android:layout_marginBottom="6dp"
     android:id="@+id/map_cardView"
+    android:onClick="animateIntent"
     app:cardCornerRadius="12dp"
+    android:transitionName="@string/map_transition_string"
     app:cardElevation="6dp">
 
     <LinearLayout
@@ -20,6 +22,7 @@
             android:layout_width="150dp"
             android:layout_height="match_parent"
             android:paddingLeft="5dp"
+            android:transitionName="@string/map_transition_string"
             android:scaleType="centerCrop"
             android:src="@drawable/drinks_and_desserts"/>
 
