@@ -12,8 +12,8 @@
 
     <!--被點擊後將會跑出載入動畫，預設狀態為invisible(隱藏)-->
     <com.github.ybq.android.spinkit.SpinKitView
-        android:id="@+id/userInfo_spinKit"
         style="@style/SpinKitView.Large.FadingCircle"
+        android:id="@+id/userInfo_spinKit"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/settingsUserInformationToolbar"
@@ -78,7 +78,7 @@
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/textUserId"
+                        android:text="@string/textUserAccount"
                         android:textColor="@color/colorText"
                         android:textSize="20sp" />
 
@@ -88,9 +88,11 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="right"
-                        android:text="資料庫內  userAccount"
+                        android:text="@string/textDefaultAccount"
                         android:textColor="@color/colorText"
-                        android:textSize="@dimen/userSetting_textSize" />
+                        android:textSize="@dimen/userSetting_textSize"
+                        tools:ignore="RtlHardcoded"/>
+
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -129,9 +131,10 @@
                         android:layout_gravity="center"
                         android:gravity="right"
                         android:inputType="textPassword"
-                        android:text="hello world"
+                        android:text="@string/textEngPassword"
                         android:textColor="@color/colorText"
-                        android:textSize="@dimen/userSetting_textSize" />
+                        android:textSize="@dimen/userSetting_textSize"
+                        tools:ignore="TextViewEdits" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -176,9 +179,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="right"
-                        android:text="資料庫內  userNickname"
+                        android:text="@string/textDefaultNickname"
                         android:textColor="@color/colorText"
-                        android:textSize="@dimen/userSetting_textSize" />
+                        android:textSize="@dimen/userSetting_textSize"
+                        tools:ignore="RtlHardcoded"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -223,9 +227,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="right"
-                        android:text="資料庫內  userBirthday"
+                        android:text="@string/textDefaultBirthday"
                         android:textColor="@color/colorText"
-                        android:textSize="@dimen/userSetting_textSize" />
+                        android:textSize="@dimen/userSetting_textSize"
+                        tools:ignore="RtlHardcoded"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -270,9 +275,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="right"
-                        android:text="資料庫內  userGender"
+                        android:text="@string/textNotFind"
                         android:textColor="@color/colorText"
-                        android:textSize="@dimen/userSetting_textSize" />
+                        android:textSize="@dimen/userSetting_textSize"
+                        tools:ignore="RtlHardcoded" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -291,7 +297,7 @@
                 android:layout_marginTop="20dp"
                 app:cardBackgroundColor="@color/colorPrimary"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="25dp">
+                app:cardElevation="20dp">
 
                 <Button
                     android:id="@+id/btUserDataSetting"

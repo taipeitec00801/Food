@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             //  讀取 SharedPreferences 中的主題模式
             int myTheme = prefs.getInt("theme", 0);
-            if (firstTheme == 32 || myTheme == 2) {
+            if (firstTheme == 32 || myTheme == MODE_NIGHT_YES) {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES);
             } else {
                 AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);

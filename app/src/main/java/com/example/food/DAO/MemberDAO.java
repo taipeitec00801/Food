@@ -48,7 +48,7 @@ public class MemberDAO {
         return usable;
     }
 
-    public Member getUserDate(String userAccount, ImageView imageView) {
+    public Member getUserDate(String userAccount) {
         Member member = null;
         if (Common.networkConnected(inputActivity)) {
             //建立Gson物件，以便將資料轉成Json格式。
@@ -70,26 +70,17 @@ public class MemberDAO {
             CommonTask memberGetAllTask = new CommonTask(url, jsonOut);
             //CommonTask會將傳入的jsonOut字串送給伺服器
 
-            memberImageTask = new MemberImageTask(url, userAccount, imageSize, imageView);
-            memberImageTask.execute();
-
-            //ImageTask會將傳入的userAccount字串送給伺服器
             //而伺服器判斷字串對應的方法後，對資料庫做出方法內的動作。
-            //伺服器會找到在伺服器內部的getUserDate方法，傳入參數UserAccount，
-            // 回傳的圖片會套用到指定的 imageView
+            //伺服器會找到在伺服器內部的getUserDate方法，傳入參數UserAccount
 
             try {
                 //用字串儲存伺服器回應的json格式字串。
-//                spotGetAllTask.get(500, TimeUnit.MILLISECONDS);
                 String jsonIn = memberGetAllTask.execute().get();
                 //利用TypeToken指定資料型態為Member
-                Type listType = new TypeToken<Member>() {
-                }.getType();
-
+                Type listType = new TypeToken<Member>() {  }.getType();
                 //利用Gson把json字串轉成Type指定的型態(Member)後放入member(Member)。
                 member = gson.fromJson(jsonIn, listType);
-//            }catch(TimeoutException te){
-//                Common.showToast(inputActivity, "伺服器無回應");
+
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }

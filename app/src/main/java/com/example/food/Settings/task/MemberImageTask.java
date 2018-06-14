@@ -68,7 +68,7 @@ public class MemberImageTask extends AsyncTask<Object, Integer, Bitmap> {
 //            } else if (gender == 1) {
 //                imageView.setImageResource(R.drawable.man);
 //            }
-            imageView.setImageResource(R.drawable.person);
+            imageView.setImageResource(R.drawable.logo);
         }
     }
 

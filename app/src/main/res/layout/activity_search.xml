@@ -12,7 +12,7 @@
         android:id="@+id/search_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/sort_item_bgcolor_r"
+        android:background="?attr/colorBackground"
         android:orientation="vertical">
 
         <com.mancj.materialsearchbar.MaterialSearchBar

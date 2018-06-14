@@ -29,7 +29,7 @@
         android:layout_below="@+id/etCreate"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:src="@drawable/person"
+        android:src="@drawable/logo"
         app:civ_border_color="@color/colorWhite"
         app:civ_border_width="2dp" />
     <!--<ImageView-->
