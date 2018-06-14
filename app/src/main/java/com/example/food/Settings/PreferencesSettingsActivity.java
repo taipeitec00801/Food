@@ -30,6 +30,7 @@ import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PreferencesSettingsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -59,10 +60,13 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 skvSetBy.setVisibility(View.VISIBLE);
-                mThread = new HandlerThread("pp");
-                mThread.start();
-                mThreadHandler = new Handler(mThread.getLooper());
-                mThreadHandler.post(runnable);
+                if (outBt.isEnabled()) {
+                    mThread = new HandlerThread("psa");
+                    mThread.start();
+                    mThreadHandler = new Handler(mThread.getLooper());
+                    mThreadHandler.post(runnable);
+                }
+                outBt.setEnabled(false);
             }
         });
 
@@ -80,27 +84,30 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
 
         public void run() {
             //編寫Preference 內容
-            String newPreference = "";
+            StringBuilder newPreference = new StringBuilder();
             for (int i = 0; i < nowPreference.length; i++) {
-                if (nowPreference[i] == 1) {  newPreference += i + ",";  }
+                if (nowPreference[i] == 1) {
+                    newPreference.append(i).append(",");
+                }
             }
-            newPreference = newPreference.substring(0, newPreference.length()-1);
+            newPreference = new StringBuilder(newPreference.substring(0, newPreference.length() - 1));
 
-            prefs.edit().putString("preference", newPreference).apply();
+            prefs.edit().putString("preference", newPreference.toString()).apply();
             MemberDAO memberDAO = new MemberDAO(PreferencesSettingsActivity.this);
             String userAccount = prefs.getString("userAccount", "");
 //            boolean updateResult = memberDAO.updatePreference(userAccount, newPreference);
 
             //用假帳號測試
-            boolean updateResult = memberDAO.updatePreference(testUserAccount, newPreference);
+            boolean updateResult = memberDAO.updatePreference(testUserAccount, newPreference.toString());
             checkDialog(updateResult);
         }
     };
 
+    //更新結果 提示視窗
     private void checkDialog(boolean updateResult) {
-        String result = "更新失敗";
+        String result = "更新喜好種類失敗";
         if (updateResult) {
-            result = "更新成功";
+            result = "更新喜好種類成功";
         }
         new MaterialDialog.Builder(PreferencesSettingsActivity.this)
                 .title(R.string.textPreferencesSettings)
@@ -175,7 +182,6 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
 
                 mrlL = itemView.findViewById(R.id.pref_item_ripple_L);
                 mrlR = itemView.findViewById(R.id.pref_item_ripple_R);
-
             }
         }
 
@@ -259,7 +265,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
                 }
             });
 
-            //設定每個item動畫延遲時間，position超過3，不使用動畫。
+            //設定每個item動畫延遲時間，position超過4，不使用動畫。
             if (position <= 4) {
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(PreferencesSettingsActivity.this, R.anim.sort_item_down);
@@ -277,7 +283,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         settingsPreferencesToolbar.setTitle(R.string.textPreferencesSettings);
 
         setSupportActionBar(settingsPreferencesToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     //分類的資料庫

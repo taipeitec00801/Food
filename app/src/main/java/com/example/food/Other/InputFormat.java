@@ -63,6 +63,7 @@ public class InputFormat {
 
     public void inputFilter(EditText editText, int no){
         editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(no)});
+//      editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
     }
 
 

@@ -32,6 +32,7 @@ import com.example.food.Search.SearchActivity;
 import com.example.food.Sort.SortActivity;
 
 import java.io.File;
+import java.util.Objects;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
@@ -70,12 +71,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cvUerInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                //執行 登入狀態判斷
-//                isLogin(UserInformationActivity.class);
-
-                Intent intent = new Intent();
-                intent.setClass(SettingsActivity.this, UserInformationActivity.class);
-                startActivity(intent);
+                //執行 登入狀態判斷
+                isLogin(UserInformationActivity.class);
             }
         });
         /* 喜好種類設定 */
@@ -83,12 +80,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cvSettingsPreferences.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                //執行 登入狀態判斷
-//                isLogin(PreferencesSettingsActivity.class);
-
-                Intent intent = new Intent();
-                intent.setClass(SettingsActivity.this, PreferencesSettingsActivity.class);
-                startActivity(intent);
+                //執行 登入狀態判斷
+                isLogin(PreferencesSettingsActivity.class);
             }
         });
 
@@ -125,7 +118,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
                 new MaterialDialog.Builder(SettingsActivity.this)
                         .title(R.string.textLogout)
-                        .icon(getDrawable(R.drawable.warn_icon))
+                        .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
                         .content("你確定要登出嗎？")
                         .neutralText(R.string.text_btCancel)
                         .positiveText(R.string.text_btYes)
@@ -149,12 +142,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private void initContent() {
         settingsToolbar.setTitle(R.string.textSettings);
-
         // 是否登入
         isMember = prefs.getBoolean("login", false);
-//        if (isMember) {
+        if (isMember) {
         settingLogout.setVisibility(View.VISIBLE);
-//        }
+        }
 
         // 讀取快取大小
         File file = new File(this.getCacheDir().getPath());
@@ -168,17 +160,16 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
     private void isLogin(Class wantToGo) {
-
         final Intent intent = new Intent();
-
         if (isMember) {
             intent.setClass(SettingsActivity.this, wantToGo);
             startActivity(intent);
 
         } else {
             new MaterialDialog.Builder(SettingsActivity.this)
-                    .title(R.string.textPreferencesSettings)
-                    .content("")
+                    .title("訪客您好!")
+                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                    .content("欲使用該功能，請先登入")
                     .positiveText(R.string.textIKnow)
                     .neutralText(R.string.textGoTo)
                     .onNeutral(new MaterialDialog.SingleButtonCallback() {

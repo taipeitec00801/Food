@@ -77,9 +77,6 @@ public class UserInformationActivity extends AppCompatActivity implements
     private static final int REQ_PICK_IMAGE = 1;
     private static final int REQ_CROP_PICTURE = 2;
 
-    // 測試用 testUserAccount
-    private static final String testUserAccount = "hikarumiyasaki@gmail.com";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +87,8 @@ public class UserInformationActivity extends AppCompatActivity implements
         // 暫時-->讀取資料庫內的會員照片
         memberDAO = new MemberDAO(UserInformationActivity.this);
         ImageView imageView = findViewById(R.id.cvUserImage);
-        memberDAO.getPortrait(testUserAccount, imageView);
+        memberDAO.getPortrait(userAccount, imageView);
+
         showMemberData();
 
         selectCardView();
@@ -100,25 +98,13 @@ public class UserInformationActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 skvSetBy.setVisibility(View.VISIBLE);
-
-//                btUserDataSetting.setEnabled(false);
-
-//                Log.e("測試 updateMemberDate = ", "開始");
-//                Log.e("測試 newPassword = ", newPassword);
-//                Log.e("測試 newNickName = ", newNickName);
-//                Log.e("測試 newBirthday = ", newBirthday);
-//                String s = String.valueOf(newGender);
-//                Log.e("測試 newGender = ", s);
-
-
-
-//                if (btUserDataSetting.isEnabled()) {
-//                    mThread = new HandlerThread("uis");
-//                    mThread.start();
-//                    mThreadHandler = new Handler(mThread.getLooper());
-//                    mThreadHandler.post(runnable);
-//                }
-//                btUserDataSetting.setEnabled(false);
+                if (btUserDataSetting.isEnabled()) {
+                    mThread = new HandlerThread("uis");
+                    mThread.start();
+                    mThreadHandler = new Handler(mThread.getLooper());
+                    mThreadHandler.post(runnable);
+                }
+                btUserDataSetting.setEnabled(false);
             }
         });
 
@@ -127,44 +113,56 @@ public class UserInformationActivity extends AppCompatActivity implements
     //這裡放執行緒要執行的程式。
     private Runnable runnable = new Runnable() {
         public void run() {
+            boolean updateResult = memberDAO.updateMemberDate(userAccount, newPassword,
+                    newNickName, newBirthday, newGender);
+
+            boolean updateImageResult = false;
+            // 若有改變頭像 執行 updatePortrait
+            if (imageChange) {
+                updateImageResult = memberDAO.updatePortrait(userAccount, image);
+                // 變更頭像 改回
+                imageChange = false;
+            }
+            checkDialog(updateResult, updateImageResult);
+        }
+    };
+
+    //更新結果 提示視窗
+    private void checkDialog(boolean updateResult, boolean updateImageResult) {
+        String result = "個人資料 失敗";
+        String imageResult = " ";
+        if (updateResult) {
             //將會員資料 寫入偏好設定檔中
             prefs.edit().putString("userPassword", newPassword).apply();
             prefs.edit().putString("nickname", newNickName).apply();
             prefs.edit().putString("birthday", newBirthday).apply();
             prefs.edit().putInt("gender", newGender).apply();
 
-//            boolean updateResult = memberDAO.updateMemberDate(userAccount, newPassword,
-//                    newNickName, newBirthday, newGender);
-
-            //用假帳號測試
-            boolean updateResult = memberDAO.updateMemberDate(testUserAccount, newPassword,
-                    newNickName, newBirthday, newGender);
-            checkDialog(updateResult);
-
-        }
-    };
-
-    private void checkDialog(boolean updateResult) {
-        String result = "更新失敗";
-        if (updateResult) {
-            result = "更新成功";
+            if (updateImageResult) {
+                imageResult = " 與 大頭照 ";
+            }
+            result = "個人資料" + imageResult + "成功";
+        } else if (updateImageResult) {
+            result = "大頭照 成功";
         }
         new MaterialDialog.Builder(UserInformationActivity.this)
                 .title(R.string.settingUserData)
-                .content(result)
+                .content("更新 " + result)
                 .positiveText(R.string.textIKnow)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (mThreadHandler != null) {
-                            mThreadHandler.removeCallbacks(runnable);
-                        }
-                        if (mThread != null) {
-                            mThread.quit();
-                        }
+                        btUserDataSetting.setEnabled(true);
                         skvSetBy.setVisibility(View.INVISIBLE);
                     }
                 }).show();
+        if (mThreadHandler != null) {
+            mThreadHandler.removeCallbacks(runnable);
+            Log.e("mThreadHandler","finish");
+        }
+        if (mThread != null) {
+            mThread.quit();
+        }
     }
 
     @Override
@@ -180,8 +178,8 @@ public class UserInformationActivity extends AppCompatActivity implements
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
         cvUserImage = findViewById(R.id.cvUserImage);
-        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         skvSetBy = findViewById(R.id.userInfo_spinKit);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
     }
 
     private void selectCardView() {
@@ -234,7 +232,7 @@ public class UserInformationActivity extends AppCompatActivity implements
                         popWindow.dismiss();
                     }
                 });
-                // 取消按钮
+                // 取消
                 Button btn_cancel = mView.findViewById(R.id.btn_cancel);
                 btn_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -261,7 +259,7 @@ public class UserInformationActivity extends AppCompatActivity implements
 
                 // 设置弹出窗体的背景
                 // 实例化一个ColorDrawable颜色为半透明
-                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0ffffff));
+                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0000000));
             }
         });
 
@@ -270,42 +268,11 @@ public class UserInformationActivity extends AppCompatActivity implements
         cvUserPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new MaterialDialog.Builder(UserInformationActivity.this)
-                        .title(R.string.textPassword)
-                        .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                        .inputRange(6, 12, 0)
-                        .widgetColorRes(R.color.cardBackgroundStart)
-                        .input(0, 0, new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                //...
 
-                                //  密碼是否與資料庫內相同
-                                if (discernMemberPassword(newPassword, input.toString())) {
-                                    // 確認密碼 視窗
-                                    new MaterialDialog.Builder(UserInformationActivity.this)
-                                            .title(R.string.confirmPassword)
-                                            .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                                            .widgetColorRes(R.color.cardBackgroundStart)
-                                            .input(0, 0, new MaterialDialog.InputCallback() {
-                                                @Override
-                                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                                    discernMemberPassword(newPassword, input.toString());
-                                                }
-                                            }).show();
-                                } else {
-                                    new MaterialDialog.Builder(UserInformationActivity.this)
-                                            .title("")
-                                            .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                                            .widgetColorRes(R.color.cardBackgroundStart)
-                                            .input(0, 0, new MaterialDialog.InputCallback() {
-                                                @Override
-                                                public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                                                    discernMemberPassword(newPassword, input.toString());
-                                                }
-                                            }).show();
-                                }
-                            }
-                        }).show();
+
+
+
             }
         });
         /* 暱稱 */
@@ -418,7 +385,8 @@ public class UserInformationActivity extends AppCompatActivity implements
         TextView tvUserAccount = findViewById(R.id.tvUserAccount);
         tvUserAccount.setText(userAccount);
 
-        discernMemberPassword("demo", "");
+        newPassword = prefs.getString("userPassword","");
+//        discernMemberPassword("demo", newPassword);
 
         newNickName = prefs.getString("nickname","");
         tvUserNickname.setText(newNickName);
@@ -440,8 +408,8 @@ public class UserInformationActivity extends AppCompatActivity implements
     // 判斷密碼 original與input相關關係
     private boolean discernMemberPassword(String original, String input) {
         TextView tvUserPassword = findViewById(R.id.tvUserPassword);
-        if (input == null || input.length() == 0) {
-            newPassword = original;
+        if (input.isEmpty()) {
+            tvUserPassword.setText(original);
             return false;
         } else if (!original.equals(input)) {
             tvUserPassword.setText(input);

@@ -13,17 +13,30 @@
     <string name="textIntroduction">簡介</string>
 
     <!-- member -->
-    <string name="text_btSubmit">註冊</string>
-    <string name="text_btLogin">登入</string>
-    <string name="text_gender">性別</string>
-    <string name="textUserId">帳號</string>
-    <string name="textPassword">密碼</string>
-    <string name="confirmPassword">確認密碼</string>
-    <string name="textNickname">暱稱</string>
-    <string name="textBirthday">生日</string>
-    <string name="textMale">男性</string>
-    <string name="textFemale">女性</string>
-    <string name="textNotFind">找不到資料</string>
+        <!-- login-->
+        <string name="textEngUserAccount">User Email</string>
+        <string name="textEngPassword">Password</string>
+        <string name="textForgetPassword">忘記密碼</string>
+        <string name="textLoginTitle">Find Your Food</string>
+        <!-- other -->
+        <string name="text_btSubmit">註冊</string>
+        <string name="text_btLogin">登入</string>
+        <string name="text_gender">性別</string>
+        <string name="textUserAccount">帳號</string>
+        <string name="textPassword">密碼</string>
+        <string name="confirmPassword">確認密碼</string>
+        <string name="textNickname">暱稱</string>
+        <string name="textBirthday">生日</string>
+        <string name="textMale">男性</string>
+        <string name="textFemale">女性</string>
+        <string name="textNotFind">找不到資料</string>
+        <string name="textMemberLogin">會員登入</string>
+
+    <!-- 預設會員資料 -->
+    <string name="textDefaultAccount">userEmail@.gmail.com</string>
+    <string name="textDefaultNickname">userNickname</string>
+    <string name="textDefaultBirthday">1970–01-01</string>
+
 
 
     <!-- setting -->

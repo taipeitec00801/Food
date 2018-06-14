@@ -1,9 +1,13 @@
 package com.example.food.Member;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -14,10 +18,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.food.DAO.Member;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.Main.MainActivity;
 import com.example.food.Other.InputFormat;
+import com.example.food.Other.MySharedPreferences;
 import com.example.food.R;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -32,46 +41,149 @@ public class LoginActivity extends AppCompatActivity implements
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-    private EditText etUser , etPassword;
-    private Button btSubmit, btForgetPassword;
+    private EditText etUser, etPassword;
+    private Button btLogin, btSubmit, btForgetPassword;
     private GoogleSignInClient mGoogleSignInClient;
     private SignInButton btn_sign_in;
     private Button btn_sign_out;
-    InputFormat inputFormat = new InputFormat();
+    private MemberDAO memberDAO;
+    private Member member;
+    private InputFormat inputFormat;
+    private SpinKitView loginSpinKit;
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
+    private SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        btSubmit = findViewById(R.id.btSubmit);
-        findViews();
-        googleSignIn();
-        getUserInfo();
-        btForgetPassword.setOnClickListener(btflistener);
-//        initContent();
-        btn_sign_in .setOnClickListener(this);
-        btSubmit.setOnClickListener(new Button.OnClickListener(){
+
+        findById();
+
+        //透過inputFormat.inputFilter()來限制帳密字數;
+        inputFormat = new InputFormat();
+        inputFormat.inputFilter(etUser, 40);
+        inputFormat.inputFilter(etPassword, 12);
+
+        //Google 登入
+//        googleSignIn();
+//        getUserInfo();
+
+        //點擊事件
+        clickEvent();
+    }
+
+
+    //點擊按鈕事件
+    public void clickEvent() {
+        //登入
+        btLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isValid = inputFormat.isValidAccount(etUser) & inputFormat.isValidPassword(etPassword);
+                if (isValid) {
+                    loginSpinKit.setVisibility(View.VISIBLE);
+                    if (btLogin.isEnabled()) {
+                        mThread = new HandlerThread("login");
+                        mThread.start();
+                        mThreadHandler = new Handler(mThread.getLooper());
+                        mThreadHandler.post(runnable);
+                    }
+                    btLogin.setEnabled(false);
+                    btSubmit.setEnabled(false);
+                }
+            }
+        });
+
+        //註冊
+        btSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(LoginActivity.this, MemberActivity.class);
                 startActivity(intent);
-
             }
         });
+
+        //Google登入
+        btn_sign_in.setOnClickListener(this);
+
+        // 忘記密碼
+        btForgetPassword.setOnClickListener(btflistener);
     }
 
+    //login method
+    public void runLogin() {
+
+    }
+
+    //這裡放執行緒要執行的程式。
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            memberDAO = new MemberDAO(LoginActivity.this);
+            //傳送帳號與密碼到 Server 回傳登入結果
+            boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),
+                    etPassword.getText().toString().trim());
+            prefs.edit().putBoolean("login", isUser).apply();
+            boolean inputPrefOk = false;
+            if (isUser) {
+                //登入成功抓資料
+                member = memberDAO.getUserDate(etUser.getText().toString().trim());
+                inputPrefOk = MySharedPreferences.inputSharedPreferences(prefs, member);
+            }
+            loginResult(isUser, inputPrefOk);
+        }
+    };
+
+    //登入 結果
+    public void loginResult(boolean isUser, boolean inputPrefOk) {
+        //登入與寫入偏好設定檔成功跳頁 失敗跳出訊息視窗
+        if (isUser && inputPrefOk) {
+            Intent intent = new Intent();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.setClass(LoginActivity.this, MainActivity.class);
+            LoginActivity.this.finish();
+            startActivity(intent);
+        } else {
+            new MaterialDialog.Builder(LoginActivity.this)
+                    .title(R.string.textMemberLogin)
+                    .content("登入失敗，請從新登入")
+                    .positiveText(R.string.textIKnow)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            btLogin.setEnabled(true);
+                            btSubmit.setEnabled(true);
+                            loginSpinKit.setVisibility(View.INVISIBLE);
+                        }
+                    }).show();
+        }
+        //結束執行序
+        if (mThreadHandler != null) {
+            mThreadHandler.removeCallbacks(runnable);
+        }
+        if (mThread != null) {
+            mThread.quit();
+        }
+    }
 
     //取得activity_login的ID
-    private void findViews() {
-        etPassword = findViewById(R.id.etPassword);
-        etUser = findViewById(R.id.etUser);
+    private void findById() {
+        btLogin = findViewById(R.id.bt_login_Login);
+        btSubmit = findViewById(R.id.bt_login_Submit);
         btn_sign_in = findViewById(R.id.btn_sign_in);
-        btn_sign_out = findViewById(R.id.btn_sign_out);
         btForgetPassword = findViewById(R.id.btForgetPassword);
-        inputFormat.inputFilter(etPassword,12);
-        inputFormat.inputFilter(etUser,40);
-        //透過mb.inputFilter()來限制帳密字數;
+        etUser = findViewById(R.id.et_login_User);
+        etPassword = findViewById(R.id.et_login_Password);
+        loginSpinKit = findViewById(R.id.login_spinKit);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+
+//        btn_sign_out = findViewById(R.id.btn_sign_out);
+
+
     }
+
     public void googleSignIn() {
         GoogleSignInOptions gso
                 = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -79,10 +191,12 @@ public class LoginActivity extends AppCompatActivity implements
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
+
     @Override
     public void onStart() {
         super.onStart();
-
+        btLogin.setEnabled(true);
+        btSubmit.setEnabled(true);
 
         // [START on_start_sign_in]
         // Check for existing Google Sign In account, if the user is already signed in
@@ -98,8 +212,8 @@ public class LoginActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.btn_sign_in:
                 signIn();
-            case R.id.btn_sign_out:
-                signOut();
+//            case R.id.btn_sign_out:
+//                signOut();
                 break;
         }
     }
@@ -129,11 +243,11 @@ public class LoginActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
             Log.d("Info",
-                    "DisplayName = "+account.getDisplayName()+
-                            "; GivenName = " + account.getGivenName()+
-                            "; FamilyName = " + account.getFamilyName()+
-                            "; Email = " + account.getEmail()+
-                            "; getId = " + account.getId()+
+                    "DisplayName = " + account.getDisplayName() +
+                            "; GivenName = " + account.getGivenName() +
+                            "; FamilyName = " + account.getFamilyName() +
+                            "; Email = " + account.getEmail() +
+                            "; getId = " + account.getId() +
                             "; getPhotoUrl = " + account.getPhotoUrl());
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -142,7 +256,8 @@ public class LoginActivity extends AppCompatActivity implements
             updateUI(null);
         }
     }
-//    private void googleToken(){
+
+    //    private void googleToken(){
 //        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
 //                // Specify the CLIENT_ID of the app that accesses the backend:
 //                .setAudience(Collections.singletonList(CLIENT_ID))
@@ -185,16 +300,17 @@ public class LoginActivity extends AppCompatActivity implements
 //        }
 //    });
 //    }
-/*----------------------------------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------------------------------*/
 //    @SuppressLint("StringFormatInvalid")
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if (account != null) {
             findViewById(R.id.btn_sign_in).setVisibility(View.GONE);
         } else {
-            findViewById(R.id.btn_sign_out).setVisibility(View.VISIBLE);
+//            findViewById(R.id.btn_sign_out).setVisibility(View.VISIBLE);
 
         }
     }
+
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
@@ -206,7 +322,7 @@ public class LoginActivity extends AppCompatActivity implements
                     }
                 });
     }
-    // [END signOut]
+// [END signOut]
 
     // [START revokeAccess]
 //    private void revokeAccess() {
@@ -220,7 +336,7 @@ public class LoginActivity extends AppCompatActivity implements
 //                    }
 //                });
 //    }
-    // [END revokeAccess]
+// [END revokeAccess]
     public void getUserInfo() {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
         if (acct != null) {
@@ -230,7 +346,7 @@ public class LoginActivity extends AppCompatActivity implements
             String personEmail = acct.getEmail();
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
-            Toast.makeText(LoginActivity.this, ""+personName,Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "" + personName, Toast.LENGTH_SHORT).show();
             Log.d("UserInfo", "personName = " + personName);
             Log.d("UserInfo", "personGivenName = " + personGivenName);
             Log.d("UserInfo", "personFamilyName = " + personFamilyName);
@@ -238,48 +354,16 @@ public class LoginActivity extends AppCompatActivity implements
             Log.d("UserInfo", "personId = " + personId);
             Log.d("UserInfo", "personPhoto = " + personPhoto);
 
-        }else {
-            Toast.makeText(LoginActivity.this, "null",Toast.LENGTH_SHORT).show();
-        }
-    }
-//    public void onUserClick(){
-//
-//    }
-//
-//    //從MemderBeanActivity取得帳密布林值
-    public void onSubmitClick(View view) {
-        boolean isValid = inputFormat.isValidAccount(etUser) & inputFormat.isValidPassword(etPassword);
-        if (isValid) {
-            MemberDAO memberDAO = new MemberDAO(LoginActivity.this);
-
-            boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),
-                    etPassword.getText().toString().trim());
-            if (isUser) {
-                Intent intent = new Intent();
-                intent.setClass(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
         } else {
-            return;
+            Toast.makeText(LoginActivity.this, "null", Toast.LENGTH_SHORT).show();
         }
-
-
-
-//
-//        String user = etUser.getText().toString();
-//        String password = etPassword.getText().toString();
-        //將帳號密碼打包傳送到資料庫驗證
-//        Intent intent = new Intent(this, DAO);
-//        Bundle bundle = new Bundle();
-//        bundle.putString("user", user);
-//        bundle.putString("password", password);
-//        intent.putExtras(bundle);
-//        startActivity(intent);
     }
-    private Button.OnClickListener btflistener = new Button.OnClickListener(){
+
+
+    private Button.OnClickListener btflistener = new Button.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(v.getId()==R.id.btForgetPassword){
+            if (v.getId() == R.id.btForgetPassword) {
                 final EditText edit = new EditText(LoginActivity.this);
                 //產生視窗物件
                 new AlertDialog.Builder(LoginActivity.this)
@@ -287,14 +371,14 @@ public class LoginActivity extends AppCompatActivity implements
                         .setIcon(R.mipmap.ic_launcher)//設定對話視窗圖示
                         .setMessage("請輸入信箱:example@gmail.com")//設定顯示的文字
                         .setView(edit)
-                        .setPositiveButton("送出",new DialogInterface.OnClickListener(){
-//                                    finish();
+                        .setPositiveButton("送出", new DialogInterface.OnClickListener() {
+                            //                                    finish();
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 //                                finish();
                             }
                         })//設定結束的子視窗
-                       .show();//呈現對話視窗
+                        .show();//呈現對話視窗
             }
         }
     };
