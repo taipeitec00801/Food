@@ -1,4 +1,4 @@
-package com.example.food.DAO;
+package com.example.food.AppModel;
 
 import java.io.Serializable;
 

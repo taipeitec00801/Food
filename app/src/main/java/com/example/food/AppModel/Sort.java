@@ -1,4 +1,4 @@
-package com.example.food.Sort;
+package com.example.food.AppModel;
 
 public class Sort {
     private int ivLsrc,sortLnum;

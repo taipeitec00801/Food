@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,10 +40,9 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.food.DAO.Member;
+import com.example.food.AppModel.Member;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
-import com.example.food.Settings.task.MemberImageTask;
 import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.io.ByteArrayOutputStream;
@@ -91,7 +89,7 @@ public class UserInformationActivity extends AppCompatActivity implements
 
         showMemberData();
 
-        selectCardView();
+        clickCardView();
 
         //點擊確認鍵後，建立新的執行緒。
         btUserDataSetting.setOnClickListener(new View.OnClickListener() {
@@ -113,8 +111,9 @@ public class UserInformationActivity extends AppCompatActivity implements
     //這裡放執行緒要執行的程式。
     private Runnable runnable = new Runnable() {
         public void run() {
-            boolean updateResult = memberDAO.updateMemberDate(userAccount, newPassword,
+            Member newMember = new Member(userAccount, newPassword,
                     newNickName, newBirthday, newGender);
+            boolean updateResult = memberDAO.updateMemberDate(newMember);
 
             boolean updateImageResult = false;
             // 若有改變頭像 執行 updatePortrait
@@ -182,7 +181,7 @@ public class UserInformationActivity extends AppCompatActivity implements
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
     }
 
-    private void selectCardView() {
+    private void clickCardView() {
         /* 個人頭像 */
         cvUserImage.setOnClickListener(new View.OnClickListener() {
             @Override

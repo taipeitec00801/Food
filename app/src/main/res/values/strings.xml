@@ -63,6 +63,7 @@
     <string name="textSort">分類</string>
     <string name="textAddStore">分享店家</string>
     <string name="textMember">會員</string>
+    <string name="textGuests">訪客</string>
     <string name="textServer">系統</string>
 
     <!--Map-->

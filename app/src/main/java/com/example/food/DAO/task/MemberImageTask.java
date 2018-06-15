@@ -1,13 +1,13 @@
-package com.example.food.Settings.task;
+package com.example.food.DAO.task;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.example.food.DAO.Member;
 import com.example.food.R;
 import com.google.gson.JsonObject;
 
@@ -19,28 +19,27 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class MemberImageTask extends AsyncTask<Object, Integer, Bitmap> {
     private final static String TAG = "ImageTask";
-
+    private Activity inputActivity;
     private String url, userAccount;
     private int imageSize;
-    private Member member;
     /* ImageTask的屬性strong參照到SpotListFragment內的imageView不好，
         會導致SpotListFragment進入背景時imageView被參照而無法被釋放，
         而且imageView會參照到Context，也會導致Activity無法被回收。
         改採weak參照就不會阻止imageView被回收 */
     private WeakReference<ImageView> imageViewWeakReference;
 
-    public MemberImageTask(String url, String userAccount, int imageSize) {
-        this(url, userAccount, imageSize, null);
-    }
 
-    public MemberImageTask(String url, String userAccount, int imageSize, ImageView imageView) {
+    public MemberImageTask(String url, String userAccount, int imageSize, ImageView imageView, Activity inputActivity) {
         this.url = url;
         this.userAccount = userAccount;
         this.imageSize = imageSize;
         this.imageViewWeakReference = new WeakReference<>(imageView);
+        this.inputActivity = inputActivity;
     }
 
     @Override
@@ -63,12 +62,15 @@ public class MemberImageTask extends AsyncTask<Object, Integer, Bitmap> {
             imageView.setImageBitmap(bitmap);
         } else {
             //這裡需加判斷性別  並顯示不同預設圖
-//            if (gender == 0) {
-//                imageView.setImageResource(R.drawable.woman);
-//            } else if (gender == 1) {
-//                imageView.setImageResource(R.drawable.man);
-//            }
-            imageView.setImageResource(R.drawable.logo);
+            SharedPreferences prefs = inputActivity.getSharedPreferences("MyApp", MODE_PRIVATE);
+            int gender = prefs.getInt("gender", 2);
+            if (gender == 0) {
+                imageView.setImageResource(R.drawable.woman);
+            } else if (gender == 1) {
+                imageView.setImageResource(R.drawable.man);
+            } else {
+                imageView.setImageResource(R.drawable.logo);
+            }
         }
     }
 

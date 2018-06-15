@@ -3,6 +3,7 @@ package com.example.food.Collection;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -30,13 +32,16 @@ import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.widget.PullRefreshLayout;
+import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Map.StoreInfo;
+import com.example.food.Member.LoginActivity;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
+import com.example.food.Sort.SortAsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +53,15 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
     private DrawerLayout collectionDrawerLayout;
     private AppAdapter mAdapter;
     private List<StoreInfo> storeInfos = getStoreInfoList();
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         mAdapter = new AppAdapter(storeInfos,this);
+        initContent();
         setupNavigationDrawerMenu();
         initSwipeListView();
         PullRefresh();
@@ -65,30 +73,35 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         super.onStart();
     }
 
-    /*   每個 Activity  的要使用
-               @Override
-               protected void onActivityResult ...       */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // requestCode "RESULT_OK" 代表 前一頁
-            // 一定要有   RESULT_OK
-            case RESULT_OK:
-                break;
-            // requestCode "0" 代表 首頁
-            case 0:
-                break;
-            default:
-                break;
-        }
-    }
 
     //Init DrawerLayout
     private void setupNavigationDrawerMenu() {
-        collectionToolbar = findViewById(R.id.collectionToolbar);
-        collectionToolbar.setTitle("收藏庫");
         NavigationView navigationView = findViewById(R.id.collectionNavigationView);
         collectionDrawerLayout = findViewById(R.id.collectionDrawer);
+
+        View headerView = navigationView.getHeaderView(0);
+        RelativeLayout head = headerView.findViewById(R.id.menuHeader);
+
+        TextView tv_nv_nickName = head.findViewById(R.id.tv_nv_nickName);
+        TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
+        ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
+
+        //若已登入 將會員帳號和暱稱顯示
+        tv_nv_nickName.setText(prefs.getString("nickname",""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+
+        if (!prefs.getBoolean("login", false)) {
+            //尚未登入點擊頭像 到登入頁
+            ivUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setClass(CollectionActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 collectionDrawerLayout,
@@ -96,45 +109,52 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
                 R.string.drawer_open,
                 R.string.drawer_close);
         collectionDrawerLayout.addDrawerListener(actionBarDrawerToggle);
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 menuItem.setChecked(true);
-                collectionDrawerLayout.closeDrawers();
                 Intent intent = new Intent();
+                collectionDrawerLayout.closeDrawers();
                 switch (menuItem.getItemId()) {
                     case R.id.navHome:
-                        // "0" 代表 首頁的requestCode
-                        setResult(0, intent);
+                        intent.setClass(CollectionActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         CollectionActivity.this.finish();
-                        break;
-                    case R.id.navSettings:
-                        intent.setClass(CollectionActivity.this, SettingsActivity.class);
-                        startActivityForResult(intent, 0);
+                        startActivity(intent);
                         break;
                     case R.id.navMap:
                         intent.setClass(CollectionActivity.this, MapActivity.class);
-                        startActivity(intent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         CollectionActivity.this.finish();
-                        break;
-                    case R.id.navGift:
-                        intent.setClass(CollectionActivity.this, UnderDevelopmentActivity.class);
                         startActivity(intent);
-                        CollectionActivity.this.finish();
                         break;
                     case R.id.navSort:
                         intent.setClass(CollectionActivity.this, SortActivity.class);
-                        startActivity(intent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         CollectionActivity.this.finish();
+                        startActivity(intent);
                         break;
                     case R.id.navSearch:
                         intent.setClass(CollectionActivity.this, SearchActivity.class);
-                        startActivity(intent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         CollectionActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navCollection:
+                        initContent();
+                        onResume();
+                        break;
+                    case R.id.navSettings:
+                        intent.setClass(CollectionActivity.this, SettingsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        CollectionActivity.this.finish();
+                        startActivity(intent);
                         break;
                     default:
-                        recreate();
+                        intent.setClass(CollectionActivity.this, UnderDevelopmentActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        CollectionActivity.this.finish();
+                        startActivity(intent);
                         break;
                 }
                 return true;
@@ -142,6 +162,12 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         });
         actionBarDrawerToggle.syncState();
     }
+
+    private void initContent() {
+        collectionToolbar = findViewById(R.id.collectionToolbar);
+        collectionToolbar.setTitle("收藏庫");
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         menuItem.setChecked(true);

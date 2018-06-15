@@ -2,7 +2,7 @@ package com.example.food.Other;
 
 import android.content.SharedPreferences;
 
-import com.example.food.DAO.Member;
+import com.example.food.AppModel.Member;
 
 public class MySharedPreferences {
 
@@ -11,9 +11,9 @@ public class MySharedPreferences {
         prefs.edit().putBoolean("login", false).apply();
         //  會員資料
         prefs.edit().putInt("memberId", 0).apply();
-        prefs.edit().putString("userAccount", "userEmail@.gmail.com").apply();
+        prefs.edit().putString("userAccount", "").apply();
         prefs.edit().putString("userPassword", "").apply();
-        prefs.edit().putString("nickname", "").apply();
+        prefs.edit().putString("nickname", "訪客").apply();
         prefs.edit().putString("birthday", "").apply();
         // 預設會員性別 為2 查無資料
         prefs.edit().putInt("gender", 2).apply();
@@ -28,7 +28,6 @@ public class MySharedPreferences {
         boolean inputOk = false;
         //將 從Server端 拿到的會員資料 寫入偏好設定檔中
         if (member != null) {
-            //將 從Server端 拿到的會員資料 寫入偏好設定檔中
             prefs.edit().putInt("memberId", member.getMemberId()).apply();
             prefs.edit().putString("userAccount", member.getUserAccount()).apply();
             prefs.edit().putString("userPassword", member.getUserPassword()).apply();

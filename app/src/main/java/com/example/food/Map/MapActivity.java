@@ -85,7 +85,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private ImageView selectMarker;
     private Thread t1;
 
-
     @Override //Create Menu
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.map_menu,menu);
@@ -205,7 +204,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                 scrollPosition = recyclerView.computeHorizontalScrollOffset()/overallXScrol;
             }
         });
-
     }
 
     //RecyclerView implement

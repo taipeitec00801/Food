@@ -3,6 +3,7 @@ package com.example.food.Sort;
 import android.app.Activity;
 import android.util.Log;
 
+import com.example.food.AppModel.SortAs;
 import com.example.food.Sort.task.CommonTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -10,9 +11,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class SortDAO {
     private Activity inputActivity;

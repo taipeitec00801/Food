@@ -1,17 +1,17 @@
-package com.example.food.Sort;
+package com.example.food.AppModel;
 
 import java.io.Serializable;
 
 public class SortAs implements Serializable{
-    Integer StoreId;
-    String StoreName;
-    String StoreAddress;
-    String StorePhone;
-    String ServiceHours;
-    String StorePicture;
-    Integer SortNumber;
-    Integer StoreRecomCount;
-    Integer StoreCommentCount;
+    private Integer StoreId;
+    private String StoreName;
+    private String StoreAddress;
+    private String StorePhone;
+    private String ServiceHours;
+    private String StorePicture;
+    private Integer SortNumber;
+    private Integer StoreRecomCount;
+    private Integer StoreCommentCount;
 
     public SortAs(Integer storeId, String storeName, String storeAddress, String storePhone, String serviceHours, String storePicture, Integer sortNumber, Integer storeRecomCount, Integer storeCommentCount) {
         StoreId = storeId;

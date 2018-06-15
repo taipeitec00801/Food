@@ -3,8 +3,6 @@ package com.example.food.Settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -25,7 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.R;
-import com.example.food.Sort.Sort;
+import com.example.food.AppModel.Sort;
 import com.github.ybq.android.spinkit.SpinKitView;
 
 import java.util.ArrayList;
@@ -41,8 +39,6 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
     private int colorCvRip, colorCvNoRip, colorTvRip, colorTvNoRip;
     private int prefNum;
     private int[] nowPreference = new int[10];
-    private Handler mThreadHandler;
-    private HandlerThread mThread;
 
     // 測試用 testUserAccount
     private static final String testUserAccount = "hikarumiyasaki@gmail.com";
@@ -61,17 +57,14 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 skvSetBy.setVisibility(View.VISIBLE);
                 if (outBt.isEnabled()) {
-                    mThread = new HandlerThread("psa");
+                    Thread mThread = new Thread(runnable);
                     mThread.start();
-                    mThreadHandler = new Handler(mThread.getLooper());
-                    mThreadHandler.post(runnable);
                 }
                 outBt.setEnabled(false);
             }
         });
 
-        recyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
 
         List<Sort> prefList = getSortList();
@@ -95,10 +88,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             prefs.edit().putString("preference", newPreference.toString()).apply();
             MemberDAO memberDAO = new MemberDAO(PreferencesSettingsActivity.this);
             String userAccount = prefs.getString("userAccount", "");
-//            boolean updateResult = memberDAO.updatePreference(userAccount, newPreference);
-
-            //用假帳號測試
-            boolean updateResult = memberDAO.updatePreference(testUserAccount, newPreference.toString());
+            boolean updateResult = memberDAO.updatePreference(userAccount, newPreference.toString());
             checkDialog(updateResult);
         }
     };
@@ -128,18 +118,6 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         btSetBy = findViewById(R.id.bt_set_by);
         recyclerView = findViewById(R.id.rvSetting_pref);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //離開時把執行序關掉
-        if (mThreadHandler != null) {
-            mThreadHandler.removeCallbacks(runnable);
-        }
-        if (mThread != null) {
-            mThread.quit();
-        }
     }
 
     @Override

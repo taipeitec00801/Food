@@ -24,7 +24,7 @@ public class WelcomeActivity  extends Activity {
                     //將原本Activity的換成MainActivity
                     intent.setClass(WelcomeActivity.this, MainActivity.class);
                     startActivity(intent);
-                    finish();
+                    WelcomeActivity.this.finish();
                     break;
 
                 default:

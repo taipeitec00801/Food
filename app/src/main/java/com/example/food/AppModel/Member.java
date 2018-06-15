@@ -1,4 +1,4 @@
-package com.example.food.DAO;
+package com.example.food.AppModel;
 
 import java.io.Serializable;
 
@@ -18,7 +18,7 @@ public class Member implements Serializable {
     private String userFriends;
 
     // 註冊用
-    // 送出會員資料給 server 不含 portrait(在image方法)
+    // 送出會員資料給 server 不含 portrait
     public Member(String userAccount, String userPassword, String nickName, String birthday,
                   int gender, String preference) {
         this.userAccount = userAccount;
@@ -29,7 +29,7 @@ public class Member implements Serializable {
         this.preference = preference;
     }
 
-    // 接收 server 給的會員所有資料 不含 portrait(在image方法)
+    // 接收 server 給的會員所有資料 不含 portrait
     public Member(int memberId, String userAccount, String userPassword,
                   String nickName, String birthday, int gender,
                   int userRank, String preference,
@@ -58,9 +58,9 @@ public class Member implements Serializable {
     }
 
     // 傳 userAccount 來搜尋
-    public Member(String userAccount) {
-        this.userAccount = userAccount;
-    }
+//    public Member(String userAccount) {
+//        this.userAccount = userAccount;
+//    }
 
     //-------getter--setter---------------------------------------------------------------
     public String getUserAccount() {

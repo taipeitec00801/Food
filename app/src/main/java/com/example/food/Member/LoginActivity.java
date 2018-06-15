@@ -1,13 +1,10 @@
 package com.example.food.Member;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -20,7 +17,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.food.DAO.Member;
+import com.example.food.AppModel.Member;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.Main.MainActivity;
 import com.example.food.Other.InputFormat;
@@ -50,8 +47,7 @@ public class LoginActivity extends AppCompatActivity implements
     private Member member;
     private InputFormat inputFormat;
     private SpinKitView loginSpinKit;
-    private Handler mThreadHandler;
-    private HandlerThread mThread;
+
     private SharedPreferences prefs;
 
     @Override
@@ -85,10 +81,8 @@ public class LoginActivity extends AppCompatActivity implements
                 if (isValid) {
                     loginSpinKit.setVisibility(View.VISIBLE);
                     if (btLogin.isEnabled()) {
-                        mThread = new HandlerThread("login");
+                        Thread mThread = new Thread(runnable);
                         mThread.start();
-                        mThreadHandler = new Handler(mThread.getLooper());
-                        mThreadHandler.post(runnable);
                     }
                     btLogin.setEnabled(false);
                     btSubmit.setEnabled(false);
@@ -126,46 +120,42 @@ public class LoginActivity extends AppCompatActivity implements
             boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),
                     etPassword.getText().toString().trim());
             prefs.edit().putBoolean("login", isUser).apply();
-            boolean inputPrefOk = false;
             if (isUser) {
                 //登入成功抓資料
                 member = memberDAO.getUserDate(etUser.getText().toString().trim());
-                inputPrefOk = MySharedPreferences.inputSharedPreferences(prefs, member);
+                boolean inputPrefOk = MySharedPreferences.inputSharedPreferences(prefs, member);
+
+                //抓資料與寫入偏好設定檔成功跳頁
+                if (inputPrefOk) {
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.setClass(LoginActivity.this, MainActivity.class);
+                    LoginActivity.this.finish();
+                    startActivity(intent);
+                } else {
+                    //失敗跳出訊息視窗
+                    loginFail();
+                }
+            } else {
+                loginFail();
             }
-            loginResult(isUser, inputPrefOk);
         }
     };
 
-    //登入 結果
-    public void loginResult(boolean isUser, boolean inputPrefOk) {
-        //登入與寫入偏好設定檔成功跳頁 失敗跳出訊息視窗
-        if (isUser && inputPrefOk) {
-            Intent intent = new Intent();
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.setClass(LoginActivity.this, MainActivity.class);
-            LoginActivity.this.finish();
-            startActivity(intent);
-        } else {
-            new MaterialDialog.Builder(LoginActivity.this)
-                    .title(R.string.textMemberLogin)
-                    .content("登入失敗，請從新登入")
-                    .positiveText(R.string.textIKnow)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            btLogin.setEnabled(true);
-                            btSubmit.setEnabled(true);
-                            loginSpinKit.setVisibility(View.INVISIBLE);
-                        }
-                    }).show();
-        }
-        //結束執行序
-        if (mThreadHandler != null) {
-            mThreadHandler.removeCallbacks(runnable);
-        }
-        if (mThread != null) {
-            mThread.quit();
-        }
+    //登入 失敗 訊息提示窗
+    public void loginFail() {
+        new MaterialDialog.Builder(LoginActivity.this)
+                .title(R.string.textMemberLogin)
+                .content("登入失敗，請從新登入")
+                .positiveText(R.string.textIKnow)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        btLogin.setEnabled(true);
+                        btSubmit.setEnabled(true);
+                        loginSpinKit.setVisibility(View.INVISIBLE);
+                    }
+                }).show();
     }
 
     //取得activity_login的ID

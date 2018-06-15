@@ -37,7 +37,6 @@ public class CommentActivity extends AppCompatActivity {
         List<Member> memberList = getMemberList();
         recyclerView.setAdapter(new MemberAdapter(this, memberList));
 
-
         mRollViewPager =findViewById(R.id.roll_view_pager);
 
         //设置播放时间间隔

@@ -18,10 +18,13 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.example.food.Collection.CollectionActivity;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
@@ -194,7 +197,31 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.settingsNavigationView);
-        settingsDrawerLayout = findViewById(R.id.settingsDrawerLayout);
+        settingsDrawerLayout = findViewById(R.id.settings_DrawerLayout);
+
+        View headerView = navigationView.getHeaderView(0);
+        RelativeLayout head = headerView.findViewById(R.id.menuHeader);
+
+        TextView tv_nv_nickName = head.findViewById(R.id.tv_nv_nickName);
+        TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
+        ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
+
+        //若已登入 將會員帳號和暱稱顯示
+        tv_nv_nickName.setText(prefs.getString("nickname",""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+
+        if (!prefs.getBoolean("login", false)) {
+            //尚未登入點擊頭像 到登入頁
+            ivUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setClass(SettingsActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 settingsDrawerLayout,
@@ -202,7 +229,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 R.string.drawer_open,
                 R.string.drawer_close);
         settingsDrawerLayout.addDrawerListener(actionBarDrawerToggle);
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -235,7 +261,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                         startActivity(intent);
                         break;
                     case R.id.navCollection:
-                        intent.setClass(SettingsActivity.this, MapActivity.class);
+                        intent.setClass(SettingsActivity.this, CollectionActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         SettingsActivity.this.finish();
                         startActivity(intent);
@@ -246,6 +272,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                         break;
                     default:
                         intent.setClass(SettingsActivity.this, UnderDevelopmentActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         SettingsActivity.this.finish();
                         startActivity(intent);
                         break;

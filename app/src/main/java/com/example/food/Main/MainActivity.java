@@ -20,7 +20,6 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.food.Collection.CollectionActivity;
 import com.example.food.Map.MapActivity;
@@ -45,6 +43,8 @@ import com.jude.rollviewpager.hintview.ColorPointHintView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
@@ -184,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-
     private void initContent() {
         toolbar = findViewById(R.id.mainToolbar);
         toolbar.setTitle(R.string.textHome);
@@ -192,19 +191,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.navigationView);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        //點擊投向 到登入
+        drawerLayout = findViewById(R.id.main_drawerLayout);
+
         View headerView = navigationView.getHeaderView(0);
         RelativeLayout head = headerView.findViewById(R.id.menuHeader);
-        ImageView ivUser = head.findViewById(R.id.ivUser);
-        ivUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+
+        TextView tv_nv_nickName = head.findViewById(R.id.tv_nv_nickName);
+        TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
+        ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
+
+        //若已登入 將會員帳號和暱稱顯示
+        tv_nv_nickName.setText(prefs.getString("nickname",""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+
+        if (!prefs.getBoolean("login", false)) {
+            //尚未登入點擊頭像 到登入頁
+            ivUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setClass(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
@@ -213,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.drawer_open,
                 R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -221,32 +230,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawerLayout.closeDrawers();
                 Intent intent = new Intent();
                 switch (menuItem.getItemId()) {
-
                     case R.id.navHome:
+                        initContent();
                         onResume();
-                        break;
-                    case R.id.navSettings:
-                        intent.setClass(MainActivity.this, SettingsActivity.class);
-                        startActivityForResult(intent, 0);
                         break;
                     case R.id.navMap:
                         intent.setClass(MainActivity.this, MapActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.navGift:
-                        intent.setClass(MainActivity.this, UnderDevelopmentActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
                     case R.id.navSort:
                         intent.setClass(MainActivity.this, SortActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
                     case R.id.navSearch:
                         intent.setClass(MainActivity.this, SearchActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        break;
+                    case R.id.navCollection:
+                        intent.setClass(MainActivity.this, CollectionActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        break;
+                    case R.id.navSettings:
+                        intent.setClass(MainActivity.this, SettingsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         break;
                     default:
-                        initContent();
+                        intent.setClass(MainActivity.this, UnderDevelopmentActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                         break;
                 }
                 return true;

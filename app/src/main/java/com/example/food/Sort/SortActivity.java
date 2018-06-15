@@ -2,7 +2,7 @@ package com.example.food.Sort;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +17,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,13 +25,16 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.example.food.AppModel.Sort;
+import com.example.food.AppModel.SortAs;
+import com.example.food.Collection.CollectionActivity;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
+import com.example.food.Member.LoginActivity;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -45,11 +47,11 @@ import java.util.List;
 
 public class SortActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static Boolean btcont = true;
+    public static Boolean btCont = true;
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private SharedPreferences prefs;
     private Button outBt, comeBt;
     private Handler mThreadHandler;
     private HandlerThread mThread;
@@ -60,7 +62,6 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         super.onPause();
         if (!outBt.isEnabled()) {
             int i = Integer.parseInt(outBt.getText().toString());
-
             recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_L).setVisibility(View.INVISIBLE);
             recyclerView.findViewHolderForLayoutPosition(i).itemView.findViewById(R.id.sort_item_spin_kit_R).setVisibility(View.INVISIBLE);
         }
@@ -72,6 +73,8 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_sort);
         outBt = findViewById(R.id.sort_bt);
         comeBt = findViewById(R.id.sort_comebt);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+
         //建立ToolBar
         initContent();
         setupNavigationDrawerMenu();
@@ -89,8 +92,6 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-
-        //
         recyclerView = findViewById(R.id.sort_rv);
         recyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(
@@ -105,7 +106,6 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         public void run() {
             //這裡放執行緒要執行的程式。
             int i = Integer.parseInt(outBt.getText().toString());
-
             portalToSortAs(getSortList().get(i), comeBt.isEnabled());
         }
     };
@@ -125,7 +125,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        outBt.setEnabled(btcont);
+        outBt.setEnabled(btCont);
     }
 
     private void initContent() {
@@ -136,8 +136,32 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.sort_navigationView);
         drawerLayout = findViewById(R.id.sort_drawerLayout);
+
+        View headerView = navigationView.getHeaderView(0);
+        RelativeLayout head = headerView.findViewById(R.id.menuHeader);
+
+        TextView tv_nv_nickName = head.findViewById(R.id.tv_nv_nickName);
+        TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
+        ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
+
+        //若已登入 將會員帳號和暱稱顯示
+        tv_nv_nickName.setText(prefs.getString("nickname",""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+
+        if (!prefs.getBoolean("login", false)) {
+            //尚未登入點擊頭像 到登入頁
+            ivUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setClass(SortActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 drawerLayout,
                 toolbar,
                 R.string.drawer_open,
@@ -162,6 +186,10 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
                         SortActivity.this.finish();
                         startActivity(intent);
                         break;
+                    case R.id.navSort:
+                        initContent();
+                        onResume();
+                        break;
                     case R.id.navSearch:
                         intent.setClass(SortActivity.this, SearchActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -169,7 +197,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(intent);
                         break;
                     case R.id.navCollection:
-                        intent.setClass(SortActivity.this, MapActivity.class);
+                        intent.setClass(SortActivity.this, CollectionActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         SortActivity.this.finish();
                         startActivity(intent);
@@ -180,12 +208,9 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
                         SortActivity.this.finish();
                         startActivity(intent);
                         break;
-                    case R.id.navSort:
-                        initContent();
-                        onResume();
-                        break;
                     default:
                         intent.setClass(SortActivity.this, UnderDevelopmentActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         SortActivity.this.finish();
                         startActivity(intent);
                         break;
@@ -200,7 +225,6 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         menuItem.setChecked(true);
         drawerLayout.closeDrawers();
-
         return true;
     }
 
@@ -268,8 +292,9 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             return sortList.size();
         }
 
+        @NonNull
         @Override
-        public SortViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public SortViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View itemView = layoutInflater.inflate(R.layout.sort_item, viewGroup, false);
 
@@ -393,7 +418,6 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
         sortList.add(new Sort(R.drawable.s10, 8, "飲料甜點",
                 R.drawable.s01, 9, "其他"));
-
 
         return sortList;
     }

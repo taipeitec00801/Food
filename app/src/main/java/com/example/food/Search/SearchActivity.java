@@ -2,6 +2,9 @@ package com.example.food.Search;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -10,7 +13,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -21,12 +23,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.example.food.AppModel.SortAs;
+import com.example.food.Collection.CollectionActivity;
+import com.example.food.Main.MainActivity;
+import com.example.food.Map.MapActivity;
+import com.example.food.Member.LoginActivity;
+import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
-import com.example.food.Sort.SortAs;
+import com.example.food.Settings.SettingsActivity;
+import com.example.food.Sort.SortActivity;
 import com.example.food.Sort.SortDAO;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
@@ -40,7 +50,6 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
 //    private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private static final String TAG = "SearchActivity";
     private RecyclerView rvUp,rvDown;
@@ -52,6 +61,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private Handler mThreadHandler;
     private HandlerThread mThread;
     private TextView tvAbc;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         setContentView(R.layout.activity_search);
         //建立ToolBar
         initContent();
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         setupNavigationDrawerMenu();
         tvAbc = findViewById(R.id.search_tvAbc);
 
@@ -197,15 +208,16 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
             return sortList.size();
         }
 
+        @NonNull
         @Override
-        public SortViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public SortViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View itemView = layoutInflater.inflate(R.layout.search_down_item, viewGroup, false);
             return new SortViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(SortViewHolder viewHolder, int position) {
+        public void onBindViewHolder(@NonNull SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
             viewHolder.resImg.setImageResource(R.drawable.cf);
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
@@ -246,15 +258,16 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
             return sortList.size();
         }
 
+        @NonNull
         @Override
-        public SearchViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View itemView = layoutInflater.inflate(R.layout.search_item, viewGroup, false);
             return new SearchViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(SearchViewHolder viewHolder, int position) {
+        public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
             viewHolder.resName.setText(sort.getStoreName());
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
@@ -280,12 +293,87 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.search_navigationView);
         drawerLayout = findViewById(R.id.search_drawerLayout);
+
+        View headerView = navigationView.getHeaderView(0);
+        RelativeLayout head = headerView.findViewById(R.id.menuHeader);
+
+        TextView tv_nv_nickName = head.findViewById(R.id.tv_nv_nickName);
+        TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
+        ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
+
+        //若已登入 將會員帳號和暱稱顯示
+        tv_nv_nickName.setText(prefs.getString("nickname",""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+
+        if (!prefs.getBoolean("login", false)) {
+            //尚未登入點擊頭像 到登入頁
+            ivUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setClass(SearchActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
                 drawerLayout,
                 R.string.drawer_open,
                 R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                menuItem.setChecked(true);
+                Intent intent = new Intent();
+                drawerLayout.closeDrawers();
+                switch (menuItem.getItemId()) {
+                    case R.id.navHome:
+                        intent.setClass(SearchActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SearchActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navMap:
+                        intent.setClass(SearchActivity.this, MapActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SearchActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSort:
+                        intent.setClass(SearchActivity.this, SortActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SearchActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSearch:
+                        initContent();
+                        onResume();
+                        break;
+                    case R.id.navCollection:
+                        intent.setClass(SearchActivity.this, CollectionActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SearchActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    case R.id.navSettings:
+                        intent.setClass(SearchActivity.this, SettingsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SearchActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                    default:
+                        intent.setClass(SearchActivity.this, UnderDevelopmentActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        SearchActivity.this.finish();
+                        startActivity(intent);
+                        break;
+                }
+                return true;
+            }
+        });
         actionBarDrawerToggle.syncState();
     }
 
@@ -337,11 +425,5 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 //            mThreadHandler.post();
         }
     };
-//
-//    private Runnable r2 = new Runnable() {
-//        @Override
-//        public void run() {
-//
-//        }
-//    };
+
 }
