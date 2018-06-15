@@ -83,6 +83,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private IconGenerator iconFactory;
     private TextView listid;
     private ImageView selectMarker;
+    private Thread t1;
 
 
     @Override //Create Menu
@@ -95,9 +96,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (googleServicesAvailable()) {
-            System.out.println("Start APP!!!!!!!!!!!!");
             setContentView(R.layout.activity_map);
-            System.out.println("Load UI Complete!!!!!!!!!!!!");
             mThread = new HandlerThread("aa");
             mThread.start();
             mThreadHandler = new Handler(mThread.getLooper());
@@ -107,8 +106,11 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
             mprogressDialog.setCancelable(false);
             mprogressDialog.setCanceledOnTouchOutside(false);
             mprogressDialog.show();
+            //新增Thread處理其他事件
+            t1=new Thread(r1);
+            t1.start();
             initMap();
-
+            //Log.d("Thread", String.valueOf(t1.getState()));
             /*  接收Search結果 並執行
                         locationToMarker(String StoreAddress)*/
         }
@@ -140,6 +142,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         }
     };
 
+
+
     @Override
     public void onMapLoaded() {
         //取得位置
@@ -150,7 +154,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         mprogressDialog.dismiss();
         recyclerView = findViewById(R.id.map_recycleView);
         recyclerView.setVisibility(View.VISIBLE);
-
+        //Log.d("Thread", String.valueOf(t1.getState()));
     }
 
     public void animateIntent(View view) {
