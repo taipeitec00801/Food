@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="?attr/colorBackground">
+   >
 
 
     <!--最外一層LinearLayout用來設定兩組cardView的比例-->
@@ -15,12 +15,11 @@
         android:orientation="horizontal">
         <!--此層cardView用來設定邊框顏色和動畫可以用Id附著-->
         <android.support.v7.widget.CardView
-            android:id="@+id/sort_item_cv_moveL"
+            android:id="@+id/comment_item_cv_moveL"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_margin="3dp"
-            app:cardBackgroundColor="@color/colorText">
+            android:layout_margin="3dp">
             <!--被點擊後將會跑出載入動畫，預設狀態為invisible(隱藏)-->
             <!--<com.github.ybq.android.spinkit.SpinKitView-->
             <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->

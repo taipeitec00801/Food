@@ -16,6 +16,9 @@ public class Food {
         this.name = name;
     }
 
+
+
+
     public int getImage() {
         return image;
     }

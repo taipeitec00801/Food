@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.food.Collection.CollectionActivity;
+import com.example.food.Comment.CommentActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.Other.MySharedPreferences;
@@ -43,8 +44,6 @@ import com.jude.rollviewpager.hintview.ColorPointHintView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
         List<Food> memberList = getFoodList();
-        recyclerView.setAdapter(new MemberAdapter(this, memberList));
+        recyclerView.setAdapter(new FoodpicAdapter(this, memberList));
 
         mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
         //設定播放時間間隔
@@ -361,14 +360,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    private class MemberAdapter extends
-            RecyclerView.Adapter<MemberAdapter.MyViewHolder> {
+    private class FoodpicAdapter extends RecyclerView.Adapter<FoodpicAdapter.MyViewHolder> {
         private Context context;
         private List<Food> foodList;
 
-        MemberAdapter(Context context, List<Food> memberList) {
+        FoodpicAdapter(Context context, List<Food> memberList) {
             this.context = context;
             this.foodList = memberList;
+
+
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
@@ -404,8 +404,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ImageView imageView = new ImageView(context);
-                    imageView.setImageResource(food.getImage());
+                    switch (food.getId()){
+                        case 1:
+                            Intent intent = new Intent(MainActivity.this, CommentActivity.class);
+                            startActivity(intent);
+                            break;
+                        case 2:
+                            Intent intent2 = new Intent(MainActivity.this, CommentActivity.class);
+                            startActivity(intent2);
+                            break;
+                        case 3:
+                            Intent intent3 = new Intent(MainActivity.this, CommentActivity.class);
+                            startActivity(intent3);
+                            break;
+
+                    }
                 }
             });
         }

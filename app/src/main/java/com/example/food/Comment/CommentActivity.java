@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -98,16 +99,15 @@ public class CommentActivity extends AppCompatActivity {
             this.MembersList = MembersList;
         }
 
-
         @Override
         public  MyViewHolder onCreateViewHolder(ViewGroup viewGroup ,int viewType){
-            LayoutInflater layoutInflater =LayoutInflater.from(context);
-            View itemView =layoutInflater.inflate(R.layout.comment_item,viewGroup,false);
+            View itemView =LayoutInflater.from(context)
+                        .inflate(R.layout.comment_item,viewGroup,false);
             return new MyViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder viewHolder ,int position){
+        public void onBindViewHolder(MyViewHolder viewHolder, int position){
             final Member member =MembersList.get(position);
             viewHolder.textView.setText(member.getName());
             viewHolder.imageView.setImageResource(member.getImage());
