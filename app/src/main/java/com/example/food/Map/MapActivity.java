@@ -109,7 +109,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
             //新增Thread處理其他事件
             t1=new Thread(r1);
             t1.start();
-            //Log.d("Thread", String.valueOf(t1.getState()));
+            Log.d("Thread", String.valueOf(t1.getState()));
             /*  接收Search結果 並執行
                         locationToMarker(String StoreAddress)*/
         }
@@ -138,6 +138,12 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                     return false;
                 }
             });
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    makeMarkers();
+                }
+            });
         }
     };
 
@@ -148,9 +154,9 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         recyclerView = findViewById(R.id.map_recycleView);
         recyclerView.setVisibility(View.VISIBLE);
         //產生店家Marker
-        makeMarkers();
+        //makeMarkers();
         progressDialog.dismiss();
-        //Log.d("Thread", String.valueOf(t1.getState()));
+        Log.d("Thread", String.valueOf(t1.getState()));
     }
 
     public void animateIntent(View view) {
@@ -367,7 +373,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                 .zoom(15)
                 .build();
         CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
-        mgoogleMap.animateCamera(update);
+        //mgoogleMap.animateCamera(update);
+        mgoogleMap.moveCamera(update);
     }
 
     LocationRequest mLocationRequest;
