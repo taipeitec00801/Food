@@ -145,8 +145,8 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
 
         //若已登入 將會員帳號和暱稱顯示
-        tv_nv_nickName.setText(prefs.getString("nickname",""));
-        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+        tv_nv_nickName.setText(prefs.getString("nickname", ""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
 
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁
@@ -240,10 +240,15 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
+            Intent intent = new Intent();
+            intent.setClass(SortActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 
 

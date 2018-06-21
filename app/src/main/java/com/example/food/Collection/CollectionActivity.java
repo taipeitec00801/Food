@@ -187,10 +187,15 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
 
     @Override
     public void onBackPressed() {
-        if (collectionDrawerLayout.isDrawerOpen(GravityCompat.START))
+        if (collectionDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
+            Intent intent = new Intent();
+            intent.setClass(CollectionActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 
     // listen refresh event

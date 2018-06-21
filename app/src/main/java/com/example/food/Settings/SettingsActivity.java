@@ -1,14 +1,13 @@
 package com.example.food.Settings;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +33,9 @@ import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Sort.SortActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.File;
 import java.util.Objects;
@@ -46,8 +49,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout settingsDrawerLayout;
     private SharedPreferences prefs;
     private boolean isMember;
+    private GoogleSignInClient mGoogleSignInClient;
     private CardView settingLogout;
-    public static boolean cleanCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,15 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         //  點選不同的 CardView
         selectCardView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        int changeDate = prefs.getInt("changeDate",0);
+        if (changeDate > 0) {
+            recreate();
+        }
     }
 
     private void findById() {
@@ -87,7 +99,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 isLogin(PreferencesSettingsActivity.class);
             }
         });
-
         /* 日夜間模式 */
         CardView cvChangeDayTimeOrNight = findViewById(R.id.changeDayTimeOrNight);
         cvChangeDayTimeOrNight.setOnClickListener(new View.OnClickListener() {
@@ -110,35 +121,33 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         cvClearApplicationCache.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CleanCacheDialog cleanCacheDialog = new CleanCacheDialog();
-                cleanCacheDialog.show(getSupportFragmentManager(), "alert");
+                new MaterialDialog.Builder(SettingsActivity.this)
+                        .title(R.string.textCleanCache)
+                        .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                        .content("Do you really want to clear cache?")
+                        .positiveText(R.string.text_btYes)
+                        .neutralText(R.string.text_btCancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                DataClearManager.clearInternalCache(getApplicationContext());
+                                DataClearManager.clearExternalCache(getApplicationContext());
+                                recreate();
+                            }
+                        })
+                        .show();
             }
         });
         /* 登出 */
         settingLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                new MaterialDialog.Builder(SettingsActivity.this)
-                        .title(R.string.textLogout)
-                        .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
-                        .content("你確定要登出嗎？")
-                        .neutralText(R.string.text_btCancel)
-                        .positiveText(R.string.text_btYes)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                //登出  初始化偏好設定中的會員資料
-                                MySharedPreferences.initSharedPreferences(prefs);
-
-                                Intent intent = new Intent();
-                                intent.setClass(SettingsActivity.this, MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                SettingsActivity.this.finish();
-                                startActivity(intent);
-                            }
-                        })
-                        .show();
+                String password = prefs.getString("userPassword", "");
+                if (password.equals("googleLogin")) {
+                    googleSignOut();
+                } else {
+                    signOut();
+                }
             }
         });
     }
@@ -148,17 +157,63 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         // 是否登入
         isMember = prefs.getBoolean("login", false);
         if (isMember) {
-        settingLogout.setVisibility(View.VISIBLE);
+            settingLogout.setVisibility(View.VISIBLE);
         }
 
         // 讀取快取大小
-        File file = new File(this.getCacheDir().getPath());
+        File file = new File(getDiskCacheDir(getApplicationContext()));
+
         TextView tvClearApplicationCache = findViewById(R.id.tvClearApplicationCache);
-        try {
-            tvClearApplicationCache.setText(DataClearManager.getCacheSize(file));
-        } catch (Exception e) {
-            e.printStackTrace();
+        tvClearApplicationCache.setText(DataClearManager.getCacheSize(file));
+    }
+
+    //讀取 cache 檔位置
+    public String getDiskCacheDir(Context context) {
+        String cachePath = null;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
         }
+        return cachePath;
+    }
+
+    // google 登出
+    private void googleSignOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        signOut();
+                    }
+                });
+    }
+
+    //登出 訊息提示
+    private void signOut() {
+        new MaterialDialog.Builder(SettingsActivity.this)
+                .title(R.string.textLogout)
+                .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                .content("你確定要登出嗎？")
+                .neutralText(R.string.text_btCancel)
+                .positiveText(R.string.text_btYes)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        //登出  初始化偏好設定中的會員資料
+                        MySharedPreferences.initSharedPreferences(prefs);
+                        //隱藏登出按鈕
+                        settingLogout.setVisibility(View.INVISIBLE);
+                        //回首頁
+                        Intent intent = new Intent();
+                        intent.setClass(SettingsActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        SettingsActivity.this.finish();
+                        startActivity(intent);
+                    }
+                })
+                .show();
     }
 
     //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
@@ -188,13 +243,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         }
     }
 
-
-    /* 清除内部 外部 快取 */
-    public void cleanCache() {
-        DataClearManager.clearInternalCache(getApplicationContext());
-        DataClearManager.clearExternalCache(getApplicationContext());
-    }
-
     private void setupNavigationDrawerMenu() {
         NavigationView navigationView = findViewById(R.id.settingsNavigationView);
         settingsDrawerLayout = findViewById(R.id.settings_DrawerLayout);
@@ -207,8 +255,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
 
         //若已登入 將會員帳號和暱稱顯示
-        tv_nv_nickName.setText(prefs.getString("nickname",""));
-        tv_nv_UserAccount.setText(prefs.getString("userAccount",""));
+        tv_nv_nickName.setText(prefs.getString("nickname", ""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
 
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁
@@ -239,7 +287,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     case R.id.navHome:
                         intent.setClass(SettingsActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        SettingsActivity.this.finish();
+//                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                     case R.id.navMap:
@@ -303,38 +351,14 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-        if (settingsDrawerLayout.isDrawerOpen(GravityCompat.START))
+        if (settingsDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
-    }
-
-    //清除快取 Dialog
-    public static class CleanCacheDialog extends DialogFragment implements DialogInterface.OnClickListener {
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new android.app.AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.textCleanCache)
-                    .setIcon(R.drawable.warn_icon)
-                    .setMessage("Do you really want to clear cache?")
-                    .setPositiveButton(R.string.text_btYes, this)
-                    .setNegativeButton(R.string.text_btCancel, this)
-                    .create();
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    SettingsActivity activity = new SettingsActivity();
-                    activity.cleanCache();
-                    break;
-                default:
-                    dialog.cancel();
-                    break;
-            }
+            Intent intent = new Intent();
+            intent.setClass(SettingsActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
     }
 }

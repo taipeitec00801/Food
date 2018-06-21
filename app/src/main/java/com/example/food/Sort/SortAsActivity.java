@@ -184,10 +184,15 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
+            Intent intent = new Intent();
+            intent.setClass(SortAsActivity.this, SortActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 
     private class sortAdapter extends
