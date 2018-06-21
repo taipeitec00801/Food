@@ -14,6 +14,9 @@
     <!-- 精確定位:GPS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <!--<uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>-->
+    <!--<uses-permission android:name="android.permission.DELETE_CACHE_FILES" />-->
+
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -54,12 +57,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity
+            android:name=".Main.MainActivity"
+            android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".Collection.CollectionActivity" />
         <activity android:name=".Settings.SettingsActivity" />
