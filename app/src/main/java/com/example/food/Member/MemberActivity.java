@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
@@ -20,6 +19,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +33,8 @@ import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.food.AppModel.Member;
+import com.example.food.DAO.MemberDAO;
 import com.example.food.Other.InputFormat;
 import com.example.food.R;
 import com.example.food.Settings.Common;
@@ -39,6 +42,7 @@ import com.example.food.Settings.Common;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -49,24 +53,177 @@ public class MemberActivity extends AppCompatActivity implements
     private Button btNext;
     private int mYear, mMonth, mDay;
     private Spinner spGender;
+    private MemberDAO memberDAO;
+    private boolean inputAccount, inputPassword, inputConfirm;
     private CircleImageView cvRegisteredImage;
     private File file;
     private byte[] regImage;
-    private PopupWindow popWindow = new PopupWindow ();
-    private InputFormat inputFormat = new InputFormat();
+    private PopupWindow popWindow = new PopupWindow();
+    private InputFormat inputFormat;
+    private String errorMessage;
     private Uri contentUri, croppedImageUri;
     private static final int REQ_TAKE_PICTURE = 0;
     private static final int REQ_PICK_IMAGE = 1;
     private static final int REQ_CROP_PICTURE = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registered);
         findViews();
         showSpinner();
-
+        //初始化
+        initContent();
+        // 偵測 現在在哪個 EditText 並 檢查輸入資訊
+        editTextFocusEvent();
         //點擊事件
         clickEvent();
+    }
+
+    private void initContent() {
+        inputAccount = false;
+        inputPassword = false;
+        inputConfirm = false;
+        errorMessage = "請確認輸入資料";
+        //頭像陣列初始化
+        regImage = null;
+    }
+
+    private void editTextFocusEvent() {
+        inputFormat = new InputFormat();
+        //帳號
+        etUser.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    inputFormat.inputFilter(etUser, 40);
+                } else {
+                    //確認輸入的帳號格式與是否已註冊
+                    inputAccount = inputFormat.isValidAccount(etUser) &&
+                            inputFormat.isInputNotNull(etUser) &&
+                            unUsableAccount(etUser);
+                    if (!inputAccount && !errorMessage.isEmpty()) {
+                        Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        //密碼
+        etPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    inputFormat.inputFilter(etPassword, 12);
+                } else {
+                    //確認輸入的密碼格式
+                    inputPassword = inputFormat.isValidPassword(etPassword) &&
+                            inputFormat.passwordLength(etPassword);
+                    if (!inputPassword && !errorMessage.isEmpty()) {
+                        Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        //確認密碼
+        cfPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    inputFormat.inputFilter(cfPassword, 12);
+                } else {
+                    //確認輸入的密碼格式 與 2組密碼是否相同
+                    inputConfirm = inputFormat.isValidPassword(cfPassword) &&
+                            inputFormat.passwordLength(cfPassword) &&
+                            inputPasswordCheck(etPassword, cfPassword);
+                    if (!inputConfirm && !errorMessage.isEmpty()) {
+                        Toast.makeText(MemberActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        //生日
+        // 當Focus在Birthday & Gender的EditText時 不顯示虛擬鍵盤
+        etBirthday.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    etBirthday.setInputType(InputType.TYPE_NULL); // 關閉虛擬鍵盤
+                    DatePickerDialogFragment datePickerFragment = new DatePickerDialogFragment();
+                    FragmentManager fm = getSupportFragmentManager();
+                    datePickerFragment.show(fm, "datePicker");
+                }
+            }
+        });
+        //性別
+        etGender.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    etGender.setInputType(InputType.TYPE_NULL); // 關閉虛擬鍵盤
+                }
+            }
+        });
+    }
+
+    private boolean inputDataCheck() {
+        boolean inputGenderOk = inputGenderCheck(etGender);
+        Log.e("測試--inputGenderOk",String.valueOf(inputGenderOk));
+        boolean inputBirthdayOk = inputFormat.isInputNotNull(etBirthday);
+        Log.e("測試--inputBirthdayOk",String.valueOf(inputBirthdayOk));
+        Log.e("測試--inputConfirm",String.valueOf(inputConfirm));
+        Log.e("測試--inputPassword",String.valueOf(inputPassword));
+        Log.e("測試--inputAccount",String.valueOf(inputAccount));
+        return inputBirthdayOk && inputGenderOk && inputConfirm && inputPassword && inputAccount;
+    }
+
+    private boolean inputGenderCheck(EditText editText) {
+        Log.e("測試--inputGenderCheck","!!");
+        boolean inputOk = false;
+        String gender = editText.getText().toString().trim();
+        Log.e("測試--Gender",gender);
+
+        if (gender.equals("男性") || gender.equals("女性")) {
+            errorMessage = "";
+            inputOk = true;
+        } else {
+            errorMessage = "請填入性別";
+        }
+        return inputOk;
+    }
+
+    private boolean inputPasswordCheck(EditText password, EditText pwConfirm) {
+        boolean inputOk = false;
+        String pswd = password.getText().toString().trim();
+        String cfpswd = pwConfirm.getText().toString().trim();
+        if (cfpswd.equals(pswd)) {
+            pwConfirm.setError(null);
+            errorMessage = "";
+            inputOk = true;
+        } else {
+            pwConfirm.setError("密碼不一致");
+            errorMessage = "密碼不一致";
+        }
+        return inputOk;
+    }
+
+    //傳送帳號到 server 帳號是否重複
+    public boolean unUsableAccount(EditText editText) {
+        boolean inputOk = false;
+        memberDAO = new MemberDAO(MemberActivity.this);
+        String inputAccount = etUser.getText().toString().trim();
+        boolean accountExisted = memberDAO.checkAccount(inputAccount);
+
+//        if (accountExisted) {
+//            //帳號已存在
+//            editText.setError("帳號已存在");
+//            errorMessage = "帳號已存在";
+//        } else {
+            //帳號尚未註冊
+            editText.setError(null);
+            errorMessage = "";
+            inputOk = true;
+//        }
+        return inputOk;
     }
 
     private void clickEvent() {
@@ -74,30 +231,36 @@ public class MemberActivity extends AppCompatActivity implements
         btNext.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                Bundle bundle = new Bundle();
-//                if (inputDataCheck()) {
-//                    //紀錄會員資料
-//                    SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-//                    prefs.edit().putString("userAccount", etUser.getText().toString().trim()).apply();
-//                    prefs.edit().putString("userPassword", etPassword.getText().toString().trim()).apply();
-//                    prefs.edit().putString("birthday", etBirthday.getText().toString().trim()).apply();
-//                    //預設 暱稱為帳號 @ 前字串
-//                    int mos = etUser.getText().toString().trim().indexOf("@");
-//                    String defaultNickName = etUser.getText().toString().trim().substring(0, mos);
-//                    prefs.edit().putString("nickName", defaultNickName).apply();
-//                    //判斷性別 並存入性別編號
-//                    int genderNumber = 2;
-//                    if (etGender.getText().toString().trim().equals("女姓")) {
-//                        genderNumber = 0;
-//                    } else if (etGender.getText().toString().trim().equals("男姓")) {
-//                        genderNumber = 1;
-//                    }
-//                    prefs.edit().putInt("gender", genderNumber).apply();
+                if (inputDataCheck()) {
+                    String userAccount = etUser.getText().toString().trim();
+                    String userPassword = etPassword.getText().toString().trim();
+                    String birthday = etBirthday.getText().toString().trim();
+                    int mos = userAccount.indexOf("@");
+                    String nickName = userAccount.substring(0, mos);
+                    String gender = etGender.getText().toString().trim();
+                    //判斷性別 並存入性別編號
+                    int genderNumber = -1;
+                    if (gender.equals(getResources().getString(R.string.textFemale))) {
+                        genderNumber = 0;
+                    } else if (gender.equals(getResources().getString(R.string.textMale))) {
+                        genderNumber = 1;
+                    }
+                    //將資料封裝 用 Bundle 傳到下一頁
+                    Member member = new Member(userAccount, userPassword, nickName,
+                            birthday, genderNumber, regImage);
 
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("MemberDate", member);
+
+                    Intent intent = new Intent();
                     intent.setClass(MemberActivity.this, Member2Activity.class);
+                    intent.putExtras(bundle);
                     startActivity(intent);
-//                }
+                } else {
+                    if (!errorMessage.isEmpty()) {
+                        Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
 
@@ -150,7 +313,7 @@ public class MemberActivity extends AppCompatActivity implements
                         popWindow.dismiss();
                     }
                 });
-                // 取消按钮
+                // 取消
                 Button btn_cancel = mView.findViewById(R.id.btn_cancel);
                 btn_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -177,24 +340,30 @@ public class MemberActivity extends AppCompatActivity implements
 
                 // 设置弹出窗体的背景
                 // 实例化一个ColorDrawable颜色为半透明
-                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0ffffff));
+                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0000000));
             }
         });
 
+        //birthDay
+        etBirthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialogFragment datePickerFragment = new DatePickerDialogFragment();
+                FragmentManager fm = getSupportFragmentManager();
+                datePickerFragment.show(fm, "datePicker");
+            }
+        });
     }
 
     private void findViews() {
         cvRegisteredImage = findViewById(R.id.cvRegisteredImage);
-        etUser = findViewById(R.id.etUser);
-        etPassword = findViewById(R.id.etPassword);
-        cfPassword = findViewById(R.id.cfPassword);
-        etBirthday = findViewById(R.id.etBirthday);
-        btNext = findViewById(R.id.btNext);
-        etGender = findViewById(R.id.etGender);
-        spGender= findViewById(R.id.spGender);
-        inputFormat.inputFilter(etPassword,12);
-        inputFormat.inputFilter(cfPassword,12);
-        inputFormat.inputFilter(etUser,40);
+        etUser = findViewById(R.id.et_reg_User);
+        etPassword = findViewById(R.id.et_reg_Password);
+        cfPassword = findViewById(R.id.cf_reg_Password);
+        etBirthday = findViewById(R.id.et_reg_Birthday);
+        btNext = findViewById(R.id.bt_reg_Next);
+        etGender = findViewById(R.id.et_reg_Gender);
+        spGender = findViewById(R.id.spGender);
     }
 
     //檢查裝置有沒有應用程式可以拍照  若有則 >0
@@ -206,14 +375,15 @@ public class MemberActivity extends AppCompatActivity implements
     }
 
     private void showSpinner() {
-        String[] places = {"Gender", "男姓", "女姓"};
-        SpinnerAdapter adapterPlace = new SpinnerAdapter(MemberActivity.this,places);
+        String[] places = {"Gender", "男性", "女性"};
+        SpinnerAdapter adapterPlace = new SpinnerAdapter(MemberActivity.this, places);
         adapterPlace
                 .setDropDownViewResource(android.R.layout.simple_gallery_item);
         spGender.setAdapter(adapterPlace);
 
         spGender.setOnItemSelectedListener(listener);
     }
+
     Spinner.OnItemSelectedListener listener = new Spinner.OnItemSelectedListener() {
         @Override
         public void onItemSelected(
@@ -226,26 +396,6 @@ public class MemberActivity extends AppCompatActivity implements
             etGender.setText(R.string.text_gender);
         }//被呼叫時代表下拉式選單有問題
     };
-
-    private boolean inputDataCheck() {
-        boolean inputPassword = false;
-        boolean inputNotNull = false;
-        //確認輸入的帳號格式與重複性
-        boolean inputAccount = (inputFormat.isValidAccount(etUser) &
-                inputFormat.unUsableAccount(MemberActivity.this, etUser));
-
-        if (inputAccount) {
-            //確認輸入的密碼
-            inputPassword = inputFormat.isValidPassword(etPassword) &
-                    inputFormat.isValidPassword(cfPassword);
-        }
-        if (inputPassword && etPassword.equals(cfPassword)) {
-            //確認輸入的生日與性別非空值
-            inputNotNull = inputFormat.isiInputNotNull(etBirthday) &
-                    inputFormat.isiInputNotNull(etGender);
-        }
-        return inputNotNull;
-    }
 
     //birthDay
     //----------------------------------------------------------------------------
@@ -260,6 +410,7 @@ public class MemberActivity extends AppCompatActivity implements
         else
             return "0" + String.valueOf(number);
     }
+
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         mYear = year;
@@ -267,6 +418,7 @@ public class MemberActivity extends AppCompatActivity implements
         mDay = day;
         updateDisplay();
     }
+
     public static class DatePickerDialogFragment extends DialogFragment {
         @NonNull
         @Override
@@ -277,13 +429,15 @@ public class MemberActivity extends AppCompatActivity implements
                     memberActivity.mDay);
         }
     }
-    public void onDateClick(View view) {
-        DatePickerDialogFragment datePickerFragment = new DatePickerDialogFragment();
-        FragmentManager fm = getSupportFragmentManager();
-        datePickerFragment.show(fm, "datePicker");
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent();
+        intent.setClass(MemberActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
-    //----------------------------------------------------------------------------
-    //birthDay
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {

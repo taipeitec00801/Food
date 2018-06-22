@@ -1,10 +1,12 @@
 package com.example.food.Member;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -33,6 +35,12 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class LoginActivity extends AppCompatActivity implements
         View.OnClickListener {
 
@@ -42,7 +50,6 @@ public class LoginActivity extends AppCompatActivity implements
     private Button btLogin, btSubmit, btForgetPassword;
     private GoogleSignInClient mGoogleSignInClient;
     private SignInButton btn_sign_in;
-    private Button btn_sign_out;
     private MemberDAO memberDAO;
     private Member member;
     private InputFormat inputFormat;
@@ -65,51 +72,13 @@ public class LoginActivity extends AppCompatActivity implements
         //Google 登入
 //        googleSignIn();
 //        getUserInfo();
-
-        //點擊事件
-        clickEvent();
-    }
-
-
-    //點擊按鈕事件
-    public void clickEvent() {
-        //登入
-        btLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isValid = inputFormat.isValidAccount(etUser) & inputFormat.isValidPassword(etPassword);
-                if (isValid) {
-                    loginSpinKit.setVisibility(View.VISIBLE);
-                    if (btLogin.isEnabled()) {
-                        Thread mThread = new Thread(runnable);
-                        mThread.start();
-                    }
-                    btLogin.setEnabled(false);
-                    btSubmit.setEnabled(false);
-                }
-            }
-        });
-
-        //註冊
-        btSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(LoginActivity.this, MemberActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        //Google登入
-        btn_sign_in.setOnClickListener(this);
-
+//        btn_sign_in.setOnClickListener(this);
         // 忘記密碼
         btForgetPassword.setOnClickListener(btflistener);
-    }
-
-    //login method
-    public void runLogin() {
-
+        //註冊
+        btSubmit.setOnClickListener(this);
+        //登入
+        btLogin.setOnClickListener(this);
     }
 
     //這裡放執行緒要執行的程式。
@@ -120,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements
             boolean isUser = memberDAO.userLogin(etUser.getText().toString().trim(),
                     etPassword.getText().toString().trim());
             prefs.edit().putBoolean("login", isUser).apply();
+            Log.e("測試--loginActivity",String.valueOf(isUser));
             if (isUser) {
                 //登入成功抓資料
                 member = memberDAO.getUserDate(etUser.getText().toString().trim());
@@ -141,6 +111,9 @@ public class LoginActivity extends AppCompatActivity implements
             }
         }
     };
+
+    private void inputImgStorage() {
+    }
 
     //登入 失敗 訊息提示窗
     public void loginFail() {
@@ -168,9 +141,6 @@ public class LoginActivity extends AppCompatActivity implements
         etPassword = findViewById(R.id.et_login_Password);
         loginSpinKit = findViewById(R.id.login_spinKit);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-
-//        btn_sign_out = findViewById(R.id.btn_sign_out);
-
 
     }
 
@@ -201,9 +171,28 @@ public class LoginActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_sign_in:
-                signIn();
-//            case R.id.btn_sign_out:
+//                signIn();
+                break;
+            case R.id.btn_sign_out:
 //                signOut();
+                break;
+            case R.id.bt_login_Submit:
+                Intent intent = new Intent();
+                intent.setClass(LoginActivity.this, MemberActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                break;
+            case R.id.bt_login_Login:
+//                boolean isValid = inputFormat.isValidAccount(etUser) & inputFormat.isValidPassword(etPassword);
+//                if (isValid) {
+                    loginSpinKit.setVisibility(View.VISIBLE);
+                    if (btLogin.isEnabled()) {
+                        Thread mThread = new Thread(runnable);
+                        mThread.start();
+                    }
+                    btLogin.setEnabled(false);
+                    btSubmit.setEnabled(false);
+//                }
                 break;
         }
     }
@@ -213,91 +202,45 @@ public class LoginActivity extends AppCompatActivity implements
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        System.out.println(requestCode);
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
-    }
-
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
-//            updateUI(account);
-            Log.d("Info",
-                    "DisplayName = " + account.getDisplayName() +
-                            "; GivenName = " + account.getGivenName() +
-                            "; FamilyName = " + account.getFamilyName() +
-                            "; Email = " + account.getEmail() +
-                            "; getId = " + account.getId() +
-                            "; getPhotoUrl = " + account.getPhotoUrl());
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.d(TAG, "signInResult:failed code=" + e.getStatusCode());
-            updateUI(null);
-        }
-    }
-
-    //    private void googleToken(){
-//        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-//                // Specify the CLIENT_ID of the app that accesses the backend:
-//                .setAudience(Collections.singletonList(CLIENT_ID))
-//                // Or, if multiple clients access the backend:
-//                //.setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3))
-//                .build();
-//
-//// (Receive idTokenString by HTTPS POST)
-//
-//        GoogleIdToken idToken = verifier.verify(idTokenString);
-//        if (idToken != null) {
-//            Payload payload = idToken.getPayload();
-//
-//            // Print user identifier
-//            String userId = payload.getSubject();
-//            System.out.println("User ID: " + userId);
-//
-//            // Get profile information from payload
-//            String email = payload.getEmail();
-//            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-//            String name = (String) payload.get("name");
-//            String pictureUrl = (String) payload.get("picture");
-//            String locale = (String) payload.get("locale");
-//            String familyName = (String) payload.get("family_name");
-//            String givenName = (String) payload.get("given_name");
-//
-//            // Use or store profile information
-//            // ...
-//
-//        } else {
-//            System.out.println("Invalid ID token.");
-//        }
-//    }
-//    public void checkSigIn(){
-//    GoogleSignIn.silentSignIn()
-//            .addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
-//        @Override
-//        public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        System.out.println(requestCode);
+//        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+//        if (requestCode == RC_SIGN_IN) {
+//            // The Task returned from this call is always completed, no need to attach
+//            // a listener.
+//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
 //            handleSignInResult(task);
 //        }
-//    });
 //    }
-    /*----------------------------------------------------------------------------------------------*/
-//    @SuppressLint("StringFormatInvalid")
+
+//    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+//        try {
+//            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+//
+//            // Signed in successfully, show authenticated UI.
+//            updateUI(account);
+//            Log.d("測試--Info",
+//                    "DisplayName = " + account.getDisplayName() +
+//                            "; GivenName = " + account.getGivenName() +
+//                            "; FamilyName = " + account.getFamilyName() +
+//                            "; Email = " + account.getEmail() +
+//                            "; getId = " + account.getId() +
+//                            "; getPhotoUrl = " + account.getPhotoUrl());
+//        } catch (ApiException e) {
+//            // The ApiException status code indicates the detailed failure reason.
+//            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+//            Log.d("測試--" + TAG, "signInResult:failed code=" + e.getStatusCode());
+//            updateUI(null);
+//        }
+//    }
+
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if (account != null) {
             findViewById(R.id.btn_sign_in).setVisibility(View.GONE);
         } else {
-//            findViewById(R.id.btn_sign_out).setVisibility(View.VISIBLE);
-
+            findViewById(R.id.btn_sign_out).setVisibility(View.VISIBLE);
         }
     }
 
@@ -312,43 +255,28 @@ public class LoginActivity extends AppCompatActivity implements
                     }
                 });
     }
-// [END signOut]
 
-    // [START revokeAccess]
-//    private void revokeAccess() {
-//        mGoogleSignInClient.revokeAccess()
-//                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        // [START_EXCLUDE]
-//                        updateUI(null);
-//                        // [END_EXCLUDE]
-//                    }
-//                });
+//    public void getUserInfo() {
+//        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+//        if (acct != null) {
+//            String personName = acct.getDisplayName();
+//            String personGivenName = acct.getGivenName();
+//            String personFamilyName = acct.getFamilyName();
+//            String personEmail = acct.getEmail();
+//            String personId = acct.getId();
+//            Uri personPhoto = acct.getPhotoUrl();
+//            Toast.makeText(LoginActivity.this, "" + personName, Toast.LENGTH_SHORT).show();
+//            Log.d("測試--UserInfo", "personName = " + personName);
+//            Log.d("測試--UserInfo", "personGivenName = " + personGivenName);
+//            Log.d("測試--UserInfo", "personFamilyName = " + personFamilyName);
+//            Log.d("測試--UserInfo", "personEmail = " + personEmail);
+//            Log.d("測試--UserInfo", "personId = " + personId);
+//            Log.d("測試--UserInfo", "personPhoto = " + personPhoto);
+//
+//        } else {
+//            Toast.makeText(LoginActivity.this, "null", Toast.LENGTH_SHORT).show();
+//        }
 //    }
-// [END revokeAccess]
-    public void getUserInfo() {
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            Uri personPhoto = acct.getPhotoUrl();
-            Toast.makeText(LoginActivity.this, "" + personName, Toast.LENGTH_SHORT).show();
-            Log.d("UserInfo", "personName = " + personName);
-            Log.d("UserInfo", "personGivenName = " + personGivenName);
-            Log.d("UserInfo", "personFamilyName = " + personFamilyName);
-            Log.d("UserInfo", "personEmail = " + personEmail);
-            Log.d("UserInfo", "personId = " + personId);
-            Log.d("UserInfo", "personPhoto = " + personPhoto);
-
-        } else {
-            Toast.makeText(LoginActivity.this, "null", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
     private Button.OnClickListener btflistener = new Button.OnClickListener() {
         @Override
@@ -372,6 +300,4 @@ public class LoginActivity extends AppCompatActivity implements
             }
         }
     };
-
-
 }
