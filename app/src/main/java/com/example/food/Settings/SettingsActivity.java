@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -15,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +32,7 @@ import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.Other.MySharedPreferences;
+import com.example.food.Other.SaveImageInExStorage;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -51,6 +55,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     private boolean isMember;
     private GoogleSignInClient mGoogleSignInClient;
     private CardView settingLogout;
+    private SaveImageInExStorage saveExStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,15 +68,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         //  點選不同的 CardView
         selectCardView();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        int changeDate = prefs.getInt("changeDate",0);
-        if (changeDate > 0) {
-            recreate();
-        }
     }
 
     private void findById() {
@@ -219,28 +215,25 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
     private void isLogin(Class wantToGo) {
         final Intent intent = new Intent();
-        if (isMember) {
+//        if (isMember) {
             intent.setClass(SettingsActivity.this, wantToGo);
             startActivity(intent);
-
-        } else {
-            new MaterialDialog.Builder(SettingsActivity.this)
-                    .title("訪客您好!")
-                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
-                    .content("欲使用該功能，請先登入")
-                    .positiveText(R.string.textIKnow)
-                    .neutralText(R.string.textGoTo)
-                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            intent.setClass(SettingsActivity.this, LoginActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            SettingsActivity.this.finish();
-                            startActivity(intent);
-                        }
-                    })
-                    .show();
-        }
+//        } else {
+//            new MaterialDialog.Builder(SettingsActivity.this)
+//                    .title("訪客您好!")
+//                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+//                    .content("欲使用該功能，請先登入")
+//                    .positiveText(R.string.textIKnow)
+//                    .neutralText(R.string.textGoTo)
+//                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+//                        @Override
+//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                            intent.setClass(SettingsActivity.this, LoginActivity.class);
+//                            startActivity(intent);
+//                        }
+//                    })
+//                    .show();
+//        }
     }
 
     private void setupNavigationDrawerMenu() {
@@ -257,6 +250,13 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         //若已登入 將會員帳號和暱稱顯示
         tv_nv_nickName.setText(prefs.getString("nickname", ""));
         tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
+
+        saveExStorage = new SaveImageInExStorage(SettingsActivity.this, prefs);
+//        Bitmap bitmap = saveExStorage.openFile();
+        saveExStorage.openFile(ivUserImage);
+//        Log.e("測試--setImageBitmap", String.valueOf(bitmap));
+//        ivUserImage.setImageBitmap(bitmap);
+//        Log.e("測試--setImageBitmap", String.valueOf(((BitmapDrawable) ivUserImage.getDrawable()).getBitmap()));
 
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁
