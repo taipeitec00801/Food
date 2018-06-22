@@ -1,6 +1,7 @@
 package com.example.food.Settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,9 +40,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
     private int colorCvRip, colorCvNoRip, colorTvRip, colorTvNoRip;
     private int prefNum;
     private int[] nowPreference = new int[10];
-
-    // 測試用 testUserAccount
-    private static final String testUserAccount = "hikarumiyasaki@gmail.com";
+    private boolean updateResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +56,21 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 skvSetBy.setVisibility(View.VISIBLE);
                 if (outBt.isEnabled()) {
+                    outBt.setEnabled(false);
                     Thread mThread = new Thread(runnable);
                     mThread.start();
+                    try {
+                        mThread.join();
+                    } catch (InterruptedException e) {
+                        System.out.println("執行緒被中斷");
+                    }
                 }
-                outBt.setEnabled(false);
+                checkDialog(updateResult);
             }
         });
 
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
-                        1, StaggeredGridLayoutManager.VERTICAL));
+                1, StaggeredGridLayoutManager.VERTICAL));
 
         List<Sort> prefList = getSortList();
         recyclerView.setAdapter(new prefAdapter(PreferencesSettingsActivity.this, prefList));
@@ -74,7 +79,6 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
 
     //這裡放執行緒要執行的程式。
     private Runnable runnable = new Runnable() {
-
         public void run() {
             //編寫Preference 內容
             StringBuilder newPreference = new StringBuilder();
@@ -88,8 +92,8 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             prefs.edit().putString("preference", newPreference.toString()).apply();
             MemberDAO memberDAO = new MemberDAO(PreferencesSettingsActivity.this);
             String userAccount = prefs.getString("userAccount", "");
-            boolean updateResult = memberDAO.updatePreference(userAccount, newPreference.toString());
-            checkDialog(updateResult);
+            updateResult = memberDAO.updatePreference(userAccount, newPreference.toString());
+
         }
     };
 
@@ -107,7 +111,10 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         skvSetBy.setVisibility(View.INVISIBLE);
-                        PreferencesSettingsActivity.this.finish();
+                        Intent intent = new Intent();
+                        intent.setClass(PreferencesSettingsActivity.this, SettingsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
                 }).show();
     }
@@ -204,7 +211,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
                         prefNum = 2 * position;
                         //判斷是點擊狀態 1=已點擊 0=未點擊
                         if (nowPreference[prefNum] == 0) {
-                            //被點擊
+                            //選取
                             viewHolder.cvLeft.setCardBackgroundColor(colorCvRip);
                             viewHolder.tvNameLeft.setBackgroundColor(colorTvRip);
                             nowPreference[prefNum] = 1;
@@ -280,8 +287,18 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
                 R.drawable.s09, 7, "冰涼滋味"));
 
         prefList.add(new Sort(R.drawable.s10, 8, "甜點飲品",
-                R.drawable.s01, 9, "隱藏美食"));
+                R.drawable.s01, 9, "其他美食"));
 
         return prefList;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent();
+        intent.setClass(PreferencesSettingsActivity.this, SettingsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
     }
 }
