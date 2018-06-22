@@ -57,10 +57,20 @@ public class Member implements Serializable {
         this.gender = gender;
     }
 
-    // 傳 userAccount 來搜尋
-//    public Member(String userAccount) {
-//        this.userAccount = userAccount;
-//    }
+    //註冊第一頁傳送到第二頁用
+    public Member(String userAccount, String userPassword, String nickName,
+                  String birthday, int gender, byte[] portrait) {
+        this.userAccount = userAccount;
+        this.userPassword = userPassword;
+        this.nickName = nickName;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.portrait = portrait;
+    }
+
+    public Member() {
+        super();
+    }
 
     //-------getter--setter---------------------------------------------------------------
     public String getUserAccount() {

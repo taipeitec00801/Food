@@ -24,18 +24,17 @@ public class MemberDAO {
         TAG = inputActivity.getClass().getName();
     }
 
-
     public boolean checkAccount(String userAccount) {
-        boolean usable = false;
+        boolean usable = true;
         if (Common.networkConnected(inputActivity)) {
             String url = Common.URL + "/MemberServlet";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "checkAccount");
             jsonObject.addProperty("UserAccount", userAccount);
             String jsonOut = jsonObject.toString();
-            CommonTask userLoginTask = new CommonTask(url, jsonOut);
+            CommonTask checkAccountTask = new CommonTask(url, jsonOut);
             try {
-                String result = userLoginTask.execute().get();
+                String result = checkAccountTask.execute().get();
                 usable = Boolean.valueOf(result);
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
@@ -100,11 +99,9 @@ public class MemberDAO {
     public Boolean updatePortrait(String userAccount, byte[] portrait) {
         Boolean updateSuccess = false;
         if (Common.networkConnected(inputActivity)) {
-            //透過IP和資料庫名稱找到資料庫。
             String url = Common.URL + "/MemberServlet";
 
             JsonObject jsonObject = new JsonObject();
-            //jsonObject新增屬性action其值為updateMemberDate
             jsonObject.addProperty("action", "update");
             jsonObject.addProperty("update", "updatePortrait");
 
@@ -192,46 +189,35 @@ public class MemberDAO {
         return updateSuccess;
     }
 
-//    public void insertMemberDate(String userAccount, String password, String nickName, String birthday,
-//                                 int gender, byte[] Portrait, String preference) {
-//        if (Common.networkConnected(inputActivity)) {
-//            //透過IP和資料庫名稱找到資料庫。
-//            String url = Common.URL + "/MemberServlet";
-//
-//            //預設暱稱為 帳號 "@" 前的字串
-//            if (nickName == null || nickName.length() == 0) {
-//                nickName = userAccount.substring(0, userAccount.indexOf("@"));
-//            }
-//            Member newMember = new Member(userAccount, password, nickName, birthday,
-//                    gender, preference);
-//
-//            //建立JsonObject
-//            JsonObject jsonObject = new JsonObject();
-//            //jsonObject新增屬性action其值為updateMemberDate
-//            jsonObject.addProperty("action", "updateMemberDate");
-//
-//            //CommonTask會將傳入的jsonOut字串送給伺服器
-//            //而伺服器判斷字串對應的方法後，對資料庫做出方法內的動作。
-//            //伺服器會找到在伺服器內部的updateMemberDate方法
-//            // 找 member table  傳入修改後的資料newMember
-//            jsonObject.addProperty("Member", new Gson().toJson(newMember));
-//            int count = 0;
-//            try {
-//                String result = new CommonTask(url, jsonObject.toString()).execute().get();
-//                count = Integer.valueOf(result);
-//
-//            } catch (Exception e) {
-//                Log.e(TAG, e.toString());
-//            }
-//            if (count == 0) {
-//                Common.showToast(inputActivity, "Update fail");
-//            } else {
-//                Common.showToast(inputActivity, "Update successfully");
-//            }
-//        } else {
-//            Common.showToast(inputActivity, "no network connection available");
-//        }
-//    }
+    public boolean insertMemberDate(Member member, byte[] portrait) {
+        Boolean insertSuccess = false;
+        if (Common.networkConnected(inputActivity)) {
+            String url = Common.URL + "/MemberServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "insertMemberDate");
+            jsonObject.addProperty("Member", new Gson().toJson(member));
+            //若會員有給頭像 傳給Server 若沒有 傳0
+            String imageBase64 = "0";
+            if (portrait != null) {
+                imageBase64 = Base64.encodeToString(portrait, Base64.DEFAULT);
+            }
+            jsonObject.addProperty("insertPortrait", imageBase64);
+            int count = 0;
+            try {
+                String result = new CommonTask(url, jsonObject.toString()).execute().get();
+                count = Integer.valueOf(result);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (count > 0) {
+                insertSuccess = true;
+            }
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+        return insertSuccess;
+    }
 
     public boolean userLogin(final String userAccount, final String userPassword) {
         boolean isUser = false;

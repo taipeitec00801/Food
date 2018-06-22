@@ -9,9 +9,11 @@ public class MySharedPreferences {
     public static void initSharedPreferences(SharedPreferences prefs) {
         //是否登入 預設 false
         prefs.edit().putBoolean("login", false).apply();
+        //是否變更資料 預設 0
+        prefs.edit().putInt("changeDate", 0).apply();
         //  會員資料
         prefs.edit().putInt("memberId", 0).apply();
-        prefs.edit().putString("userAccount", "").apply();
+        prefs.edit().putString("userAccount", "請點擊上方圖片登入").apply();
         prefs.edit().putString("userPassword", "").apply();
         prefs.edit().putString("nickname", "訪客").apply();
         prefs.edit().putString("birthday", "").apply();
