@@ -151,7 +151,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         if (prefs.getBoolean("login", false)) {
             settingLogout.setVisibility(View.VISIBLE);
         }
-
+        imgExStorage = new ImageInExternalStorage(SettingsActivity.this, prefs);
         // 讀取快取大小
         File file = new File(getDiskCacheDir(getApplicationContext()));
 
@@ -196,17 +196,16 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        //登出  初始化偏好設定中的會員資料
-                        MySharedPreferences.initSharedPreferences(prefs);
                         //刪除會員頭像
                         imgExStorage.deleteFile();
+                        //登出  初始化偏好設定中的會員資料
+                        MySharedPreferences.initSharedPreferences(prefs);
                         //隱藏登出按鈕
                         settingLogout.setVisibility(View.INVISIBLE);
                         //回首頁
                         Intent intent = new Intent();
                         intent.setClass(SettingsActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        SettingsActivity.this.finish();
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
                 })
@@ -254,7 +253,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         //若已登入 將會員帳號、暱稱和頭像顯示
         tv_nv_nickName.setText(prefs.getString("nickname", ""));
         tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
-        imgExStorage = new ImageInExternalStorage(SettingsActivity.this, prefs);
         imgExStorage.openFile(ivUserImage);
 
         if (!prefs.getBoolean("login", false)) {

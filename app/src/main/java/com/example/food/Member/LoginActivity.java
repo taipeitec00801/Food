@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements
 
             if (isUser) {
                 //登入成功抓會員資料
-                Member member = memberDAO.getUserDate(etUser.getText().toString().trim());
+                Member member = memberDAO.getUserDate(userAccount);
                 //抓會員頭像
                 Bitmap bitmap = memberDAO.getPortrait(userAccount);
                 //會員資料寫入偏好設定檔
