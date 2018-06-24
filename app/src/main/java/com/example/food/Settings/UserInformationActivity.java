@@ -9,14 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -26,14 +25,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +40,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.AppModel.Member;
 import com.example.food.DAO.MemberDAO;
-import com.example.food.Other.SaveImageInExStorage;
+import com.example.food.Other.ImageInExternalStorage;
+import com.example.food.Other.InputFormat;
 import com.example.food.R;
 import com.github.ybq.android.spinkit.SpinKitView;
 
@@ -57,19 +56,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserInformationActivity extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener {
     private int mYear, mMonth, mDay, newGender;
-    private int changeDate;
     private String newPassword, newNickName, newBirthday;
     private String userAccount;
-    private TextView tvUserNickname, tvUserBirthday;
+    private String errorMessage;
+    private TextView tvUserNickname, tvUserBirthday, tvUserPassword;
+    private EditText etSetPassword, cfSetPassword;
+    private InputFormat inputFormat;
     private SpinKitView skvSetBy;
     private File file;
-    private MemberDAO memberDAO;
-    private SaveImageInExStorage saveExStorage;
+    private ImageInExternalStorage imgExStorage;
     private PopupWindow popWindow = new PopupWindow();
     private Button btUserDataSetting;
     private byte[] image;
     private SharedPreferences prefs;
-    private boolean imageChange, updateResult, updateImageResult;
+    private boolean inputPassword, inputConfirm, inputOK;
+    private boolean imageChange, dateChange, updateResult, updateImageResult;
     private CircleImageView cvUserImage;
     private Uri contentUri, croppedImageUri;
     private static final int REQ_TAKE_PICTURE = 0;
@@ -82,17 +83,6 @@ public class UserInformationActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_user_information);
         findById();
         initContent();
-
-        // 暫時-->讀取資料庫內的會員照片
-        memberDAO = new MemberDAO(UserInformationActivity.this);
-        ImageView imageView = findViewById(R.id.cvUserImage);
-        memberDAO.getPortrait(userAccount, imageView);
-
-//        File path = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        Log.e("測試--getExternalFilesDir:",String.valueOf(path));
-        saveExStorage = new SaveImageInExStorage(UserInformationActivity.this, prefs);
-        saveExStorage.saveImage(imageView);
-
 
         showMemberData();
         clickCardView();
@@ -121,9 +111,16 @@ public class UserInformationActivity extends AppCompatActivity implements
     //這裡放執行緒要執行的程式。
     private Runnable runnable = new Runnable() {
         public void run() {
+            MemberDAO memberDAO = new MemberDAO(UserInformationActivity.this);
             Member newMember = new Member(userAccount, newPassword,
                     newNickName, newBirthday, newGender);
-            updateResult = memberDAO.updateMemberDate(newMember);
+            updateResult = false;
+            if (dateChange) {
+                updateResult = memberDAO.updateMemberDate(newMember);
+                //變更資料 改回
+                dateChange = false;
+            }
+
             updateImageResult = false;
             // 若有改變頭像 執行 updatePortrait
             if (imageChange) {
@@ -137,34 +134,25 @@ public class UserInformationActivity extends AppCompatActivity implements
                 prefs.edit().putString("nickname", newNickName).apply();
                 prefs.edit().putString("birthday", newBirthday).apply();
                 prefs.edit().putInt("gender", newGender).apply();
-                //有變更資料
-//                prefs.edit().putBoolean("changeDate", updateResult).apply();
             }
         }
     };
 
-
-
-
     //更新結果 提示視窗
     private void checkDialog(boolean updateResult, boolean updateImageResult) {
-        String result = "個人資料 失敗";
+        String result = "更新 個人資料 失敗";
         String imageResult = " ";
         if (updateResult) {
             if (updateImageResult) {
-                changeDate++;
                 imageResult = " 與 大頭照 ";
             }
-            changeDate++;
-            result = "個人資料" + imageResult + "成功";
+            result = "更新 個人資料" + imageResult + "成功";
         } else if (updateImageResult) {
-            changeDate++;
-            result = "大頭照 成功";
+            result = "更新 大頭照 成功";
         }
-        prefs.edit().putInt("changeDate", changeDate).apply();
         new MaterialDialog.Builder(UserInformationActivity.this)
                 .title(R.string.settingUserData)
-                .content("更新 " + result)
+                .content(result)
                 .positiveText(R.string.textIKnow)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
@@ -185,7 +173,11 @@ public class UserInformationActivity extends AppCompatActivity implements
     }
 
     private void findById() {
+        etSetPassword = findViewById(R.id.et_set_Password);
+        cfSetPassword = findViewById(R.id.cf_set_Password);
+
         btUserDataSetting = findViewById(R.id.btUserDataSetting);
+        tvUserPassword = findViewById(R.id.tvUserPassword);
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
         tvUserNickname = findViewById(R.id.tvUserNickname);
         cvUserImage = findViewById(R.id.cvUserImage);
@@ -280,11 +272,26 @@ public class UserInformationActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(UserInformationActivity.this)
-                        .title(R.string.textPassword)
+                        .backgroundColorRes(R.color.colorDialogBackground)
+                        .positiveColorRes(R.color.colorText)
+                        .neutralColorRes(R.color.colorText)
+                        .neutralText(R.string.text_btCancel)
                         .customView(R.layout.reset_password, true)
                         .positiveText(R.string.text_btYes)
-                        .show();
-
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                if (discernMemberPassword()) {
+                                    dialog.dismiss();
+                                    //資料有變更
+                                    dateChange = true;
+                                }
+                            }
+                        }).show();
+                //限制密碼輸入長度
+                inputFormat = new InputFormat();
+//        inputFormat.inputFilter(etSetPassword, 12);
+//        inputFormat.inputFilter(cfSetPassword, 12);
 
             }
         });
@@ -296,12 +303,17 @@ public class UserInformationActivity extends AppCompatActivity implements
                 new MaterialDialog.Builder(UserInformationActivity.this)
                         .title(R.string.textNickname)
                         .inputType(InputType.TYPE_CLASS_TEXT)
-                        .widgetColorRes(R.color.cardBackgroundStart)
+                        .backgroundColorRes(R.color.colorDialogBackground)
+                        .positiveColorRes(R.color.colorText)
+                        .neutralColorRes(R.color.colorText)
+                        .neutralText(R.string.text_btCancel)
                         .input(0, 0, new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                                 newNickName = input.toString();
                                 tvUserNickname.setText(newNickName);
+                                //資料有變更
+                                dateChange = true;
                             }
                         }).show();
             }
@@ -318,12 +330,20 @@ public class UserInformationActivity extends AppCompatActivity implements
         });
         /* 性別 */
         CardView cvUserGender = findViewById(R.id.cvUserGender);
+        final ColorStateList csl = UserInformationActivity.this
+                .getResources()
+                .getColorStateList(R.color.colorRadioButtons, null);
         cvUserGender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new MaterialDialog.Builder(UserInformationActivity.this)
                         .title(R.string.text_gender)
                         .items(R.array.genderArray)
+                        .choiceWidgetColor(csl)
+                        .backgroundColorRes(R.color.colorDialogBackground)
+                        .positiveColorRes(R.color.colorText)
+                        .neutralColorRes(R.color.colorText)
+                        .itemsColorRes(R.color.colorText)
                         .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
@@ -332,6 +352,8 @@ public class UserInformationActivity extends AppCompatActivity implements
                                     case 1:
                                         newGender = which;
                                         discernMemberGender(newGender);
+                                        //資料有變更
+                                        dateChange = true;
                                         break;
                                     default:
                                         dialog.cancel();
@@ -341,6 +363,7 @@ public class UserInformationActivity extends AppCompatActivity implements
                             }
                         })
                         .positiveText(R.string.text_btYes)
+                        .neutralText(R.string.text_btCancel)
                         .show();
             }
         });
@@ -352,8 +375,12 @@ public class UserInformationActivity extends AppCompatActivity implements
         toolbar.setTitle(R.string.settingUserData);
         //是否有變更頭像
         imageChange = false;
+        dateChange = false;
+        inputPassword = false;
+        inputConfirm = false;
+        inputOK = false;
         userAccount = prefs.getString("userAccount", "");
-
+        imgExStorage = new ImageInExternalStorage(UserInformationActivity.this, prefs);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
@@ -399,7 +426,7 @@ public class UserInformationActivity extends AppCompatActivity implements
         tvUserAccount.setText(userAccount);
 
         newPassword = prefs.getString("userPassword", "");
-//        discernMemberPassword("demo", newPassword);
+        tvUserPassword.setText(newPassword);
 
         newNickName = prefs.getString("nickname", "");
         tvUserNickname.setText(newNickName);
@@ -410,29 +437,45 @@ public class UserInformationActivity extends AppCompatActivity implements
         newGender = prefs.getInt("gender", 2);
         discernMemberGender(newGender);
 
-//        Bitmap bitmap = ((BitmapDrawable) cvUserImage.getDrawable()).getBitmap();
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        image = baos.toByteArray();
-
+        imgExStorage.openFile(cvUserImage);
     }
 
     // 未完成
     // 判斷密碼 original與input相關關係
-    private boolean discernMemberPassword(String original, String input) {
-        TextView tvUserPassword = findViewById(R.id.tvUserPassword);
-        if (input.isEmpty()) {
-            tvUserPassword.setText(original);
-            return false;
-        } else if (!original.equals(input)) {
-            tvUserPassword.setText(input);
-            newPassword = input;
-            return true;
-        } else {
-            tvUserPassword.setText(original);
-            newPassword = original;
-            return false;
+    private boolean discernMemberPassword() {
+        //密碼
+        //確認輸入的密碼格式
+        inputPassword = inputFormat.isValidPassword(etSetPassword) &&
+                inputFormat.passwordLength(etSetPassword);
+        if (!inputPassword && !errorMessage.isEmpty()) {
+            Toast.makeText(UserInformationActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
         }
+
+        //確認密碼
+        //確認輸入的密碼格式 與 2組密碼是否相同
+        inputConfirm = inputFormat.isValidPassword(cfSetPassword) &&
+                inputFormat.passwordLength(cfSetPassword) &&
+                inputPasswordCheck(etSetPassword, cfSetPassword);
+        if (!inputConfirm && !errorMessage.isEmpty()) {
+            Toast.makeText(UserInformationActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+        }
+
+        return inputConfirm && inputPassword;
+    }
+
+    private boolean inputPasswordCheck(EditText password, EditText pwConfirm) {
+        boolean inputOk = false;
+        String pswd = password.getText().toString().trim();
+        String cfpswd = pwConfirm.getText().toString().trim();
+        if (cfpswd.equals(pswd)) {
+            pwConfirm.setError(null);
+            errorMessage = "";
+            inputOk = true;
+        } else {
+            pwConfirm.setError("密碼不一致");
+            errorMessage = "密碼不一致";
+        }
+        return inputOk;
     }
 
     // 分析 性別
@@ -480,7 +523,9 @@ public class UserInformationActivity extends AppCompatActivity implements
                         e.getMessage();
                     } finally {
                         // 頭像有變更
-                        imageChange = true;
+                        if (image != null) {
+                            imageChange = true;
+                        }
                     }
                     break;
             }
