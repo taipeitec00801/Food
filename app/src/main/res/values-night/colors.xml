@@ -2,9 +2,11 @@
 <resources>
     <color name="colorPrimary">#203a43</color>
     <color name="colorPrimaryDark">#121d21</color>
-    <color name="colorAccent">#a2104b</color>
+    <color name="colorAccent">#f0649c</color>
 
     <color name="colorText">#ffffff</color>
+    <color name="colorRadioButtons">#9a8478</color>
+    <color name="colorDialogBackground">#434343</color>
 
     <color name="backgroundStart">#232526</color>
     <color name="backgroundEnd">#434343</color>
@@ -12,15 +14,13 @@
     <color name="cardBackgroundStart">#9a8478</color>
     <color name="cardBackgroundEnd">#1e130c</color>
 
-    <color name="rawerLayoutBackground">#c333</color>
+    <color name="drawerLayoutBackground">#c333</color>
 
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="lgColorText">#f0649c</color>
     <color name="Ripple">#d02e2a2a</color>
     <color name="Ripple1">#c5b8b8b8</color>
     <color name="Ripple2">#63b8b8b8</color>
     <color name="colorPopupWindow">#c3b3b2</color>
-    <color name="colorButton">#80ffa037</color>
 
 </resources>

@@ -11,7 +11,7 @@
 
         <!-- system -->
         <item name="colorControlNormal">@color/colorWhite</item>
-        <item name="android:windowBackground">@color/rawerLayoutBackground</item>
+        <item name="android:windowBackground">@color/drawerLayoutBackground</item>
 
         <!-- 切換 image -->
         <item name="ivSettingDayNight">@drawable/sun</item>

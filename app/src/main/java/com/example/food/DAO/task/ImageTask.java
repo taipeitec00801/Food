@@ -22,11 +22,10 @@ import java.net.URL;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class MemberImageTask extends AsyncTask<Object, Integer, Bitmap> {
+public class ImageTask extends AsyncTask<String, Integer, Bitmap> {
     private final static String TAG = "ImageTask";
-    private Activity inputActivity;
-    private String url, userAccount;
-    private int imageSize;
+//    private Bitmap bitmap;
+    private String url, jsonOut;
     /* ImageTask的屬性strong參照到SpotListFragment內的imageView不好，
         會導致SpotListFragment進入背景時imageView被參照而無法被釋放，
         而且imageView會參照到Context，也會導致Activity無法被回收。
@@ -34,47 +33,17 @@ public class MemberImageTask extends AsyncTask<Object, Integer, Bitmap> {
     private WeakReference<ImageView> imageViewWeakReference;
 
 
-    public MemberImageTask(String url, String userAccount, int imageSize, ImageView imageView, Activity inputActivity) {
+    public ImageTask(String url, String jsonOut) {
         this.url = url;
-        this.userAccount = userAccount;
-        this.imageSize = imageSize;
-        this.imageViewWeakReference = new WeakReference<>(imageView);
-        this.inputActivity = inputActivity;
+        this.jsonOut = jsonOut;
     }
 
     @Override
-    protected Bitmap doInBackground(Object... params) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("action", "getImage");
-        jsonObject.addProperty("UserAccount", userAccount);
-        jsonObject.addProperty("imageSize", imageSize);
-        return getRemoteImage(url, jsonObject.toString());
+    protected Bitmap doInBackground(String... params) {
+        return getRemoteImage();
     }
 
-    @Override
-    protected void onPostExecute(Bitmap bitmap) {
-        ImageView imageView = imageViewWeakReference.get();
-//        int gender = member.getGender();
-        if (isCancelled() || imageView == null) {
-            return;
-        }
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap);
-        } else {
-            //這裡需加判斷性別  並顯示不同預設圖
-            SharedPreferences prefs = inputActivity.getSharedPreferences("MyApp", MODE_PRIVATE);
-            int gender = prefs.getInt("gender", 2);
-            if (gender == 0) {
-                imageView.setImageResource(R.drawable.woman);
-            } else if (gender == 1) {
-                imageView.setImageResource(R.drawable.man);
-            } else {
-                imageView.setImageResource(R.drawable.logo);
-            }
-        }
-    }
-
-    private Bitmap getRemoteImage(String url, String jsonOut) {
+    private Bitmap getRemoteImage() {
         HttpURLConnection connection = null;
         Bitmap bitmap = null;
         try {
@@ -105,4 +74,8 @@ public class MemberImageTask extends AsyncTask<Object, Integer, Bitmap> {
         }
         return bitmap;
     }
+
+//    public Bitmap getImage() {
+//        return bitmap;
+//    }
 }

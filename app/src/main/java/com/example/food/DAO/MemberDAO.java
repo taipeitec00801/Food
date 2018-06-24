@@ -1,13 +1,13 @@
 package com.example.food.DAO;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.example.food.AppModel.Member;
 import com.example.food.DAO.task.CommonTask;
-import com.example.food.DAO.task.MemberImageTask;
+import com.example.food.DAO.task.ImageTask;
 import com.example.food.Settings.Common;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -43,6 +43,30 @@ public class MemberDAO {
             Common.showToast(inputActivity, "no network connection available");
         }
         return usable;
+    }
+
+    public boolean initGoogleDate(Member member) {
+        Boolean updateSuccess = false;
+        if (Common.networkConnected(inputActivity)) {
+            String url = Common.URL + "/MemberServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "insertGoogleDate");
+            jsonObject.addProperty("GoogleDate", new Gson().toJson(member));
+
+            int count = 0;
+            try {
+                String result = new CommonTask(url, jsonObject.toString()).execute().get();
+                count = Integer.valueOf(result);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (count > 0) {
+                updateSuccess = true;
+            }
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+        return updateSuccess;
     }
 
     public Member getUserDate(String userAccount) {
@@ -83,17 +107,26 @@ public class MemberDAO {
         return member;
     }
 
-    public void getPortrait(String userAccount, ImageView imageView) {
+    public Bitmap getPortrait(String userAccount) {
+        Bitmap bitmap = null;
         if (Common.networkConnected(inputActivity)) {
             String url = Common.URL + "/MemberServlet";
+            int imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 2;
 
-            int imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 4;
-            MemberImageTask memberImageTask = new MemberImageTask(url, userAccount, imageSize, imageView, inputActivity);
-            memberImageTask.execute();
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getImage");
+            jsonObject.addProperty("UserAccount", userAccount);
+            jsonObject.addProperty("imageSize", imageSize);
 
+            try {
+                bitmap = new ImageTask(url, jsonObject.toString()).execute().get();
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
         } else {
             Common.showToast(inputActivity, "no network connection available");
         }
+        return bitmap;
     }
 
     public Boolean updatePortrait(String userAccount, byte[] portrait) {

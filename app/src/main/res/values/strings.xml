@@ -84,7 +84,6 @@
     <string name="drawer_close">Close</string>
     <string name="msg_NoCameraAppsFound">找不到相機應用程式</string>
     <string name="msg_ExternalStorageNotFound">External storage not found</string>
-    <string name="msg_DirectoryNotCreated">Directory cannot be created</string>
 
     <!-- Button text -->
     <string name="btn_logout_from_google">Logout from Google</string>
