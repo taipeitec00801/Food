@@ -35,6 +35,7 @@ import com.example.food.Collection.CollectionActivity;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
+import com.example.food.Other.ImageInExternalStorage;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -144,9 +145,11 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
         ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
 
-        //若已登入 將會員帳號和暱稱顯示
+        //若已登入 將會員帳號、暱稱和頭像顯示
         tv_nv_nickName.setText(prefs.getString("nickname", ""));
         tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
+        ImageInExternalStorage imgExStorage = new ImageInExternalStorage(SortActivity.this, prefs);
+        imgExStorage.openFile(ivUserImage);
 
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁

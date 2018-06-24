@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -17,8 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,8 +27,8 @@ import com.example.food.Collection.CollectionActivity;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
+import com.example.food.Other.ImageInExternalStorage;
 import com.example.food.Other.MySharedPreferences;
-import com.example.food.Other.SaveImageInExStorage;
 import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
@@ -52,10 +48,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     private Toolbar settingsToolbar;
     private DrawerLayout settingsDrawerLayout;
     private SharedPreferences prefs;
-    private boolean isMember;
     private GoogleSignInClient mGoogleSignInClient;
     private CardView settingLogout;
-    private SaveImageInExStorage saveExStorage;
+    private ImageInExternalStorage imgExStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +115,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 new MaterialDialog.Builder(SettingsActivity.this)
                         .title(R.string.textCleanCache)
                         .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                        .backgroundColorRes(R.color.colorDialogBackground)
+                        .positiveColorRes(R.color.colorText)
                         .content("Do you really want to clear cache?")
                         .positiveText(R.string.text_btYes)
                         .neutralText(R.string.text_btCancel)
@@ -150,9 +147,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private void initContent() {
         settingsToolbar.setTitle(R.string.textSettings);
-        // 是否登入
-        isMember = prefs.getBoolean("login", false);
-        if (isMember) {
+        // 是否登入　若是 則顯示登出鍵
+        if (prefs.getBoolean("login", false)) {
             settingLogout.setVisibility(View.VISIBLE);
         }
 
@@ -192,6 +188,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                 .title(R.string.textLogout)
                 .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
                 .content("你確定要登出嗎？")
+                .backgroundColorRes(R.color.colorDialogBackground)
+                .positiveColorRes(R.color.colorText)
+                .neutralColorRes(R.color.colorText)
                 .neutralText(R.string.text_btCancel)
                 .positiveText(R.string.text_btYes)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -199,6 +198,8 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         //登出  初始化偏好設定中的會員資料
                         MySharedPreferences.initSharedPreferences(prefs);
+                        //刪除會員頭像
+                        imgExStorage.deleteFile();
                         //隱藏登出按鈕
                         settingLogout.setVisibility(View.INVISIBLE);
                         //回首頁
@@ -221,6 +222,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 //        } else {
 //            new MaterialDialog.Builder(SettingsActivity.this)
 //                    .title("訪客您好!")
+//                    .backgroundColorRes(R.color.colorDialogBackground)
+//                    .positiveColorRes(R.color.colorText)
+//                    .neutralColorRes(R.color.colorText)
 //                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
 //                    .content("欲使用該功能，請先登入")
 //                    .positiveText(R.string.textIKnow)
@@ -247,16 +251,11 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         TextView tv_nv_UserAccount = head.findViewById(R.id.tv_nv_User_Account);
         ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
 
-        //若已登入 將會員帳號和暱稱顯示
+        //若已登入 將會員帳號、暱稱和頭像顯示
         tv_nv_nickName.setText(prefs.getString("nickname", ""));
         tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
-
-        saveExStorage = new SaveImageInExStorage(SettingsActivity.this, prefs);
-//        Bitmap bitmap = saveExStorage.openFile();
-        saveExStorage.openFile(ivUserImage);
-//        Log.e("測試--setImageBitmap", String.valueOf(bitmap));
-//        ivUserImage.setImageBitmap(bitmap);
-//        Log.e("測試--setImageBitmap", String.valueOf(((BitmapDrawable) ivUserImage.getDrawable()).getBitmap()));
+        imgExStorage = new ImageInExternalStorage(SettingsActivity.this, prefs);
+        imgExStorage.openFile(ivUserImage);
 
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁
@@ -287,31 +286,26 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     case R.id.navHome:
                         intent.setClass(SettingsActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                     case R.id.navMap:
                         intent.setClass(SettingsActivity.this, MapActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                     case R.id.navSort:
                         intent.setClass(SettingsActivity.this, SortActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                     case R.id.navSearch:
                         intent.setClass(SettingsActivity.this, SearchActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                     case R.id.navCollection:
                         intent.setClass(SettingsActivity.this, CollectionActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                     case R.id.navSettings:
@@ -321,7 +315,6 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
                     default:
                         intent.setClass(SettingsActivity.this, UnderDevelopmentActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        SettingsActivity.this.finish();
                         startActivity(intent);
                         break;
                 }

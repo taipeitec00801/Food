@@ -105,6 +105,8 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         }
         new MaterialDialog.Builder(PreferencesSettingsActivity.this)
                 .title(R.string.textPreferencesSettings)
+                .backgroundColorRes(R.color.colorDialogBackground)
+                .positiveColorRes(R.color.colorText)
                 .content(result)
                 .positiveText(R.string.textIKnow)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
