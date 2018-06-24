@@ -7,7 +7,7 @@ public class Member implements Serializable {
     private int memberId;
     private String userAccount;
     private String userPassword;
-    private String nickName;
+    private String nickname;
     private String birthday;
     private int gender;
     private int userRank;
@@ -19,11 +19,11 @@ public class Member implements Serializable {
 
     // 註冊用
     // 送出會員資料給 server 不含 portrait
-    public Member(String userAccount, String userPassword, String nickName, String birthday,
+    public Member(String userAccount, String userPassword, String nickname, String birthday,
                   int gender, String preference) {
         this.userAccount = userAccount;
         this.userPassword = userPassword;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
         this.preference = preference;
@@ -31,13 +31,13 @@ public class Member implements Serializable {
 
     // 接收 server 給的會員所有資料 不含 portrait
     public Member(int memberId, String userAccount, String userPassword,
-                  String nickName, String birthday, int gender,
+                  String nickname, String birthday, int gender,
                   int userRank, String preference,
                   String collection, String userGift, String userFriends) {
         this.memberId = memberId;
         this.userAccount = userAccount;
         this.userPassword = userPassword;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
         this.userRank = userRank;
@@ -48,21 +48,21 @@ public class Member implements Serializable {
     }
 
     // 修改會員資料用
-    public Member(String userAccount, String userPassword, String nickName,
+    public Member(String userAccount, String userPassword, String nickname,
                   String birthday, int gender) {
         this.userAccount = userAccount;
         this.userPassword = userPassword;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
     }
 
     //註冊第一頁傳送到第二頁用
-    public Member(String userAccount, String userPassword, String nickName,
+    public Member(String userAccount, String userPassword, String nickname,
                   String birthday, int gender, byte[] portrait) {
         this.userAccount = userAccount;
         this.userPassword = userPassword;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
         this.portrait = portrait;
@@ -89,12 +89,12 @@ public class Member implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getBirthday() {

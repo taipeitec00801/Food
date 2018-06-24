@@ -45,29 +45,29 @@ public class MemberDAO {
         return usable;
     }
 
-    public boolean initGoogleDate(Member member) {
-        Boolean updateSuccess = false;
-        if (Common.networkConnected(inputActivity)) {
-            String url = Common.URL + "/MemberServlet";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "insertGoogleDate");
-            jsonObject.addProperty("GoogleDate", new Gson().toJson(member));
-
-            int count = 0;
-            try {
-                String result = new CommonTask(url, jsonObject.toString()).execute().get();
-                count = Integer.valueOf(result);
-            } catch (Exception e) {
-                Log.e(TAG, e.toString());
-            }
-            if (count > 0) {
-                updateSuccess = true;
-            }
-        } else {
-            Common.showToast(inputActivity, "no network connection available");
-        }
-        return updateSuccess;
-    }
+//    public boolean initGoogleDate(Member member) {
+//        Boolean updateSuccess = false;
+//        if (Common.networkConnected(inputActivity)) {
+//            String url = Common.URL + "/MemberServlet";
+//            JsonObject jsonObject = new JsonObject();
+//            jsonObject.addProperty("action", "insertGoogleDate");
+//            jsonObject.addProperty("GoogleDate", new Gson().toJson(member));
+//
+//            int count = 0;
+//            try {
+//                String result = new CommonTask(url, jsonObject.toString()).execute().get();
+//                count = Integer.valueOf(result);
+//            } catch (Exception e) {
+//                Log.e(TAG, e.toString());
+//            }
+//            if (count > 0) {
+//                updateSuccess = true;
+//            }
+//        } else {
+//            Common.showToast(inputActivity, "no network connection available");
+//        }
+//        return updateSuccess;
+//    }
 
     public Member getUserDate(String userAccount) {
         Member member = null;

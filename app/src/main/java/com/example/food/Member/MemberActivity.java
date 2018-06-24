@@ -54,6 +54,7 @@ public class MemberActivity extends AppCompatActivity implements
     private int mYear, mMonth, mDay;
     private Spinner spGender;
     private MemberDAO memberDAO;
+    private String gender;
     private boolean inputAccount, inputPassword, inputConfirm;
     private CircleImageView cvRegisteredImage;
     private File file;
@@ -166,23 +167,15 @@ public class MemberActivity extends AppCompatActivity implements
     }
 
     private boolean inputDataCheck() {
-        boolean inputGenderOk = inputGenderCheck(etGender);
-        Log.e("測試--inputGenderOk",String.valueOf(inputGenderOk));
+        boolean inputGenderOk = inputGenderCheck();
         boolean inputBirthdayOk = inputFormat.isInputNotNull(etBirthday);
-        Log.e("測試--inputBirthdayOk",String.valueOf(inputBirthdayOk));
-        Log.e("測試--inputConfirm",String.valueOf(inputConfirm));
-        Log.e("測試--inputPassword",String.valueOf(inputPassword));
-        Log.e("測試--inputAccount",String.valueOf(inputAccount));
         return inputBirthdayOk && inputGenderOk && inputConfirm && inputPassword && inputAccount;
     }
 
-    private boolean inputGenderCheck(EditText editText) {
-        Log.e("測試--inputGenderCheck","!!");
+    private boolean inputGenderCheck() {
         boolean inputOk = false;
-        String gender = editText.getText().toString().trim();
-        Log.e("測試--Gender",gender);
-
-        if (gender.equals("男性") || gender.equals("女性")) {
+        if (gender.equals(getResources().getString(R.string.textMale)) ||
+                gender.equals(getResources().getString(R.string.textFemale))) {
             errorMessage = "";
             inputOk = true;
         } else {
@@ -213,16 +206,16 @@ public class MemberActivity extends AppCompatActivity implements
         String inputAccount = etUser.getText().toString().trim();
         boolean accountExisted = memberDAO.checkAccount(inputAccount);
 
-//        if (accountExisted) {
-//            //帳號已存在
-//            editText.setError("帳號已存在");
-//            errorMessage = "帳號已存在";
-//        } else {
+        if (accountExisted) {
+            //帳號已存在
+            editText.setError("帳號已存在");
+            errorMessage = "帳號已存在";
+        } else {
             //帳號尚未註冊
             editText.setError(null);
             errorMessage = "";
             inputOk = true;
-//        }
+        }
         return inputOk;
     }
 
@@ -237,7 +230,6 @@ public class MemberActivity extends AppCompatActivity implements
                     String birthday = etBirthday.getText().toString().trim();
                     int mos = userAccount.indexOf("@");
                     String nickName = userAccount.substring(0, mos);
-                    String gender = etGender.getText().toString().trim();
                     //判斷性別 並存入性別編號
                     int genderNumber = -1;
                     if (gender.equals(getResources().getString(R.string.textFemale))) {
@@ -389,6 +381,7 @@ public class MemberActivity extends AppCompatActivity implements
         public void onItemSelected(
                 AdapterView<?> parent, View view, int pos, long id) {
             etGender.setText(" ");
+            gender = parent.getItemAtPosition(pos).toString();
         }
 
         @Override

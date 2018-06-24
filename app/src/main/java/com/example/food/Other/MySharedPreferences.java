@@ -18,7 +18,7 @@ public class MySharedPreferences {
         // 預設會員性別 為2 查無資料
         prefs.edit().putInt("gender", 2).apply();
         prefs.edit().putInt("userRank", 1).apply();
-        prefs.edit().putString("preference", "0,0,0,0,0,0,0,0,0,0").apply();
+        prefs.edit().putString("preference", "").apply();
         prefs.edit().putString("collection", "").apply();
         prefs.edit().putString("userGift", "").apply();
         prefs.edit().putString("userFriends", "").apply();
@@ -31,7 +31,7 @@ public class MySharedPreferences {
             prefs.edit().putInt("memberId", member.getMemberId()).apply();
             prefs.edit().putString("userAccount", member.getUserAccount()).apply();
             prefs.edit().putString("userPassword", member.getUserPassword()).apply();
-            prefs.edit().putString("nickname", member.getNickName()).apply();
+            prefs.edit().putString("nickname", member.getNickname()).apply();
             prefs.edit().putString("birthday", member.getBirthday()).apply();
             prefs.edit().putInt("gender", member.getGender()).apply();
             prefs.edit().putInt("userRank", member.getUserRank()).apply();

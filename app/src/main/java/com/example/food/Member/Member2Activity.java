@@ -3,10 +3,11 @@ package com.example.food.Member;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,6 +16,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.AppModel.Member;
 import com.example.food.DAO.MemberDAO;
 import com.example.food.Main.MainActivity;
+import com.example.food.Other.ImageInExternalStorage;
 import com.example.food.R;
 import com.github.ybq.android.spinkit.SpinKitView;
 
@@ -25,7 +27,6 @@ public class Member2Activity extends AppCompatActivity {
     private int[] nowPreference = new int[10];
     private SharedPreferences prefs;
     private SpinKitView regSpinKit;
-    private Member member;
     private boolean insertResult;
 
     @Override
@@ -101,20 +102,27 @@ public class Member2Activity extends AppCompatActivity {
                 Member member = (Member) bundle.getSerializable("MemberDate");
                 if (member != null) {
                     Member newMember = new Member(member.getUserAccount(), member.getUserPassword(),
-                            member.getNickName(), member.getBirthday(), member.getGender(), preference);
+                            member.getNickname(), member.getBirthday(), member.getGender(), preference);
+                    byte[] portrait = member.getPortrait();
                     //傳會員註冊資料到 Server
                     MemberDAO memberDAO = new MemberDAO(Member2Activity.this);
-                    insertResult = memberDAO.insertMemberDate(newMember, member.getPortrait());
+                    insertResult = memberDAO.insertMemberDate(newMember, portrait);
 
                     if (insertResult) {
                         //將會員資料寫入偏好設定檔
                         prefs.edit().putString("userAccount", member.getUserAccount()).apply();
                         prefs.edit().putString("userPassword", member.getUserPassword()).apply();
-                        prefs.edit().putString("nickName", member.getNickName()).apply();
+                        prefs.edit().putString("nickname", member.getNickname()).apply();
                         prefs.edit().putString("birthday", member.getBirthday()).apply();
                         prefs.edit().putInt("gender", member.getGender()).apply();
                         //將會員喜好寫入偏好設定檔
                         prefs.edit().putString("preference", preference).apply();
+                        //將會員圖片寫入外部儲存體
+                        if (portrait != null) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(portrait, 0, portrait.length);
+                            ImageInExternalStorage imgExStorage = new ImageInExternalStorage(Member2Activity.this, prefs);
+                            imgExStorage.saveImage(bitmap);
+                        }
                     }
                 }
             }
@@ -130,13 +138,14 @@ public class Member2Activity extends AppCompatActivity {
         new MaterialDialog.Builder(Member2Activity.this)
                 .title(R.string.textPreferencesSettings)
                 .content(result)
+                .backgroundColorRes(R.color.colorDialogBackground)
+                .positiveColorRes(R.color.colorText)
                 .positiveText(R.string.textIKnow)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         regSpinKit.setVisibility(View.INVISIBLE);
                         btConfirm.setEnabled(true);
-                        Log.e("測試--", String.valueOf(insertResult));
                         Intent intent = new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         if (insertResult) {
