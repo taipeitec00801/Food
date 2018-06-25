@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -67,15 +69,13 @@ import java.util.Objects;
 
 public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoadedCallback, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
     private GoogleMap mgoogleMap; //儲存地圖資訊
-    private LocationManager mlocationManager;//LocationManager物件
-    private Marker Store_Marker,lastClicked,defaultMarker;
+    private Marker lastClicked;
+    private Marker defaultMarker;
     private RecyclerView recyclerView;
     private List<StoreInfo> storeInfoList;
+    private List<LatLng> locationList;
     private double latitude, longitude;
     private GoogleApiClient mgoogleApiClient;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private Handler mThreadHandler;
-    private HandlerThread mThread;
     private int overallXScrol = 0;
     private int scrollPosition = 0;
     private LatLng markerPosition;
@@ -84,6 +84,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private ImageView selectMarker;
     private Thread t1;
     private CustomProgressDialog progressDialog;
+    private Toolbar mtoolbar;
 
     @Override //Create Menu
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,68 +98,88 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         if (googleServicesAvailable()) {
             setContentView(R.layout.activity_map);
             progressDialog = CustomProgressDialog.createDialog(this);
-            progressDialog.getWindow().setLayout(1080,1920);
+            progressDialog.getWindow()
+                    .setLayout(Resources.getSystem().getDisplayMetrics().widthPixels,Resources.getSystem().getDisplayMetrics().heightPixels);
             progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
-            initMap();
-            mThread = new HandlerThread("aa");
-            mThread.start();
-            mThreadHandler = new Handler(mThread.getLooper());
-            mThreadHandler.post(r1);
-            //新增Thread處理其他事件
             t1=new Thread(r1);
             t1.start();
-            Log.d("Thread", String.valueOf(t1.getState()));
             /*  接收Search結果 並執行
                         locationToMarker(String StoreAddress)*/
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        progressDialog.dismiss();
+        super.onDestroy();
+    }
+
+//    class initMarkers extends AsyncTask<Void,Void,Void> {
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            HandlerThread mThread = new HandlerThread("aa");
+//            mThread.start();
+//            Handler mThreadHandler = new Handler(mThread.getLooper());
+//            mThreadHandler.post(r1);
+//            //新增Thread處理其他事件
+//            return null;
+//        }
+//    }
+
     private Runnable r1 = new Runnable() {
         public void run() {
+            Log.d("Thread", String.valueOf(t1.getState()));
             //這裡放執行緒要執行的程式。
+            Log.d("r1 = " , String.valueOf(Thread.currentThread().getId()));
             handViews();
-            Toolbar mtoolbar = findViewById(R.id.map_toolbar);
-            mtoolbar.setTitle(getString(R.string.textMap));
-            setSupportActionBar(mtoolbar);
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-            //SearchIcon點擊跳至搜尋頁
-            mtoolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.mapSearchIcon:
-                            Intent intent = new Intent();
-                            intent.setClass(MapActivity.this, SearchActivity.class);
-                            startActivity(intent);
-                        case android.R.id.home:
-                            finish();
-                    }
-                    return false;
-                }
-            });
+            getLocationList();
+            getDeviceLocation();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    makeMarkers();
+                    mtoolbar = findViewById(R.id.map_toolbar);
+                    initToolBar();
+                    initMap();
                 }
             });
         }
     };
 
-    @Override
-    public void onMapLoaded() {
-        //取得位置
-        getDeviceLocation();
-        recyclerView = findViewById(R.id.map_recycleView);
-        recyclerView.setVisibility(View.VISIBLE);
-        //產生店家Marker
-        //makeMarkers();
-        progressDialog.dismiss();
-        Log.d("Thread", String.valueOf(t1.getState()));
+    private void initToolBar() {
+        mtoolbar.setTitle(getString(R.string.textMap));
+        setSupportActionBar(mtoolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        //SearchIcon點擊跳至搜尋頁
+        mtoolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent();
+                switch (item.getItemId()) {
+                    case R.id.mapSearchIcon:
+                        intent.setClass(MapActivity.this, SearchActivity.class);
+                        startActivity(intent);
+                    case android.R.id.home:
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                }
+                return false;
+            }
+        });
     }
 
+    @Override
+    public void onMapLoaded() {
+        recyclerView = findViewById(R.id.map_recycleView);
+        recyclerView.setVisibility(View.VISIBLE);
+        makeMarkers();
+        progressDialog.dismiss();
+       // Log.d("makeMarkers = " , String.valueOf(Thread.currentThread().getId()));
+      //  Log.d("Thread", String.valueOf(t1.getState()));
+    }
+
+    //點擊店家跳至店家頁面的animate
     public void animateIntent(View view) {
        // Toast.makeText(MapActivity.this,"Click",Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MapActivity.this,CommentActivity.class);
@@ -264,7 +285,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fmMap);
         mapFragment.getMapAsync(MapActivity.this);
-
+        mapFragment.setMenuVisibility(true);
     }
 
     //check googleServicesAvailable
@@ -285,7 +306,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
 
     //get User DeviceLocation
     private void getDeviceLocation() {
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
+        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
         try {
             final Task location = mFusedLocationProviderClient.getLastLocation();
             location.addOnCompleteListener(new OnCompleteListener() {
@@ -316,14 +337,13 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         } catch (NullPointerException e) {
             Log.e("DeviceLoc","DeviceLocation Latln:"+e.getMessage());
         }
-
     }
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mgoogleMap = googleMap;
         mgoogleMap.setOnMapLoadedCallback(this);
-        mlocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager mlocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //判斷GPS或WIFI是否開啟
         boolean isGPSEnable = mlocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean isNetworkEnable = mlocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -451,18 +471,15 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         View markerview = inflater.inflate(R.layout.custom_marker,null);
         listid = markerview.findViewById(R.id.listid);
         selectMarker = markerview.findViewById(R.id.MarkerIcon);
-        //MapMarker
-        for(int i=0;i<markers.size();i++) {
-                String address = markers.get(i).getStoreAddress();
-                LatLng position = storeAddresstoLatlng(address);
-                String id = String.valueOf(markers.get(i).getStoreID()+1); //店家ID
-                listid.setText(id);
-                iconFactory.setContentView(markerview);
-                iconFactory.setBackground(null);
-                Store_Marker = mgoogleMap.addMarker(new MarkerOptions()
-                        .position(position)
-                        .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon())));
 
+        for(int i=0;i<markers.size();i++) {
+            String id = String.valueOf(markers.get(i).getStoreID()+1); //店家ID
+            listid.setText(id);
+            iconFactory.setContentView(markerview);
+            iconFactory.setBackground(null);
+            Marker store_Marker = mgoogleMap.addMarker(new MarkerOptions()
+                    .position(locationList.get(i))
+                    .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon())));
         }
         String id = String.valueOf(markers.get(0).getStoreID()+1); //店家ID
         listid.setText(id);
@@ -472,7 +489,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         //default_marker
         defaultMarker = mgoogleMap.addMarker(new MarkerOptions()
                 //.position(new LatLng(markers.get(0).getLatitude(),markers.get(0).getLongitude()))
-                .position(storeAddresstoLatlng(markers.get(0).getStoreAddress()))
+                .position(locationList.get(0))
                 .zIndex(1.0f)
                 .icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon())));
     }
@@ -562,6 +579,20 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         }
     }
 
+    public List<LatLng> getLocationList() {
+        locationList = new ArrayList<>();
+        storeInfoList = getStoreInfoList();
+        String Address;
+        for(int i=0;i<storeInfoList.size();i++) {
+            Address = storeInfoList.get(i).getStoreAddress();
+           // Log.d("Address","Address:"+i+"||"+storeAddresstoLatlng(Address));
+            locationList.add(storeAddresstoLatlng(Address));
+            locationList.add(i,storeAddresstoLatlng(Address));
+           // Log.d("locationListSize","locationList:"+locationList.size());
+        }
+        return locationList;
+    }
+
     //StoreInfoList
     public List<StoreInfo> getStoreInfoList() {
         List<StoreInfo> StoreInfoList = new ArrayList<>();
@@ -575,27 +606,27 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         StoreInfoList.add(new StoreInfo(7, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區建國南路一段65巷7號"));
         StoreInfoList.add(new StoreInfo(8, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段67號"));
         StoreInfoList.add(new StoreInfo(9, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段66號"));
-        StoreInfoList.add(new StoreInfo(10, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(11, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(12, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(13, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(14, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(15, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(16, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(17, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(18, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(19, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(20, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(21, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(22, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(23, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(24, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(25, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(26, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(27, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(28, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(29, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
-        StoreInfoList.add(new StoreInfo(30, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(10, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(11, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(12, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(13, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(14, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(15, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(16, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(17, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(18, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(19, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(20, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(21, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(22, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(23, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(24, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(25, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(26, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(27, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(28, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(29, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
+//        StoreInfoList.add(new StoreInfo(30, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區濟南路三段25號"));
         return StoreInfoList;
     }
 }
