@@ -1,15 +1,10 @@
 package com.example.food.DAO.task;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
-
-import com.example.food.R;
-import com.google.gson.JsonObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -18,8 +13,6 @@ import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class ImageTask extends AsyncTask<String, Integer, Bitmap> {
@@ -74,8 +67,4 @@ public class ImageTask extends AsyncTask<String, Integer, Bitmap> {
         }
         return bitmap;
     }
-
-//    public Bitmap getImage() {
-//        return bitmap;
-//    }
 }
