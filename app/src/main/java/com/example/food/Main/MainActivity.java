@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (nowTheme != firstTheme) {
             recreate();
         }
+        Log.e("測試--login",String.valueOf(prefs.getBoolean("login",false)));
     }
 
     //  首次 執行App 或是 重開App  的偏好設定
@@ -170,9 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             prefs.edit().putInt("versionKey", currentVersion).apply();
         } else {
             firstTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            //  讀取 SharedPreferences 中的會員資料
-                //...
-
             //  讀取 SharedPreferences 中的主題模式
             int myTheme = prefs.getInt("theme", 0);
             if (firstTheme == 32 || myTheme == MODE_NIGHT_YES) {
@@ -205,6 +205,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
         ImageInExternalStorage imgExStorage = new ImageInExternalStorage(MainActivity.this, prefs);
         imgExStorage.openFile(ivUserImage);
+
+        Log.e("測試--logo", String.valueOf(((BitmapDrawable) ivUserImage.getDrawable()).getBitmap()));
+
 
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁
@@ -434,7 +437,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         memberList.add(new Food(3, R.drawable.food3, "shop3"));
         return memberList;
     }
-
-
-
 }

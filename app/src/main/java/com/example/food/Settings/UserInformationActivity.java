@@ -58,7 +58,6 @@ public class UserInformationActivity extends AppCompatActivity implements
     private int mYear, mMonth, mDay, newGender;
     private String newPassword, newNickName, newBirthday;
     private String userAccount;
-    private String errorMessage;
     private TextView tvUserNickname, tvUserBirthday, tvUserPassword;
     private EditText etSetPassword, cfSetPassword;
     private InputFormat inputFormat;
@@ -69,7 +68,7 @@ public class UserInformationActivity extends AppCompatActivity implements
     private Button btUserDataSetting;
     private byte[] image;
     private SharedPreferences prefs;
-    private boolean inputPassword, inputConfirm, inputOK;
+    private boolean inputOK;
     private boolean imageChange, dateChange, updateResult, updateImageResult;
     private CircleImageView cvUserImage;
     private Uri contentUri, croppedImageUri;
@@ -173,9 +172,6 @@ public class UserInformationActivity extends AppCompatActivity implements
     }
 
     private void findById() {
-        etSetPassword = findViewById(R.id.et_set_Password);
-        cfSetPassword = findViewById(R.id.cf_set_Password);
-
         btUserDataSetting = findViewById(R.id.btUserDataSetting);
         tvUserPassword = findViewById(R.id.tvUserPassword);
         tvUserBirthday = findViewById(R.id.tvUserBirthday);
@@ -281,18 +277,26 @@ public class UserInformationActivity extends AppCompatActivity implements
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                if (discernMemberPassword()) {
-                                    dialog.dismiss();
+                                etSetPassword = dialog.getView().findViewById(R.id.et_set_Password);
+                                cfSetPassword = dialog.getView().findViewById(R.id.cf_set_Password);
+
+                                //限制密碼輸入長度
+                                inputFormat.inputFilter(etSetPassword, 12);
+                                //限制密碼輸入長度
+                                inputFormat.inputFilter(cfSetPassword, 12);
+                                inputOK = discernMemberPassword(etSetPassword, cfSetPassword);
+
+                                if (inputOK) {
+                                    newPassword = cfSetPassword.getText().toString().trim();
+                                    tvUserPassword.setText(newPassword);
                                     //資料有變更
                                     dateChange = true;
+                                } else {
+                                    Common.showToast(UserInformationActivity.this, "請確認輸入的密碼");
                                 }
+                                dialog.dismiss();
                             }
                         }).show();
-                //限制密碼輸入長度
-                inputFormat = new InputFormat();
-//        inputFormat.inputFilter(etSetPassword, 12);
-//        inputFormat.inputFilter(cfSetPassword, 12);
-
             }
         });
         /* 暱稱 */
@@ -376,9 +380,8 @@ public class UserInformationActivity extends AppCompatActivity implements
         //是否有變更頭像
         imageChange = false;
         dateChange = false;
-        inputPassword = false;
-        inputConfirm = false;
         inputOK = false;
+        inputFormat = new InputFormat();
         userAccount = prefs.getString("userAccount", "");
         imgExStorage = new ImageInExternalStorage(UserInformationActivity.this, prefs);
         setSupportActionBar(toolbar);
@@ -440,25 +443,17 @@ public class UserInformationActivity extends AppCompatActivity implements
         imgExStorage.openFile(cvUserImage);
     }
 
-    // 未完成
-    // 判斷密碼 original與input相關關係
-    private boolean discernMemberPassword() {
+    private boolean discernMemberPassword(EditText password, EditText confirmPassword) {
         //密碼
         //確認輸入的密碼格式
-        inputPassword = inputFormat.isValidPassword(etSetPassword) &&
-                inputFormat.passwordLength(etSetPassword);
-        if (!inputPassword && !errorMessage.isEmpty()) {
-            Toast.makeText(UserInformationActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-        }
+        boolean inputPassword = inputFormat.isValidPassword(password) &&
+                inputFormat.passwordLength(password);
 
         //確認密碼
         //確認輸入的密碼格式 與 2組密碼是否相同
-        inputConfirm = inputFormat.isValidPassword(cfSetPassword) &&
-                inputFormat.passwordLength(cfSetPassword) &&
-                inputPasswordCheck(etSetPassword, cfSetPassword);
-        if (!inputConfirm && !errorMessage.isEmpty()) {
-            Toast.makeText(UserInformationActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-        }
+        boolean inputConfirm = inputFormat.isValidPassword(confirmPassword) &&
+                inputFormat.passwordLength(confirmPassword) &&
+                inputPasswordCheck(confirmPassword, confirmPassword);
 
         return inputConfirm && inputPassword;
     }
@@ -469,11 +464,10 @@ public class UserInformationActivity extends AppCompatActivity implements
         String cfpswd = pwConfirm.getText().toString().trim();
         if (cfpswd.equals(pswd)) {
             pwConfirm.setError(null);
-            errorMessage = "";
             inputOk = true;
         } else {
             pwConfirm.setError("密碼不一致");
-            errorMessage = "密碼不一致";
+            Common.showToast(UserInformationActivity.this, "密碼不一致");
         }
         return inputOk;
     }
