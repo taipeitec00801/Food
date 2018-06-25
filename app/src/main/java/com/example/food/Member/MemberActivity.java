@@ -53,7 +53,6 @@ public class MemberActivity extends AppCompatActivity implements
     private Button btNext;
     private int mYear, mMonth, mDay;
     private Spinner spGender;
-    private MemberDAO memberDAO;
     private String gender;
     private boolean inputAccount, inputPassword, inputConfirm;
     private CircleImageView cvRegisteredImage;
@@ -103,9 +102,6 @@ public class MemberActivity extends AppCompatActivity implements
                     inputAccount = inputFormat.isValidAccount(etUser) &&
                             inputFormat.isInputNotNull(etUser) &&
                             unUsableAccount(etUser);
-                    if (!inputAccount && !errorMessage.isEmpty()) {
-                        Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         });
@@ -119,9 +115,6 @@ public class MemberActivity extends AppCompatActivity implements
                     //確認輸入的密碼格式
                     inputPassword = inputFormat.isValidPassword(etPassword) &&
                             inputFormat.passwordLength(etPassword);
-                    if (!inputPassword && !errorMessage.isEmpty()) {
-                        Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         });
@@ -136,9 +129,6 @@ public class MemberActivity extends AppCompatActivity implements
                     inputConfirm = inputFormat.isValidPassword(cfPassword) &&
                             inputFormat.passwordLength(cfPassword) &&
                             inputPasswordCheck(etPassword, cfPassword);
-                    if (!inputConfirm && !errorMessage.isEmpty()) {
-                        Toast.makeText(MemberActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         });
@@ -181,6 +171,9 @@ public class MemberActivity extends AppCompatActivity implements
         } else {
             errorMessage = "請填入性別";
         }
+        if (!inputOk && !errorMessage.isEmpty()) {
+            Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
+        }
         return inputOk;
     }
 
@@ -196,13 +189,16 @@ public class MemberActivity extends AppCompatActivity implements
             pwConfirm.setError("密碼不一致");
             errorMessage = "密碼不一致";
         }
+        if (!inputOk && !errorMessage.isEmpty()) {
+            Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
+        }
         return inputOk;
     }
 
     //傳送帳號到 server 帳號是否重複
     public boolean unUsableAccount(EditText editText) {
         boolean inputOk = false;
-        memberDAO = new MemberDAO(MemberActivity.this);
+        MemberDAO memberDAO = new MemberDAO(MemberActivity.this);
         String inputAccount = etUser.getText().toString().trim();
         boolean accountExisted = memberDAO.checkAccount(inputAccount);
 
@@ -215,6 +211,9 @@ public class MemberActivity extends AppCompatActivity implements
             editText.setError(null);
             errorMessage = "";
             inputOk = true;
+        }
+        if (!inputOk && !errorMessage.isEmpty()) {
+            Toast.makeText(MemberActivity.this,  errorMessage, Toast.LENGTH_SHORT).show();
         }
         return inputOk;
     }

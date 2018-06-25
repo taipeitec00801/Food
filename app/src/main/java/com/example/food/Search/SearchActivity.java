@@ -179,9 +179,6 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 //                searchSetting(SearchActivity.this);
             }
         });
-
-
-
     }
 
     private class sortAdapter extends
@@ -400,10 +397,15 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
-        else
+        } else {
             super.onBackPressed();
+            Intent intent = new Intent();
+            intent.setClass(SearchActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 
     public void hideSoftKeyboard(Activity activity) {
