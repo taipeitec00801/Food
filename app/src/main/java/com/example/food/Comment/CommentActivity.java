@@ -33,8 +33,9 @@ public class CommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
         mRollViewPager =findViewById(R.id.roll_view_pager);
+
         //设置播放时间间隔
-        mRollViewPager.setPlayDelay(3000);
+//        mRollViewPager.setPlayDelay(3000);
         //设置透明度
         mRollViewPager.setAnimationDurtion(500);
         //设置适配器

@@ -44,8 +44,9 @@
     <string name="textDefaultNickname">userNickname</string>
     <string name="textDefaultBirthday">1970–01-01</string>
 
-
-
+    <!--評論-->
+    <string name="text_insert_Comment">新增評論</string>
+    <string name="text_information">店家資訊</string>
     <!-- setting -->
     <string name="textLogout">登出</string>
     <string name="settingDayNight">夜間模式</string>
