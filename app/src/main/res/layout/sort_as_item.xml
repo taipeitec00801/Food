@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="240dp"
-    app:cardBackgroundColor="@android:color/transparent">
+    android:layout_marginBottom="3dp">
 
     <com.balysv.materialripple.MaterialRippleLayout
         android:id="@+id/sortAs_item_ripple"
@@ -30,7 +30,7 @@
                     android:paddingLeft="20dp"
                     android:gravity="left|center"
                     android:text="八方雲集"
-                    android:textSize="30dp"
+                    android:textSize="18dp"
                     android:textColor="#000"/>
                 <TextView
                     android:id="@+id/sortAs_item_mapBt"

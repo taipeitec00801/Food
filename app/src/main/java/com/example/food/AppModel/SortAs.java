@@ -3,97 +3,100 @@ package com.example.food.AppModel;
 import java.io.Serializable;
 
 public class SortAs implements Serializable{
-    private Integer StoreId;
-    private String StoreName;
-    private String StoreAddress;
-    private String StorePhone;
-    private String ServiceHours;
-    private String StorePicture;
-    private Integer SortNumber;
-    private Integer StoreRecomCount;
-    private Integer StoreCommentCount;
+    private Integer storeId;
+    private String storeName;
+    private String storeAddress;
+    private String storePhone;
+    private String serviceHours;
+    private String storePicture;
+    private Integer sortNumber;
+    private Integer storeRecomCount;
+    private Integer storeCommentCount;
 
     public SortAs(Integer storeId, String storeName, String storeAddress, String storePhone, String serviceHours, String storePicture, Integer sortNumber, Integer storeRecomCount, Integer storeCommentCount) {
-        StoreId = storeId;
-        StoreName = storeName;
-        StoreAddress = storeAddress;
-        StorePhone = storePhone;
-        ServiceHours = serviceHours;
-        StorePicture = storePicture;
-        SortNumber = sortNumber;
-        StoreRecomCount = storeRecomCount;
-        StoreCommentCount = storeCommentCount;
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.storePhone = storePhone;
+        this.serviceHours = serviceHours;
+        this.storePicture = storePicture;
+        this.sortNumber = sortNumber;
+        this.storeRecomCount = storeRecomCount;
+        this.storeCommentCount = storeCommentCount;
+    }
+
+    public SortAs() {
     }
 
     public Integer getStoreId() {
-        return StoreId;
+        return storeId;
     }
 
     public void setStoreId(Integer storeId) {
-        StoreId = storeId;
+        this.storeId = storeId;
     }
 
     public String getStoreName() {
-        return StoreName;
+        return storeName;
     }
 
     public void setStoreName(String storeName) {
-        StoreName = storeName;
+        this.storeName = storeName;
     }
 
     public String getStoreAddress() {
-        return StoreAddress;
+        return storeAddress;
     }
 
     public void setStoreAddress(String storeAddress) {
-        StoreAddress = storeAddress;
+        this.storeAddress = storeAddress;
     }
 
     public String getStorePhone() {
-        return StorePhone;
+        return storePhone;
     }
 
     public void setStorePhone(String storePhone) {
-        StorePhone = storePhone;
+        this.storePhone = storePhone;
     }
 
     public String getServiceHours() {
-        return ServiceHours;
+        return serviceHours;
     }
 
     public void setServiceHours(String serviceHours) {
-        ServiceHours = serviceHours;
+        this.serviceHours = serviceHours;
     }
 
     public String getStorePicture() {
-        return StorePicture;
+        return storePicture;
     }
 
     public void setStorePicture(String storePicture) {
-        StorePicture = storePicture;
+        this.storePicture = storePicture;
     }
 
     public Integer getSortNumber() {
-        return SortNumber;
+        return sortNumber;
     }
 
     public void setSortNumber(Integer sortNumber) {
-        SortNumber = sortNumber;
+        this.sortNumber = sortNumber;
     }
 
     public Integer getStoreRecomCount() {
-        return StoreRecomCount;
+        return storeRecomCount;
     }
 
     public void setStoreRecomCount(Integer storeRecomCount) {
-        StoreRecomCount = storeRecomCount;
+        this.storeRecomCount = storeRecomCount;
     }
 
     public Integer getStoreCommentCount() {
-        return StoreCommentCount;
+        return storeCommentCount;
     }
 
     public void setStoreCommentCount(Integer storeCommentCount) {
-        StoreCommentCount = storeCommentCount;
+        this.storeCommentCount = storeCommentCount;
     }
 }

@@ -31,7 +31,7 @@ public class SortDAO {
             Gson gson = new Gson();
             //將收到的餐廳編號轉成字串。
             String sortNumbers = String.valueOf(sortNumber);
-            //透過IP和資料庫名稱找到資料庫。
+            //透過IP和資料庫名稱找到伺服器。
             String url = Common.URL + "/StoreDataServlet";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
