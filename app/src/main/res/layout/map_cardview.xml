@@ -5,11 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="6dp"
     android:layout_marginBottom="6dp"
-    android:id="@+id/map_cardView"
-    android:onClick="animateIntent"
-    app:cardCornerRadius="12dp"
-    android:transitionName="@string/map_transition_string"
-    app:cardElevation="6dp">
+    android:id="@+id/map_cardView">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,24 +26,44 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="10dp"
+            android:id="@+id/storeInfo"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/map_cardView_storename"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:transitionName="@string/map_storeInfo_name"
                 android:paddingTop="10dp"
                 android:text="store name"/>
 
 
             <TextView
-                android:id="@+id/map_cardView_tvstoreinfo"
+                android:id="@+id/map_cardView_storeAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="store info"/>
+                android:transitionName="@string/map_storeInfo_name"
+                android:text="storeAddress"/>
+
+            <TextView
+                android:id="@+id/map_cardView_businessHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:transitionName="@string/map_storeInfo_name"
+                android:text="businessHours"/>
+
+            <TextView
+                android:id="@+id/map_cardView_tel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:transitionName="@string/map_storeInfo_name"
+                android:text="tel"/>
 
         </LinearLayout>
 
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
+
+    <!--app:cardCornerRadius="12dp"-->
+    <!--app:cardElevation="6dp"-->

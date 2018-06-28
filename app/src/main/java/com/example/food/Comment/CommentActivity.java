@@ -3,11 +3,13 @@ package com.example.food.Comment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,16 +32,7 @@ public class CommentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
-        changeview();
-        RecyclerView recyclerView=findViewById(R.id.Comment_recycleview);
-        recyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(
-                        1,StaggeredGridLayoutManager.VERTICAL));
-        List<Member> memberList = getMemberList();
-        recyclerView.setAdapter(new MemberAdapter(this, memberList));
-
         mRollViewPager =findViewById(R.id.roll_view_pager);
-
         //设置播放时间间隔
         mRollViewPager.setPlayDelay(3000);
         //设置透明度
@@ -47,6 +40,28 @@ public class CommentActivity extends AppCompatActivity {
         //设置适配器
         mRollViewPager.setAdapter(new TestNormalAdapter());
         mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
+//        new commentTask().execute();
+
+    }
+
+    @Override
+    protected void onStart() {
+        new commentTask().execute();
+        super.onStart();
+    }
+
+    class commentTask extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            changeview();
+            RecyclerView recyclerView=findViewById(R.id.Comment_recycleview);
+            recyclerView.setLayoutManager(
+                    new StaggeredGridLayoutManager(
+                            1,StaggeredGridLayoutManager.VERTICAL));
+            List<Member> memberList = getMemberList();
+            recyclerView.setAdapter(new MemberAdapter(CommentActivity.this, memberList));
+            return null;
+        }
     }
 
     private class TestNormalAdapter extends StaticPagerAdapter {

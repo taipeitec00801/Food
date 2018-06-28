@@ -1,48 +1,66 @@
 package com.example.food.Map;
 
 public class StoreInfo {
-    private int StoreID,StoreImg;
-    private String StoreName,StoreAddress;
+    private int storeID, storeImg;
+    private String storeName,storeAddress,businessHours,tel;
 
     public StoreInfo() {
     }
 
-    public StoreInfo(int storeID, int storeImg, String storeName, String storeAddress) {
-        StoreID = storeID;
-        StoreImg = storeImg;
-        StoreName = storeName;
-        StoreAddress = storeAddress;
+    public StoreInfo(int storeID, int storeImg, String storeName, String storeAddress, String businessHours, String tel) {
+        this.storeID = storeID;
+        this.storeImg = storeImg;
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.businessHours = businessHours;
+        this.tel = tel;
     }
 
     public int getStoreID() {
-        return StoreID;
+        return storeID;
     }
 
     public void setStoreID(int storeID) {
-        StoreID = storeID;
+        this.storeID = storeID;
     }
 
     public int getStoreImg() {
-        return StoreImg;
+        return storeImg;
     }
 
     public void setStoreImg(int storeImg) {
-        StoreImg = storeImg;
+        this.storeImg = storeImg;
     }
 
     public String getStoreName() {
-        return StoreName;
+        return storeName;
     }
 
     public void setStoreName(String storeName) {
-        StoreName = storeName;
+        this.storeName = storeName;
     }
 
     public String getStoreAddress() {
-        return StoreAddress;
+        return storeAddress;
     }
 
     public void setStoreAddress(String storeAddress) {
-        StoreAddress = storeAddress;
+        this.storeAddress = storeAddress;
+    }
+
+    public String getBusinessHours() {
+        return businessHours;
+    }
+
+    public void setBusinessHours(String businessHours) {
+        this.businessHours = businessHours;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 }

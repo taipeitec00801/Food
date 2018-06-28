@@ -41,6 +41,7 @@
                     android:id="@+id/roll_view_pager"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
+                    android:transitionName="@string/map_transition_string"
                     android:scaleType="fitXY"
                     app:rollviewpager_play_delay="3000"/>
         </LinearLayout>
@@ -61,7 +62,8 @@
                     android:id="@+id/tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="店名:好吃好吃;地址：104台北市中山區中山北路二段52號營業時間：11:00-22:00; 連絡電話:02-23389881"
+                    android:transitionName="@string/map_storeInfo_name"
+                    android:text="店名:忠貞小館;地址：台北市大安區新生南路一段103-2號營業時間：11:00-22:00; 連絡電話:02-23389881"
                     android:layout_weight="7"
                     android:layout_gravity="center"/>
 

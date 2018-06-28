@@ -13,6 +13,10 @@
         <item name="colorControlNormal">@color/colorWhite</item>
         <item name="android:windowBackground">@color/drawerLayoutBackground</item>
 
+        <!--Enable Window Content Transitions-->
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowActivityTransitions">true</item>
+
         <!-- 切換 image -->
         <item name="ivSettingDayNight">@drawable/moon</item>
         <item name="ivUserSetting">@drawable/user_setting_black</item>
@@ -47,17 +51,16 @@
     <!--<item name="android:activityCloseExitAnimation">@transition/next_activity_out</item>-->
     <!--</style>-->
 
+    <!--自訂ProgressDialog-->
     <style name="CustomDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
     </style>
-
     <style name="CustomProgressDialog" parent="@style/CustomDialog">
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
     </style>
-
 
 </resources>

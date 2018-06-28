@@ -89,6 +89,7 @@
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
     <string name="server_client_id">891658422538-g4lvl5m9a0qqfqdapkneljnni6eas3j5.apps.googleusercontent.com</string>
-    <string name="map_transition_string">hello</string>
+    <string name="map_transition_string">mapTransition</string>
+    <string name="map_storeInfo_name">storeInfo_name</string>
 
 </resources>

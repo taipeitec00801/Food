@@ -314,8 +314,8 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
     //StoreInfoList
     public List<StoreInfo> getStoreInfoList() {
         List<StoreInfo> StoreInfoList = new ArrayList<>();
-        for(int i = 0;i<25;i++){
-            StoreInfoList.add(new StoreInfo(i, R.drawable.drinks_and_desserts,"XXX甜點","dsfdfdsfdjfoie"));
+        for(int i = 0;i<8;i++){
+            StoreInfoList.add(new StoreInfo(i, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區新生南路一段103-2號","11:00-22:00","02-23389881"));
         }
         //get Data From DataBase
         return StoreInfoList;
