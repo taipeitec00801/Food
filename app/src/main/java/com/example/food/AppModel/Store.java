@@ -3,96 +3,123 @@ package com.example.food.AppModel;
 import java.io.Serializable;
 
 public class Store implements Serializable{
-    private int StoreId,SortNumber,StoreRecomCount,StoreCommentCount;
-    private String StoreName,StoreAddress,StorePhone,ServiceHours,StorePicture;
+    private Integer storeId;
+    private String storeName;
+    private String storeAddress;
+    private String storePhone;
+    private String serviceHours;
+    private String storePicture;
+    private Integer sortNumber;
+    private Integer storeRecomCount;
+    private Integer storeCommentCount;
+    private Double latitude;
+    private Double longitude;
+
+    public Store(Integer storeId, String storeName, String storeAddress, String storePhone, String serviceHours,
+                 String storePicture, Integer sortNumber, Integer storeRecomCount, Integer storeCommentCount,
+                 Double latitude, Double longitude) {
+        super();
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.storeAddress = storeAddress;
+        this.storePhone = storePhone;
+        this.serviceHours = serviceHours;
+        this.storePicture = storePicture;
+        this.sortNumber = sortNumber;
+        this.storeRecomCount = storeRecomCount;
+        this.storeCommentCount = storeCommentCount;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     public Store() {
     }
 
-    public Store(int storeId, String storeName, String storeAddress, String storePhone,
-                 String serviceHours, String storePicture, int sortNumber, int storeRecomCount, int storeCommentCount
-                  ) {
-        StoreId = storeId;
-        StoreName = storeName;
-        StoreAddress = storeAddress;
-        StorePhone = storePhone;
-        ServiceHours = serviceHours;
-        StorePicture = storePicture;
-        SortNumber = sortNumber;
-        StoreRecomCount = storeRecomCount;
-        StoreCommentCount = storeCommentCount;
+    public Integer getStoreId() {
+        return storeId;
     }
 
-    public int getStoreId() {
-        return StoreId;
-    }
-
-    public void setStoreId(int storeId) {
-        StoreId = storeId;
+    public void setStoreId(Integer storeId) {
+        this.storeId = storeId;
     }
 
     public String getStoreName() {
-        return StoreName;
+        return storeName;
     }
 
     public void setStoreName(String storeName) {
-        StoreName = storeName;
+        this.storeName = storeName;
     }
 
     public String getStoreAddress() {
-        return StoreAddress;
+        return storeAddress;
     }
 
     public void setStoreAddress(String storeAddress) {
-        StoreAddress = storeAddress;
+        this.storeAddress = storeAddress;
     }
 
     public String getStorePhone() {
-        return StorePhone;
+        return storePhone;
     }
 
     public void setStorePhone(String storePhone) {
-        StorePhone = storePhone;
+        this.storePhone = storePhone;
     }
 
     public String getServiceHours() {
-        return ServiceHours;
+        return serviceHours;
     }
 
     public void setServiceHours(String serviceHours) {
-        ServiceHours = serviceHours;
+        this.serviceHours = serviceHours;
     }
 
     public String getStorePicture() {
-        return StorePicture;
+        return storePicture;
     }
 
     public void setStorePicture(String storePicture) {
-        StorePicture = storePicture;
+        this.storePicture = storePicture;
     }
 
-    public int getSortNumber() {
-        return SortNumber;
+    public Integer getSortNumber() {
+        return sortNumber;
     }
 
-    public void setSortNumber(int sortNumber) {
-        SortNumber = sortNumber;
+    public void setSortNumber(Integer sortNumber) {
+        this.sortNumber = sortNumber;
     }
 
-    public int getStoreRecomCount() {
-        return StoreRecomCount;
+    public Integer getStoreRecomCount() {
+        return storeRecomCount;
     }
 
-    public void setStoreRecomCount(int storeRecomCount) {
-        StoreRecomCount = storeRecomCount;
+    public void setStoreRecomCount(Integer storeRecomCount) {
+        this.storeRecomCount = storeRecomCount;
     }
 
-    public int getStoreCommentCount() {
-        return StoreCommentCount;
+    public Integer getStoreCommentCount() {
+        return storeCommentCount;
     }
 
-    public void setStoreCommentCount(int storeCommentCount) {
-        StoreCommentCount = storeCommentCount;
+    public void setStoreCommentCount(Integer storeCommentCount) {
+        this.storeCommentCount = storeCommentCount;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }

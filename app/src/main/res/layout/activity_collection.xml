@@ -23,11 +23,6 @@
             android:orientation="vertical"
             android:layout_below="@+id/collectionToolbar">
 
-            <com.baoyz.widget.PullRefreshLayout
-                android:id="@+id/collectionRefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
                 <com.baoyz.swipemenulistview.SwipeMenuListView
                     android:id="@+id/collectionListView"
                     android:layout_width="match_parent"
@@ -35,7 +30,6 @@
 
                 </com.baoyz.swipemenulistview.SwipeMenuListView>
 
-            </com.baoyz.widget.PullRefreshLayout>
         </LinearLayout>
 
     </RelativeLayout>

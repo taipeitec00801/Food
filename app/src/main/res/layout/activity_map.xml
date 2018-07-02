@@ -18,7 +18,8 @@
             app:buttonGravity="top"
             android:background="@color/colorPrimary"
             app:titleTextColor="@color/colorWhite"
-            app:theme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:theme="@style/ThemeOverlay.AppCompat"/>
+
 
         <FrameLayout
             android:layout_width="match_parent"

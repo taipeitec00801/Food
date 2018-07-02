@@ -65,7 +65,7 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         initContent();
         setupNavigationDrawerMenu();
         initSwipeListView();
-        PullRefresh();
+       // PullRefresh();
         listView.setAdapter(mAdapter);
     }
 
@@ -202,19 +202,19 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
     }
 
     // listen refresh event
-    public void PullRefresh() {
-        pullRefreshLayout = findViewById(R.id.collectionRefreshLayout);
-        pullRefreshLayout.setRefreshStyle(PullRefreshLayout.STYLE_MATERIAL);
-        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                pullRefreshLayout.setRefreshing(true);
-                /*   Refresh Data   */
-                // refresh complete
-                pullRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
+//    public void PullRefresh() {
+//        pullRefreshLayout = findViewById(R.id.collectionRefreshLayout);
+//        pullRefreshLayout.setRefreshStyle(PullRefreshLayout.STYLE_MATERIAL);
+//        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                pullRefreshLayout.setRefreshing(true);
+//                /*   Refresh Data   */
+//                // refresh complete
+//                pullRefreshLayout.setRefreshing(false);
+//            }
+//        });
+//    }
 
     //initSwipeList
     public void initSwipeListView() {
