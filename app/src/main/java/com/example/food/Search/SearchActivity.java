@@ -56,8 +56,8 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private RecyclerView rvUp,rvDown;
     private MaterialSearchBar searchBar;
     private List<SortAs> sortItemList = null;
-    private sortAdapter sortAdapter = null;
-    private searchAdapter searchAdapter = null;
+    private searchAdapter searchAdapter;
+    private sortAdapter sortAdapter;
     private boolean ordercont = true;
     private Handler mThreadHandler;
     private HandlerThread mThread;
@@ -90,52 +90,6 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         searchBar = findViewById(R.id.searchBar);
         searchBar.inflateMenu(R.menu.search_order,R.drawable.order);
         searchBar.setMenuIconTint(0xffff0000);
-        searchBar.getMenu().setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int itemId = item.getItemId();
-                if(itemId == R.id.search_order_like) {
-                    if (sortItemList != null) {
-                        if(ordercont) {
-                            ordercont = false;
-                            Collections.sort(sortItemList, new Comparator<SortAs>() {
-                                @Override
-                                public int compare(SortAs o1, SortAs o2) {
-                                    if (o1.getStoreRecomCount() > o2.getStoreRecomCount()) {
-                                        //o1 排到 o2 之前
-                                        return -1;
-                                    } else if (o1.getStoreRecomCount() < o2.getStoreRecomCount()) {
-                                        //o1 排到 o2 之後
-                                        return 1;
-                                    } else {
-                                        return 0;
-                                    }
-                                }
-                            });
-                        }else{
-                            ordercont = true;
-                            Collections.sort(sortItemList, new Comparator<SortAs>() {
-                                @Override
-                                public int compare(SortAs o1, SortAs o2) {
-                                    if (o1.getStoreRecomCount() > o2.getStoreRecomCount()) {
-                                        //o2 排到 o1 之前
-                                        return 1;
-                                    } else if (o1.getStoreRecomCount() < o2.getStoreRecomCount()) {
-                                        //o2 排到 o1 之後
-                                        return -1;
-                                    } else {
-                                        return 0;
-                                    }
-                                }
-                            });
-                        }
-                        rvUp.getAdapter().notifyDataSetChanged();
-                    }
-                }
-                return false;
-            }
-        });
-
 //        searchBar.hideSuggestionsList();
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
@@ -148,20 +102,26 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                 mThread.start();
                 mThreadHandler=new Handler(mThread.getLooper());
                 mThreadHandler.post(r1);
-                try {
-                    mThread.join(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(rvUp.getAdapter()==null||rvDown.getAdapter()==null){
-                    rvUp.setAdapter(searchAdapter);
-                    rvDown.setAdapter(sortAdapter);
-                }else{
-                    sortAdapter.notifyDataSetChanged();
-                    searchAdapter.notifyDataSetChanged();
-                    rvUp.setAdapter(searchAdapter);
-//                    rvDown.setAdapter(sortAdapter);
-                }
+//                try {
+//                    mThread.join(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                if(rvUp.getAdapter()==null||rvDown.getAdapter()==null){
+//                try {
+//                    mThread.join();
+                rvUp.setAdapter(searchAdapter);
+                rvDown.setAdapter(sortAdapter);
+//                } catch (InterruptedException e) {
+////                    rvUp.setAdapter(searchAdapter);
+////                    rvDown.setAdapter(sortAdapter);
+////                }
+//                }else{
+//                    sortAdapter.notifyDataSetChanged();
+//                    searchAdapter.notifyDataSetChanged();
+//                    rvUp.setAdapter(searchAdapter);
+////                    rvDown.setAdapter(sortAdapter);
+//                }
                 tvAbc.setVisibility(View.VISIBLE);
 
                 searchBar.disableSearch();
@@ -219,7 +179,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
             SortAs sort = sortList.get(position);
             viewHolder.resImg.setImageResource(R.drawable.cf);
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
-            viewHolder.likeNumber.setText(String.valueOf(sort.getSortNumber()));
+            viewHolder.likeNumber.setText(String.valueOf(sort.getStoreRecomCount()));
         }
     }
 
@@ -268,6 +228,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
             viewHolder.resName.setText(sort.getStoreName());
+            viewHolder.resSort.setText(sortName(sort.getSortNumber()));
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -418,17 +379,52 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         if(searchBar.getText() != null) {
             SortDAO sortDAO = new SortDAO(SearchActivity.this);
             sortItemList = sortDAO.findResByName(searchBar.getText());
-            sortAdapter = new sortAdapter(SearchActivity.this, sortItemList);
+
             searchAdapter = new searchAdapter(SearchActivity.this, sortItemList);
         }
     }
+    public void searchOther(Activity inputActivity , int sortNumber){
+        SortDAO sortDAO = new SortDAO(SearchActivity.this);
+        List<SortAs> sortDownList = sortDAO.sortRestaurant(sortNumber);
+        sortAdapter = new sortAdapter(SearchActivity.this, sortDownList);
+    }
+
+    public String sortName(int sortNumber){
+        String[] sortNameAry = {"中式餐廳","西式餐廳","日式餐廳","韓式餐廳","泰式餐廳"
+                                ,"港式餐廳","小吃","飲料甜點","冰品","其他"};
+
+        return sortNameAry[sortNumber];
+    }
+
     private Runnable r1 = new Runnable(){
         public void run(){
             //這裡放執行緒要執行的程式。
             searchSetting(SearchActivity.this);
-
-//            mThreadHandler.post();
+//            rvUp.setAdapter(searchAdapter);
+            mThreadHandler.post(r2);
         }
     };
 
+    private Runnable r2 = new Runnable(){
+        public void run(){
+            //這裡放執行緒要執行的程式。
+            searchOther(SearchActivity.this , sortItemList.get(0).getSortNumber());
+//            rvDown.setAdapter(sortAdapter);
+            mThreadHandler.post(r3);
+        }
+    };
+    private Runnable r3 = new Runnable() {
+        @Override
+        public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // update TextView here!
+                            rvUp.setAdapter(searchAdapter);
+                            rvDown.setAdapter(sortAdapter);
+                        }
+                    });
+
+        }
+    };
 }

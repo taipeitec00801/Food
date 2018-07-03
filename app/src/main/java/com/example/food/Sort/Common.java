@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 public class Common {
 //    public static String URL = "http://192.168.196.189:8080/Spot_MySQL_Web/";
-    public static String URL = "http://10.0.2.2:8080/Food_Hibernate";
+    public static String URL = "http://10.0.2.2:8080/mvcExcercise";
 
     // check if the device connect to the network
     public static boolean networkConnected(Activity activity) {

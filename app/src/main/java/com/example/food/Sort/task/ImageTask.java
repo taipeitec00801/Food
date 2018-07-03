@@ -19,7 +19,8 @@ import java.net.URL;
 
 public class ImageTask extends AsyncTask<Object, Integer, Bitmap> {
     private final static String TAG = "ImageTask";
-    private String url , name;
+    private String url;
+    private int id;
     private int imageSize;
     /* ImageTask的屬性strong參照到SpotListFragment內的imageView不好，
         會導致SpotListFragment進入背景時imageView被參照而無法被釋放，
@@ -27,23 +28,16 @@ public class ImageTask extends AsyncTask<Object, Integer, Bitmap> {
         改採weak參照就不會阻止imageView被回收 */
     private WeakReference<ImageView> imageViewWeakReference;
 
-    public ImageTask(String url, String name, int imageSize) {
-        this(url, name, imageSize, null);
-    }
-
-    public ImageTask(String url, String name, int imageSize, ImageView imageView) {
+    public ImageTask(String url, int id,  ImageView imageView) {
         this.url = url;
-        this.name = name;
-        this.imageSize = imageSize;
+        this.id = id;
         this.imageViewWeakReference = new WeakReference<>(imageView);
     }
 
     @Override
     protected Bitmap doInBackground(Object... params) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("action", "getImage");
-        jsonObject.addProperty("name", name);
-        jsonObject.addProperty("imageSize", imageSize);
+        jsonObject.addProperty("id", id);
         return getRemoteImage(url, jsonObject.toString());
     }
 
@@ -69,6 +63,7 @@ public class ImageTask extends AsyncTask<Object, Integer, Bitmap> {
             connection.setDoOutput(true); // allow outputs
             connection.setUseCaches(false); // do not use a cached copy
             connection.setRequestMethod("POST");
+            connection.setRequestProperty("charset", "UTF-8");
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
             bw.write(jsonOut);
             Log.d(TAG, "output: " + jsonOut);

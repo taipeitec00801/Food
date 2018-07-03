@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
+import com.example.food.Sort.task.ImageTask;
 
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private SharedPreferences prefs;
-
+    private ImageTask storeImgTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,7 +239,13 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(@NonNull SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-            viewHolder.resImg.setImageResource(R.drawable.food3);
+
+            String url = Common.URL + "/appGetImages";
+            Log.e(TAG, url);
+            int id = sort.getStoreId();
+            storeImgTask = new ImageTask(url, id, viewHolder.resImg);
+            storeImgTask.execute();
+
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
             viewHolder.likeNumber.setText(String.valueOf(sort.getSortNumber()));
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {

@@ -5,8 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:layout_marginTop="2dp"
-    app:cardBackgroundColor="@android:color/transparent">
+    android:layout_marginBottom="2dp">
 
     <com.balysv.materialripple.MaterialRippleLayout
         android:id="@+id/sortAs_item_ripple"
@@ -32,7 +31,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="四海遊龍"
-                android:textSize="25dp"
+                android:textSize="18dp"
                 android:gravity="center"/>
 
             <ImageView
