@@ -10,11 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.transition.Fade;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.food.AppModel.Store;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
@@ -28,11 +31,26 @@ public class CommentActivity extends AppCompatActivity {
 
     private View linearlayout_introduce,floatingbutton;
     private RollPagerView mRollViewPager;
+    private TextView tv,tv1,tv2,tv3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
         mRollViewPager =findViewById(R.id.roll_view_pager);
+        tv = findViewById(R.id.tv);
+        tv1 = findViewById(R.id.tv1);
+        tv2 = findViewById(R.id.tv2);
+        tv3 = findViewById(R.id.tv3);
+        //get bundle From Map
+        Bundle bundle = getIntent().getExtras();
+        Store store = (Store) bundle.getSerializable("store");
+        Log.d("storeList",""+store.getStoreName());
+
+        tv.setText("店名:"+store.getStoreName());
+        tv1.setText("地址:"+store.getStoreAddress());
+        tv2.setText("營業時間："+store.getServiceHours());
+        tv3.setText("連絡電話:"+store.getStorePhone());
+
 
         //设置播放时间间隔
 //        mRollViewPager.setPlayDelay(3000);

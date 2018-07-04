@@ -42,8 +42,11 @@ import android.widget.Toast;
 import com.example.food.AppModel.Store;
 import com.example.food.Comment.CommentActivity;
 import com.example.food.DAO.StoreDAO;
+import com.example.food.DAO.task.Common;
+import com.example.food.Main.MainActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
+import com.example.food.Sort.task.ImageTask;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -78,6 +81,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private List<StoreInfo> storeInfoList;
     private List<Store> storeList;
     private List<LatLng> locationList;
+    private ImageTask storeImgTask;
     private double latitude, longitude;
     private Location currentlocation;
     private GoogleApiClient mgoogleApiClient;
@@ -122,7 +126,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         super.onStart();
        // new initMarkers().execute();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -180,12 +183,15 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                     case R.id.mapSearchIcon:
                         intent.setClass(MapActivity.this, SearchActivity.class);
                         startActivity(intent);
-                    case android.R.id.home:
-                        NavUtils.navigateUpFromSameTask(MapActivity.this);
-                        Log.d("home","click");
-                        return true;
                 }
                 return true;
+            }
+        });
+        mtoolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("home","click");
+               MapActivity.this.finish();
             }
         });
     }
@@ -203,7 +209,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     }
 
     //點擊店家跳至店家頁面的animate
-    public void animateIntent() {
+    public void animateIntent(int storeNum) {
         Intent intent = new Intent(MapActivity.this,CommentActivity.class);
         String transitionName = getString(R.string.map_transition_string);
         String transitionName2 = getString(R.string.map_storeInfo_name);
@@ -217,6 +223,18 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         ActivityOptionsCompat options =
                 ActivityOptionsCompat.makeSceneTransitionAnimation(MapActivity.this,pairs);
 
+        //將資料送至商店頁
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("store",storeList.get(storeNum));
+        bundle.putAll(options.toBundle());
+        intent.putExtras(bundle);
+        intent.putExtras(options.toBundle());
+
+
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("store",storeList.get(storeNum));
+//        bundle.putAll(options.toBundle());
+//        startActivity(intent,bundle);
         startActivity(intent,options.toBundle());
 
     }
@@ -284,7 +302,12 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         public void onBindViewHolder(@NonNull final mViewHolder holder, final int position) {
            // final StoreInfo storeInfo = storeInfoList.get(position);
             final Store store = storeList.get(position);
-            holder.imageView.setImageResource(R.drawable.food);
+            String url = Common.URL+"/appGetImages";
+            int id = store.getStoreId();
+            storeImgTask = new ImageTask(url, id, holder.imageView);
+            storeImgTask.execute();
+
+           // holder.imageView.setImageResource(R.drawable.food);
             holder.tvName.setText("店名: "+store.getStoreName());
             holder.tvAddress.setText("地址: "+store.getStoreAddress());
             holder.businessHours.setText("今日營業: "+store.getServiceHours());
@@ -293,7 +316,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                 @Override
                 public void onClick(View v) {
 //                  send Data to 店家評價頁面
-                    animateIntent();
+                    animateIntent(position);
                 }
             });
         }
@@ -344,7 +367,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                             //User為圓心半徑50M
                             mgoogleMap.addCircle(new CircleOptions()
                                     .center(new LatLng(currentlocation.getLatitude(),currentlocation.getLongitude()))
-                                    .radius(1000) // In meters
+                                    .radius(10) // In meters
                                     .strokeColor(0x800000FF) //ARGB，
                                     .strokeWidth(2f)
                                     .fillColor(0x200000FF));
@@ -415,7 +438,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         longitude = lon;
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(latitude, longitude))
-                .zoom(15)
+                .zoom(17)
                 .build();
         CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
         //mgoogleMap.animateCamera(update);
@@ -622,12 +645,13 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
             storeList = storeDAO.getStoreByDistance();
 
             if(storeList == null) {
+                progressDialog.dismiss();
                 setContentView(R.layout.map_fail);
                 TextView errorText = findViewById(R.id.mapError);
                 mtoolbar = findViewById(R.id.mapfail_toolbar);
                 initToolBar();
                 errorText.setText("連線不穩，請重新嘗試。");
-                progressDialog.dismiss();
+              //  progressDialog.dismiss();
             } else {
               //  Log.d("storeList","||"+storeList.size());
                 //比對店家位置和User位置並放入storeList

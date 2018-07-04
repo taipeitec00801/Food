@@ -69,10 +69,9 @@
         <activity
             android:name=".Settings.UserInformationActivity"
             android:parentActivityName=".Settings.SettingsActivity" />
-        <activity
-            android:name=".Map.MapActivity"
-            android:parentActivityName=".Main.MainActivity" />
+
         <activity android:name=".Search.SearchActivity" />
+        <activity android:name=".Map.MapActivity" />
         <activity android:name=".Sort.SortActivity" />
         <activity android:name=".Sort.SortAsActivity" />
         <activity android:name=".Comment.CommentActivity" />
@@ -86,3 +85,7 @@
     </application>
 
 </manifest>
+
+<!--<activity-->
+<!--android:name=".Map.MapActivity"-->
+<!--android:parentActivityName=".Main.MainActivity" />-->

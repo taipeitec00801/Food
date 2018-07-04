@@ -18,7 +18,7 @@ public class Common {
     //    public static String URL = "http://192.168.196.189:8080/Spot_MySQL_Web/";
     //IP位置自行更改
    // public static String URL = "http://192.168.11.99:8080/Food_Hibernate";
-    public static String URL = "http://10.0.2.2:8080/Food_Hibernate";
+    public static String URL = "http://10.0.2.2:8080/mvcExcercise";
     public static final int PERMISSION_READ_EXTERNAL_STORAGE = 0;
     private static final String TAG = "Common";
 

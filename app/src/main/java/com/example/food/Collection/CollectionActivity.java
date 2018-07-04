@@ -27,11 +27,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.widget.PullRefreshLayout;
+import com.example.food.AppModel.Store;
+import com.example.food.DAO.StoreDAO;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Map.StoreInfo;
@@ -46,32 +50,81 @@ import com.example.food.Sort.SortAsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CollectionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private SwipeMenuListView listView;
     private Toolbar collectionToolbar;
-    private PullRefreshLayout pullRefreshLayout;
     private DrawerLayout collectionDrawerLayout;
     private AppAdapter mAdapter;
     private List<StoreInfo> storeInfos = getStoreInfoList();
     private SharedPreferences prefs;
+    private boolean isMember;
+    private List<Store> collectionList;
+    private String userCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-        mAdapter = new AppAdapter(storeInfos,this);
-        initContent();
-        setupNavigationDrawerMenu();
-        initSwipeListView();
-       // PullRefresh();
-        listView.setAdapter(mAdapter);
+        if(isMember) {
+            mAdapter = new AppAdapter(storeInfos,this);
+            initContent();
+            setupNavigationDrawerMenu();
+            initSwipeListView();
+            // PullRefresh();
+            listView.setAdapter(mAdapter);
+        } else {
+            checkLogin();
+        }
     }
+
+    private Runnable r1 = new Runnable() {
+        @Override
+        public void run() {
+            userCollection = prefs.getString("collection", "");
+            
+            collectionList = new ArrayList<>();
+            StoreDAO storeDAO = new StoreDAO(CollectionActivity.this);
+            //collectionList = storeDAO.getCollectionListByUser();
+        }
+    };
 
     @Override
     protected void onStart() {
         super.onStart();
+        isMember = prefs.getBoolean("login", false);
+    }
+
+    private void checkLogin() {
+        final Intent intent = new Intent();
+        new MaterialDialog.Builder(CollectionActivity.this)
+                .title("訪客您好!")
+                .backgroundColorRes(R.color.colorDialogBackground)
+                .positiveColorRes(R.color.colorText)
+                .neutralColorRes(R.color.colorText)
+                .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                .content("欲使用該功能，請先登入")
+                .positiveText(R.string.textIKnow)
+                .neutralText(R.string.textGoTo)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        intent.setClass(CollectionActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        CollectionActivity.this.finish();
+                    }
+                })
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        intent.setClass(CollectionActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        CollectionActivity.this.finish();
+                    }
+                })
+                .show();
     }
 
 
@@ -201,20 +254,6 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         }
     }
 
-    // listen refresh event
-//    public void PullRefresh() {
-//        pullRefreshLayout = findViewById(R.id.collectionRefreshLayout);
-//        pullRefreshLayout.setRefreshStyle(PullRefreshLayout.STYLE_MATERIAL);
-//        pullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                pullRefreshLayout.setRefreshing(true);
-//                /*   Refresh Data   */
-//                // refresh complete
-//                pullRefreshLayout.setRefreshing(false);
-//            }
-//        });
-//    }
 
     //initSwipeList
     public void initSwipeListView() {

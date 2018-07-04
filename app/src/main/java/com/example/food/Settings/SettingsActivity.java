@@ -51,6 +51,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     private GoogleSignInClient mGoogleSignInClient;
     private CardView settingLogout;
     private ImageInExternalStorage imgExStorage;
+    private boolean isMember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,12 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
         //  點選不同的 CardView
         selectCardView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isMember = prefs.getBoolean("login", false);
     }
 
     private void findById() {
@@ -215,28 +222,28 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
     private void isLogin(Class wantToGo) {
         final Intent intent = new Intent();
-//        if (isMember) {
+        if (isMember) {
             intent.setClass(SettingsActivity.this, wantToGo);
             startActivity(intent);
-//        } else {
-//            new MaterialDialog.Builder(SettingsActivity.this)
-//                    .title("訪客您好!")
-//                    .backgroundColorRes(R.color.colorDialogBackground)
-//                    .positiveColorRes(R.color.colorText)
-//                    .neutralColorRes(R.color.colorText)
-//                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
-//                    .content("欲使用該功能，請先登入")
-//                    .positiveText(R.string.textIKnow)
-//                    .neutralText(R.string.textGoTo)
-//                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            intent.setClass(SettingsActivity.this, LoginActivity.class);
-//                            startActivity(intent);
-//                        }
-//                    })
-//                    .show();
-//        }
+        } else {
+            new MaterialDialog.Builder(SettingsActivity.this)
+                    .title("訪客您好!")
+                    .backgroundColorRes(R.color.colorDialogBackground)
+                    .positiveColorRes(R.color.colorText)
+                    .neutralColorRes(R.color.colorText)
+                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                    .content("欲使用該功能，請先登入")
+                    .positiveText(R.string.textIKnow)
+                    .neutralText(R.string.textGoTo)
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            intent.setClass(SettingsActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+        }
     }
 
     private void setupNavigationDrawerMenu() {
