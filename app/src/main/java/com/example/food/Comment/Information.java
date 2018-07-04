@@ -11,6 +11,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.R;
 import com.example.food.Sort.SortAsActivity;
 import com.ldoublem.thumbUplib.ThumbUpView;
+
+import java.util.Objects;
 
 public class Information extends AppCompatActivity {
     private AppBarLayout mAppBarLayout;
@@ -35,6 +38,7 @@ public class Information extends AppCompatActivity {
 
         setContentView(R.layout.activity_comment_information);
         goview();
+        initContent();
 
 //          愛心按鈕
         tpv =findViewById(R.id.tpv);
@@ -70,6 +74,14 @@ public class Information extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void initContent() {
+        Toolbar toolbar = findViewById(R.id.CommentInformationToolbar);
+//        toolbar.setTitle(R.string.text_insert_Comment);
+        toolbar.setTitle(getString(R.string.text_information));
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
 

@@ -9,8 +9,12 @@
     tools:context=".Comment.Information">
 
     <include
-        android:id="@+id/CommentInformationToolbar"
-        layout="@layout/toolbar" />
+    android:id="@+id/CommentInformationToolbar"
+    layout="@layout/toolbar" />
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,16 +73,17 @@
             android:src="@drawable/food1" />
 
         <TextView
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/myedittext"
             android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，我又再度到意舍酒店，這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/myedittext"
             android:text="User留言"/>
         <LinearLayout
-            android:layout_marginTop="20dp"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

@@ -10,11 +10,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,6 +24,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +36,11 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.example.food.Map.CustomProgressDialog;
+import com.example.food.Member.LoginActivity;
+import com.example.food.Member.MemberActivity;
+import com.example.food.Other.ImageInExternalStorage;
+import com.example.food.Other.InputFormat;
 import com.example.food.R;
 import com.example.food.Settings.*;
 import com.example.food.Settings.Common;
@@ -40,6 +49,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Objects;
 
 public class Comment_interface extends AppCompatActivity {
     private AppBarLayout mAppBarLayout;
@@ -53,14 +63,17 @@ public class Comment_interface extends AppCompatActivity {
     private static final int REQ_CROP_PICTURE = 2;
     private Uri contentUri, croppedImageUri;
     private byte[] image;
+    private Toolbar toolbar;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment_interface);
-        review();
         findViews();
+        initContent();
+        review();
         selectCardView();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -77,6 +90,14 @@ public class Comment_interface extends AppCompatActivity {
             }
         });
     }
+    private void initContent() {
+         toolbar = findViewById(R.id.comment_interface_toolbar);
+//        toolbar.setTitle(R.string.text_insert_Comment);
+        toolbar.setTitle(getString(R.string.text_insert_Comment));
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+    }
+
     private void findViews() {
         ivComment=findViewById(R.id.ivComment);
         ibPickPicture = findViewById(R.id.ibPickPicture);
@@ -230,4 +251,5 @@ public class Comment_interface extends AppCompatActivity {
             Common.showToast(Comment_interface.this, "This device doesn't support the crop action!");
         }
     }
+
 }

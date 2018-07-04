@@ -9,7 +9,7 @@
     android:background="?attr/colorBackground">
 
     <include
-        android:id="@+id/settingsPreferencesToolbar"
+        android:id="@+id/comment_interface_toolbar"
         layout="@layout/toolbar" />
     <LinearLayout
         android:id="@+id/namelayout"

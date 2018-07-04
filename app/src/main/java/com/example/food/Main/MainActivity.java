@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         changepage();
         setupNavigationDrawerMenu();
         //Common Test 用
-//        gotocommon = findViewById(R.id.goToCommon);
+//        gotocommon = findViewById(R.id.recyclerView);
 //        gotocommon.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

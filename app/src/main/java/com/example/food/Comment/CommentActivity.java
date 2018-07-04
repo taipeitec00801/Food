@@ -18,7 +18,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.food.AppModel.Store;
+
+
+import com.example.food.DAO.task.*;
+import com.example.food.DAO.task.Common;
+import com.example.food.Sort.task.*;
+import com.example.food.Sort.task.ImageTask;
 import com.jude.rollviewpager.RollPagerView;
+import com.jude.rollviewpager.adapter.DynamicPagerAdapter;
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
 import com.example.food.R;
@@ -32,6 +39,8 @@ public class CommentActivity extends AppCompatActivity {
     private View linearlayout_introduce,floatingbutton;
     private RollPagerView mRollViewPager;
     private TextView tv,tv1,tv2,tv3;
+    private Store store;
+    private ImageTask storeImgTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +52,7 @@ public class CommentActivity extends AppCompatActivity {
         tv3 = findViewById(R.id.tv3);
         //get bundle From Map
         Bundle bundle = getIntent().getExtras();
-        Store store = (Store) bundle.getSerializable("store");
+        store = (Store) bundle.getSerializable("store");
         Log.d("storeList",""+store.getStoreName());
 
         tv.setText("店名:"+store.getStoreName());
@@ -83,25 +92,30 @@ public class CommentActivity extends AppCompatActivity {
         }
     }
 
-    private class TestNormalAdapter extends StaticPagerAdapter {
-        private int[] imgs = {
-                R.drawable.food,
-                R.drawable.food1,
-                R.drawable.food2,
-                R.drawable.food,
-        };
+    private class TestNormalAdapter extends DynamicPagerAdapter {
+//        private int[] imgs = {
+//                R.drawable.food,
+//                R.drawable.food1,
+//                R.drawable.food2,
+//                R.drawable.food,
+//        };
         @Override
         public View getView(ViewGroup container, int position) {
             ImageView view = new ImageView(container.getContext());
-            view.setImageResource(imgs[position]);
+            String url = Common.URL + "/appGetAllImages";
+            int id = store.getStoreId();
+            storeImgTask = new com.example.food.Sort.task.ImageTask(url,id,position,view);
+            storeImgTask.execute();
+           // view.setImageResource(imgs[position]);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             return view;
         }
 
+
         @Override
         public int getCount() {
-            return imgs.length;
+            return 4;
         }
     }
 
