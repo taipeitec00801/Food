@@ -20,7 +20,7 @@
             android:paddingLeft="5dp"
             android:transitionName="@string/map_transition_string"
             android:scaleType="centerCrop"
-            android:src="@drawable/drinks_and_desserts"/>
+            android:src="@drawable/logo"/>
 
         <LinearLayout
             android:layout_width="match_parent"

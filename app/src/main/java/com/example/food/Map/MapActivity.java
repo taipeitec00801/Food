@@ -191,7 +191,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
             @Override
             public void onClick(View v) {
                 Log.d("home","click");
-               MapActivity.this.finish();
+                mapFragment.onDetach();
+                MapActivity.this.finish();
             }
         });
     }
@@ -229,12 +230,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         bundle.putAll(options.toBundle());
         intent.putExtras(bundle);
         intent.putExtras(options.toBundle());
-
-
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("store",storeList.get(storeNum));
-//        bundle.putAll(options.toBundle());
-//        startActivity(intent,bundle);
         startActivity(intent,options.toBundle());
 
     }
