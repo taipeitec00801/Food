@@ -152,6 +152,8 @@ public class UserInformationActivity extends AppCompatActivity implements
         }
         new MaterialDialog.Builder(UserInformationActivity.this)
                 .title(R.string.settingUserData)
+                .backgroundColorRes(R.color.colorDialogBackground)
+                .positiveColorRes(R.color.colorText)
                 .content(result)
                 .positiveText(R.string.textIKnow)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
