@@ -38,6 +38,7 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.example.food.AppModel.Store;
 import com.example.food.DAO.StoreDAO;
 import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Map.StoreInfo;
@@ -49,7 +50,6 @@ import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
 import com.example.food.Sort.SortAsActivity;
-import com.example.food.Sort.task.ImageTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
     private AppAdapter mAdapter;
     private SharedPreferences prefs;
     private boolean isMember;
-    private ImageTask storeImgTask;
+    private ImageTaskOIB storeImgTask;
     private List<Store> collectionList;
     private String userCollection;
     private Thread t1;
@@ -365,7 +365,7 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
             ImageView imageView = item_view.findViewById(R.id.collection_image);
             String url = Common.URL+"/appGetImages";
             int id = storeInfo.getStoreId();
-            storeImgTask = new ImageTask(url, id, imageView);
+            storeImgTask = new ImageTaskOIB(url, id, imageView);
             storeImgTask.execute();
             imageView.setImageResource(R.drawable.logo);
             //GetStoreName

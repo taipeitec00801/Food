@@ -13,16 +13,12 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NavUtils;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PagerSnapHelper;
@@ -43,10 +39,9 @@ import com.example.food.AppModel.Store;
 import com.example.food.Comment.CommentActivity;
 import com.example.food.DAO.StoreDAO;
 import com.example.food.DAO.task.Common;
-import com.example.food.Main.MainActivity;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
-import com.example.food.Sort.task.ImageTask;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -69,7 +64,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,7 +75,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private List<StoreInfo> storeInfoList;
     private List<Store> storeList;
     private List<LatLng> locationList;
-    private ImageTask storeImgTask;
+    private ImageTaskOIB storeImgTask;
     private double latitude, longitude;
     private Location currentlocation;
     private GoogleApiClient mgoogleApiClient;
@@ -299,7 +293,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
             final Store store = storeList.get(position);
             String url = Common.URL+"/appGetImages";
             int id = store.getStoreId();
-            storeImgTask = new ImageTask(url, id, holder.imageView);
+            storeImgTask = new ImageTaskOIB(url, id, holder.imageView);
             storeImgTask.execute();
 
            // holder.imageView.setImageResource(R.drawable.food);

@@ -23,7 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
-                android:src="@drawable/cf"/>
+                android:src="@drawable/logo"/>
 
             <TextView
                 android:id="@+id/search_downItem_resName"

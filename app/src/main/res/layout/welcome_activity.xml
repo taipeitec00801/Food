@@ -9,7 +9,7 @@
         android:layout_centerVertical="true"
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:src="@drawable/wellgroomed_several_frigatebird" />
+        android:src="@drawable/loading" />
 
 </RelativeLayout>
 

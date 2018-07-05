@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.transition.Fade;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,13 +18,10 @@ import android.widget.TextView;
 import com.example.food.AppModel.Store;
 
 
-import com.example.food.DAO.task.*;
 import com.example.food.DAO.task.Common;
-import com.example.food.Sort.task.*;
-import com.example.food.Sort.task.ImageTask;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.adapter.DynamicPagerAdapter;
-import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
 import com.example.food.R;
 
@@ -40,7 +35,7 @@ public class CommentActivity extends AppCompatActivity {
     private RollPagerView mRollViewPager;
     private TextView tv,tv1,tv2,tv3;
     private Store store;
-    private ImageTask storeImgTask;
+    private ImageTaskOIB storeImgTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +99,7 @@ public class CommentActivity extends AppCompatActivity {
             ImageView view = new ImageView(container.getContext());
             String url = Common.URL + "/appGetAllImages";
             int id = store.getStoreId();
-            storeImgTask = new com.example.food.Sort.task.ImageTask(url,id,position,view);
+            storeImgTask = new ImageTaskOIB(url,id,position,view);
             storeImgTask.execute();
            // view.setImageResource(imgs[position]);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -191,8 +186,8 @@ public class CommentActivity extends AppCompatActivity {
 
     public List<Member> getMemberList() {
         List<Member> MemberList=new ArrayList<>();
-        MemberList.add(new Member("1",R.drawable.boy,"David"));
-        MemberList.add(new Member("2",R.drawable.boy,"Mary"));
+        MemberList.add(new Member("1",R.drawable.man,"David"));
+        MemberList.add(new Member("2",R.drawable.man,"Mary"));
         return MemberList;
     }
 }

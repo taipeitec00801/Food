@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.example.food.AppModel.SortAs;
 import com.example.food.Collection.CollectionActivity;
+import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
@@ -33,7 +35,6 @@ import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
-import com.example.food.Sort.task.ImageTask;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private SharedPreferences prefs;
-    private ImageTask storeImgTask;
+    private ImageTaskOIB storeImgTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,7 +244,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
             String url = Common.URL + "/appGetImages";
             Log.e(TAG, url);
             int id = sort.getStoreId();
-            storeImgTask = new ImageTask(url, id, viewHolder.resImg);
+            storeImgTask = new ImageTaskOIB(url, id, viewHolder.resImg);
             storeImgTask.execute();
 
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));

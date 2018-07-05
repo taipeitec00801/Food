@@ -9,7 +9,7 @@
         android:id="@+id/collection_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/japan_food" />
+        android:src="@drawable/logo" />
 
     <TextView
         android:id="@+id/collection_name"

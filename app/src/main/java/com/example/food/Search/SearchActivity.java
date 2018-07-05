@@ -177,7 +177,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         @Override
         public void onBindViewHolder(@NonNull SortViewHolder viewHolder, int position) {
             SortAs sort = sortList.get(position);
-            viewHolder.resImg.setImageResource(R.drawable.cf);
+            viewHolder.resImg.setImageResource(R.drawable.logo);
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
             viewHolder.likeNumber.setText(String.valueOf(sort.getStoreRecomCount()));
         }
