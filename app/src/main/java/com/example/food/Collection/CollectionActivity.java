@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.food.AppModel.Store;
 import com.example.food.DAO.StoreDAO;
+import com.example.food.DAO.task.Common;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Map.StoreInfo;
@@ -47,6 +49,7 @@ import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
 import com.example.food.Sort.SortAsActivity;
+import com.example.food.Sort.task.ImageTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,44 +60,65 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
     private Toolbar collectionToolbar;
     private DrawerLayout collectionDrawerLayout;
     private AppAdapter mAdapter;
-    private List<StoreInfo> storeInfos = getStoreInfoList();
     private SharedPreferences prefs;
     private boolean isMember;
+    private ImageTask storeImgTask;
     private List<Store> collectionList;
     private String userCollection;
+    private Thread t1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+        isMember = prefs.getBoolean("login", false);
         if(isMember) {
-            mAdapter = new AppAdapter(storeInfos,this);
             initContent();
             setupNavigationDrawerMenu();
             initSwipeListView();
-            // PullRefresh();
-            listView.setAdapter(mAdapter);
+            t1=new Thread(r1);
+            t1.start();
         } else {
             checkLogin();
         }
+       // mAdapter = new AppAdapter(collectionList,CollectionActivity.this);
+        //getUserCollection();
     }
 
     private Runnable r1 = new Runnable() {
+
         @Override
         public void run() {
-            userCollection = prefs.getString("collection", "");
-            
-            collectionList = new ArrayList<>();
-            StoreDAO storeDAO = new StoreDAO(CollectionActivity.this);
-            //collectionList = storeDAO.getCollectionListByUser();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getUserCollection();
+                    if(collectionList != null) {
+                        mAdapter = new AppAdapter(collectionList,CollectionActivity.this);
+                        listView.setAdapter(mAdapter);
+                    }
+                }
+            });
+
         }
     };
+
+    private void getUserCollection() {
+        //userCollection = prefs.getString("collection", "");
+        String userCollection = prefs.getString("collection", "");
+        //String userCollection="1,2,3,4,5,7,9,11";
+        collectionList = new ArrayList<>();
+        StoreDAO storeDAO = new StoreDAO(CollectionActivity.this);
+        collectionList = storeDAO.getCollectionListByUser(userCollection);
+//        Log.d("collection",""+collectionList.size());
+
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        isMember = prefs.getBoolean("login", false);
+//        isMember = prefs.getBoolean("login", false);
     }
 
     private void checkLogin() {
@@ -141,22 +165,22 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
 
         //若已登入 將會員帳號、暱稱和頭像顯示
-        tv_nv_nickName.setText(prefs.getString("nickname", ""));
-        tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
-        ImageInExternalStorage imgExStorage = new ImageInExternalStorage(CollectionActivity.this, prefs);
-        imgExStorage.openFile(ivUserImage);
-
-        if (!prefs.getBoolean("login", false)) {
-            //尚未登入點擊頭像 到登入頁
-            ivUserImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent();
-                    intent.setClass(CollectionActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
+//        tv_nv_nickName.setText(prefs.getString("nickname", ""));
+//        tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
+//        ImageInExternalStorage imgExStorage = new ImageInExternalStorage(CollectionActivity.this, prefs);
+//        imgExStorage.openFile(ivUserImage);
+//
+//        if (!prefs.getBoolean("login", false)) {
+//            //尚未登入點擊頭像 到登入頁
+//            ivUserImage.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent();
+//                    intent.setClass(CollectionActivity.this, LoginActivity.class);
+//                    startActivity(intent);
+//                }
+//            });
+//        }
 
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
@@ -288,7 +312,7 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
                 switch (index) {
                     case 0:
                         // delete item
-                        storeInfos.remove(position);
+                        collectionList.remove(position);
                         mAdapter.notifyDataSetChanged();
                         break;
                 }
@@ -306,10 +330,10 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
 
     //Adapter
     class AppAdapter extends BaseAdapter {
-        List<StoreInfo> storeInfos;
+        List<Store> storeInfos;
         Context context;
 
-        public AppAdapter(List<StoreInfo> storeInfos, Context context){
+        public AppAdapter(List<Store> storeInfos, Context context){
             this.storeInfos = storeInfos;
             this.context = context;
         }
@@ -331,14 +355,20 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
 
         @Override
         public View getView(int position, View item_view, ViewGroup viewGroup) {
-            final StoreInfo storeInfo = storeInfos.get(position);
+            final Store storeInfo = storeInfos.get(position);
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             listView.smoothOpenMenu(position);
             if(item_view == null) {
                 item_view = layoutInflater.inflate(R.layout.collection_list,viewGroup,false);
             }
+            //getStoreIMG
             ImageView imageView = item_view.findViewById(R.id.collection_image);
-            imageView.setImageResource(storeInfo.getStoreImg());
+            String url = Common.URL+"/appGetImages";
+            int id = storeInfo.getStoreId();
+            storeImgTask = new ImageTask(url, id, imageView);
+            storeImgTask.execute();
+            imageView.setImageResource(R.drawable.logo);
+            //GetStoreName
             TextView tvName = item_view.findViewById(R.id.collection_name);
             tvName.setText(storeInfo.getStoreName());
             //anim
@@ -350,14 +380,5 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         }
     }
 
-    //StoreInfoList
-    public List<StoreInfo> getStoreInfoList() {
-        List<StoreInfo> StoreInfoList = new ArrayList<>();
-        for(int i = 0;i<8;i++){
-            StoreInfoList.add(new StoreInfo(i, R.drawable.drinks_and_desserts,"忠貞小館","台北市大安區新生南路一段103-2號","11:00-22:00","02-23389881"));
-        }
-        //get Data From DataBase
-        return StoreInfoList;
-    }
 
 }

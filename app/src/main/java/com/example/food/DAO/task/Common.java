@@ -18,6 +18,7 @@ public class Common {
     //IP位置自行更改
    // public static String URL = "http://192.168.11.99:8080/Food_Hibernate";
     public static String URL = "http://10.0.2.2:8080/FoodSpringMVC";
+   // public static String URL = "http://192.168.11.5:8080/FoodSpringMVC";
     public static final int PERMISSION_READ_EXTERNAL_STORAGE = 0;
     private static final String TAG = "Common";
 

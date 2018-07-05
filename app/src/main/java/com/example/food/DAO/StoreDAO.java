@@ -74,19 +74,17 @@ public class StoreDAO {
         return StoreList;
     }
 
-    public List<Store> getCollectionListByUser(String userID) {
+    public List<Store> getCollectionListByUser(String userCollection) {
         if (Common.networkConnected(inputActivity)) {
             StoreList = null;
             //建立Gson物件，以便將資料轉成Json格式。
             Gson gson = new Gson();
-            //將收到的userID轉成字串。
-            //String user = String.valueOf(userID);
             //透過IP和資料庫名稱找到資料庫。
-            String url = Common.URL+"/StoreDataServlet";
+            String url = Common.URL+"/appStore";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getCollectionByUseID");
-            jsonObject.addProperty("userID",userID);
+            jsonObject.addProperty("action", "getCollectionByUser");
+            jsonObject.addProperty("userCollection",userCollection);
             String jsonOut = jsonObject.toString();
             Log.d("jsonObject",jsonObject.toString());
             StoreTask = new CommonTask(url, jsonOut);
