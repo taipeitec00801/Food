@@ -40,6 +40,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.AppModel.Member;
 import com.example.food.DAO.MemberDAO;
+import com.example.food.DAO.task.Common;
 import com.example.food.Other.ImageInExternalStorage;
 import com.example.food.Other.InputFormat;
 import com.example.food.R;

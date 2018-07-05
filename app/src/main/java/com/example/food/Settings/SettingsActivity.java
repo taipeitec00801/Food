@@ -70,6 +70,10 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
     protected void onStart() {
         super.onStart();
         isMember = prefs.getBoolean("login", false);
+        // 是否登入　若是 則顯示登出鍵
+//        if (isMember) {
+            settingLogout.setVisibility(View.VISIBLE);
+//        }
     }
 
     private void findById() {
@@ -154,10 +158,7 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
 
     private void initContent() {
         settingsToolbar.setTitle(R.string.textSettings);
-        // 是否登入　若是 則顯示登出鍵
-        if (prefs.getBoolean("login", false)) {
-            settingLogout.setVisibility(View.VISIBLE);
-        }
+
         imgExStorage = new ImageInExternalStorage(SettingsActivity.this, prefs);
         // 讀取快取大小
         File file = new File(getDiskCacheDir(getApplicationContext()));

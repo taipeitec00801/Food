@@ -6,9 +6,9 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.example.food.AppModel.Member;
+import com.example.food.DAO.task.Common;
 import com.example.food.DAO.task.CommonTask;
-import com.example.food.DAO.task.ImageTask;
-import com.example.food.Settings.Common;
+import com.example.food.DAO.task.ImageTaskSIB;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +27,7 @@ public class MemberDAO {
     public boolean checkAccount(String userAccount) {
         boolean usable = true;
         if (Common.networkConnected(inputActivity)) {
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appCheckAccount";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "checkAccount");
             jsonObject.addProperty("UserAccount", userAccount);
@@ -45,29 +45,6 @@ public class MemberDAO {
         return usable;
     }
 
-//    public boolean initGoogleDate(Member member) {
-//        Boolean updateSuccess = false;
-//        if (Common.networkConnected(inputActivity)) {
-//            String url = Common.URL + "/MemberServlet";
-//            JsonObject jsonObject = new JsonObject();
-//            jsonObject.addProperty("action", "insertGoogleDate");
-//            jsonObject.addProperty("GoogleDate", new Gson().toJson(member));
-//
-//            int count = 0;
-//            try {
-//                String result = new CommonTask(url, jsonObject.toString()).execute().get();
-//                count = Integer.valueOf(result);
-//            } catch (Exception e) {
-//                Log.e(TAG, e.toString());
-//            }
-//            if (count > 0) {
-//                updateSuccess = true;
-//            }
-//        } else {
-//            Common.showToast(inputActivity, "no network connection available");
-//        }
-//        return updateSuccess;
-//    }
 
     public Member getUserDate(String userAccount) {
         Member member = null;
@@ -75,7 +52,7 @@ public class MemberDAO {
             //建立Gson物件，以便將資料轉成Json格式。
             Gson gson = new Gson();
             //透過IP和資料庫名稱找到資料庫。
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appGetUserDate";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
 
@@ -110,7 +87,7 @@ public class MemberDAO {
     public Bitmap getPortrait(String userAccount) {
         Bitmap bitmap = null;
         if (Common.networkConnected(inputActivity)) {
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appGetPortrait";
             int imageSize = inputActivity.getResources().getDisplayMetrics().widthPixels / 2;
 
             JsonObject jsonObject = new JsonObject();
@@ -119,7 +96,7 @@ public class MemberDAO {
             jsonObject.addProperty("imageSize", imageSize);
 
             try {
-                bitmap = new ImageTask(url, jsonObject.toString()).execute().get();
+                bitmap = new ImageTaskSIB(url, jsonObject.toString()).execute().get();
             } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
@@ -132,7 +109,7 @@ public class MemberDAO {
     public Boolean updatePortrait(String userAccount, byte[] portrait) {
         Boolean updateSuccess = false;
         if (Common.networkConnected(inputActivity)) {
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appUpdate";
 
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "update");
@@ -162,7 +139,7 @@ public class MemberDAO {
         Boolean updateSuccess = false;
         if (Common.networkConnected(inputActivity)) {
             //透過IP和資料庫名稱找到資料庫。
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appUpdate";
             //建立JsonObject
             JsonObject jsonObject = new JsonObject();
             //jsonObject新增屬性action其值為updateMemberDate
@@ -196,7 +173,7 @@ public class MemberDAO {
         Boolean updateSuccess = false;
         if (Common.networkConnected(inputActivity)) {
 
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appUpdate";
 
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "update");
@@ -225,7 +202,7 @@ public class MemberDAO {
     public boolean insertMemberDate(Member member, byte[] portrait) {
         Boolean insertSuccess = false;
         if (Common.networkConnected(inputActivity)) {
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appInsertMemberDate";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "insertMemberDate");
             jsonObject.addProperty("Member", new Gson().toJson(member));
@@ -255,7 +232,7 @@ public class MemberDAO {
     public boolean userLogin(final String userAccount, final String userPassword) {
         boolean isUser = false;
         if (Common.networkConnected(inputActivity)) {
-            String url = Common.URL + "/MemberServlet";
+            String url = Common.URL + "/appUserLogin";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "userLogin");
             jsonObject.addProperty("UserAccount", userAccount);

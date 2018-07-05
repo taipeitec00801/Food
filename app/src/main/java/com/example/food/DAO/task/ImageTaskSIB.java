@@ -15,7 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class ImageTask extends AsyncTask<String, Integer, Bitmap> {
+public class ImageTaskSIB extends AsyncTask<String, Integer, Bitmap> {
     private final static String TAG = "ImageTask";
 //    private Bitmap bitmap;
     private String url, jsonOut;
@@ -26,7 +26,7 @@ public class ImageTask extends AsyncTask<String, Integer, Bitmap> {
     private WeakReference<ImageView> imageViewWeakReference;
 
 
-    public ImageTask(String url, String jsonOut) {
+    public ImageTaskSIB(String url, String jsonOut) {
         this.url = url;
         this.jsonOut = jsonOut;
     }

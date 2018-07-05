@@ -1,6 +1,7 @@
 package com.example.food.Other;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.food.AppModel.Member;
 
@@ -27,6 +28,7 @@ public class MySharedPreferences {
     public static boolean inputSharedPreferences(SharedPreferences prefs, Member member) {
         boolean inputOk = false;
         //將 從Server端 拿到的會員資料 寫入偏好設定檔中
+
         if (member != null) {
             prefs.edit().putInt("memberId", member.getMemberId()).apply();
             prefs.edit().putString("userAccount", member.getUserAccount()).apply();

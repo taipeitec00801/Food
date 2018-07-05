@@ -4,10 +4,17 @@ package com.example.food.Other;
 import android.text.InputFilter;
 import android.widget.EditText;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+
 public class InputFormat {
+    public static final String KEY = "taipeitecjava008";
+
     //限制非空值
     public boolean isInputNotNull(EditText editText) {
         String text = editText.getText().toString();
@@ -22,7 +29,7 @@ public class InputFormat {
 
     //限制帳號格式
     public boolean isValidAccount(EditText editText) {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]+@[0-9a-z_-]+([.0-9a-z_-]+)*$");
+        Pattern pattern = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
         String text = editText.getText().toString();
         Matcher matcher = pattern.matcher(text);
         if (!matcher.find()) {

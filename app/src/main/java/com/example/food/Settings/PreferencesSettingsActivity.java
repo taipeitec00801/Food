@@ -279,16 +279,16 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
         prefList.add(new Sort(R.drawable.s03, 0, "中式餐廳",
                 R.drawable.s02, 1, "西式餐廳"));
 
-        prefList.add(new Sort(R.drawable.s05, 2, "韓式餐廳",
-                R.drawable.s04, 3, "日式餐廳"));
+        prefList.add(new Sort(R.drawable.s05, 3, "韓式餐廳",
+                R.drawable.s04, 2, "日式餐廳"));
 
-        prefList.add(new Sort(R.drawable.s06, 4, "港式餐廳",
-                R.drawable.s07, 5, "泰式餐廳"));
+        prefList.add(new Sort(R.drawable.s06, 5, "港式餐廳",
+                R.drawable.s07, 4, "泰式餐廳"));
 
-        prefList.add(new Sort(R.drawable.s08, 6, "小吃美食",
-                R.drawable.s09, 7, "冰涼滋味"));
+        prefList.add(new Sort(R.drawable.s08, 6, "路邊美食",
+                R.drawable.s09, 8, "冰涼滋味"));
 
-        prefList.add(new Sort(R.drawable.s10, 8, "甜點飲品",
+        prefList.add(new Sort(R.drawable.s10, 7, "甜點飲品",
                 R.drawable.s01, 9, "其他美食"));
 
         return prefList;

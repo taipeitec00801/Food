@@ -43,7 +43,7 @@ import com.example.food.Other.ImageInExternalStorage;
 import com.example.food.Other.InputFormat;
 import com.example.food.R;
 import com.example.food.Settings.*;
-import com.example.food.Settings.Common;
+import com.example.food.DAO.task.Common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -91,11 +91,11 @@ public class Comment_interface extends AppCompatActivity {
         });
     }
     private void initContent() {
-         toolbar = findViewById(R.id.comment_interface_toolbar);
+//         toolbar = findViewById(R.id.comment_interface_toolbar);
 //        toolbar.setTitle(R.string.text_insert_Comment);
-        toolbar.setTitle(getString(R.string.text_insert_Comment));
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+//        toolbar.setTitle(getString(R.string.text_insert_Comment));
+//        setSupportActionBar(toolbar);
+//        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     private void findViews() {

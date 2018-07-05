@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,9 +34,9 @@ import android.widget.Toast;
 
 import com.example.food.AppModel.Member;
 import com.example.food.DAO.MemberDAO;
+import com.example.food.DAO.task.Common;
 import com.example.food.Other.InputFormat;
 import com.example.food.R;
-import com.example.food.Settings.Common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

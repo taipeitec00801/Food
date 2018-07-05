@@ -1,6 +1,7 @@
 package com.example.food.AppModel;
 
 import java.io.Serializable;
+import java.sql.Blob;
 
 @SuppressWarnings("serial")
 public class Member implements Serializable {
@@ -32,7 +33,7 @@ public class Member implements Serializable {
     // 接收 server 給的會員所有資料 不含 portrait
     public Member(int memberId, String userAccount, String userPassword,
                   String nickname, String birthday, int gender,
-                  int userRank, String preference,
+                  int userRank, Blob portrait, String preference,
                   String collection, String userGift, String userFriends) {
         this.memberId = memberId;
         this.userAccount = userAccount;
@@ -41,6 +42,7 @@ public class Member implements Serializable {
         this.birthday = birthday;
         this.gender = gender;
         this.userRank = userRank;
+//        this.portrait = portrait;
         this.preference = preference;
         this.collection = collection;
         this.userGift = userGift;

@@ -70,9 +70,9 @@ public class LoginActivity extends AppCompatActivity implements
             MemberDAO memberDAO = new MemberDAO(LoginActivity.this);
             ImageInExternalStorage imgExStorage = new ImageInExternalStorage(LoginActivity.this, prefs);
             String userAccount = etUser.getText().toString().trim();
+            String userPassword = etPassword.getText().toString().trim();
             //傳送帳號與密碼到 Server 回傳登入結果
-            isUser = memberDAO.userLogin(userAccount, etPassword.getText().toString().trim());
-            prefs.edit().putBoolean("login", isUser).apply();
+            isUser = memberDAO.userLogin(userAccount, userPassword);
 
             if (isUser) {
                 //登入成功抓會員資料
@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements
                 //會員資料寫入偏好設定檔
                 inputPrefOk = MySharedPreferences.inputSharedPreferences(prefs, member);
                 //會員頭像寫入外部儲存體
-                if (bitmap != null) {
+                if (bitmap != null && inputPrefOk) {
                     imgExStorage.saveImage(bitmap);
                 }
             }
@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements
         String result = "很抱歉，您並非會員，請先註冊";
         if (isUser) {
             if (inputPrefOk) {
+                prefs.edit().putBoolean("login", true).apply();
                 //若圖片與偏好設定檔寫入成功-->跳頁
                 Intent intent = new Intent();
                 intent.setClass(LoginActivity.this, MainActivity.class);
@@ -101,6 +102,7 @@ public class LoginActivity extends AppCompatActivity implements
                 startActivity(intent);
             } else {
                 result = "登入失敗，請從新登入";
+                MySharedPreferences.initSharedPreferences(prefs);
             }
         }
         if (!isUser || !inputPrefOk) {
