@@ -13,7 +13,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Gravity;
@@ -30,6 +29,7 @@ import android.widget.Toast;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.AppModel.SortAs;
 import com.example.food.Collection.CollectionActivity;
+import com.example.food.DAO.SortDAO;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
@@ -38,11 +38,8 @@ import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Settings.SettingsActivity;
 import com.example.food.Sort.SortActivity;
-import com.example.food.Sort.SortDAO;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;

@@ -1,10 +1,11 @@
-package com.example.food.Sort;
+package com.example.food.DAO;
 
 import android.app.Activity;
 import android.util.Log;
 
 import com.example.food.AppModel.SortAs;
-import com.example.food.Sort.task.CommonTask;
+import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.CommonTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;

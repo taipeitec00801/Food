@@ -32,6 +32,7 @@ import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.AppModel.Sort;
 import com.example.food.AppModel.SortAs;
 import com.example.food.Collection.CollectionActivity;
+import com.example.food.DAO.SortDAO;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
