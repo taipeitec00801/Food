@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,10 +25,12 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.BounceInterpolator;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,6 +40,7 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.widget.PullRefreshLayout;
 import com.example.food.AppModel.Store;
+import com.example.food.Comment.CommentActivity;
 import com.example.food.DAO.StoreDAO;
 import com.example.food.DAO.task.Common;
 import com.example.food.DAO.task.ImageTaskOIB;
@@ -82,8 +87,6 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         } else {
             checkLogin();
         }
-       // mAdapter = new AppAdapter(collectionList,CollectionActivity.this);
-        //getUserCollection();
     }
 
     private Runnable r1 = new Runnable() {
@@ -165,22 +168,22 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         ImageView ivUserImage = head.findViewById(R.id.cv_nv_User_image);
 
         //若已登入 將會員帳號、暱稱和頭像顯示
-//        tv_nv_nickName.setText(prefs.getString("nickname", ""));
-//        tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
-//        ImageInExternalStorage imgExStorage = new ImageInExternalStorage(CollectionActivity.this, prefs);
-//        imgExStorage.openFile(ivUserImage);
-//
-//        if (!prefs.getBoolean("login", false)) {
-//            //尚未登入點擊頭像 到登入頁
-//            ivUserImage.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent intent = new Intent();
-//                    intent.setClass(CollectionActivity.this, LoginActivity.class);
-//                    startActivity(intent);
-//                }
-//            });
-//        }
+        tv_nv_nickName.setText(prefs.getString("nickname", ""));
+        tv_nv_UserAccount.setText(prefs.getString("userAccount", ""));
+        ImageInExternalStorage imgExStorage = new ImageInExternalStorage(CollectionActivity.this, prefs);
+        imgExStorage.openFile(ivUserImage);
+
+        if (!prefs.getBoolean("login", false)) {
+            //尚未登入點擊頭像 到登入頁
+            ivUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent();
+                    intent.setClass(CollectionActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,
@@ -301,11 +304,19 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
         };
         listView.setMenuCreator(creator);
         listView.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
-        // Close Interpolator
-        listView.setCloseInterpolator(new BounceInterpolator());
-        // Open Interpolator
-        listView.setOpenInterpolator(new BounceInterpolator());
-        //Click Listener
+//        // Close Interpolator
+//        listView.setCloseInterpolator(new BounceInterpolator());
+//        // Open Interpolator
+//        listView.setOpenInterpolator(new BounceInterpolator());
+        // 點擊跳至店家資訊業
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Log.d("click","StoreName"+collectionList.get(position).getStoreName());
+                animateIntent(position,view);
+            }
+        });
+        //滑動選單刪除
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
@@ -317,9 +328,31 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
                         break;
                 }
                 // false : close the menu; true : not close the menu
-                return false;
+                return true;
             }
         });
+    }
+
+    //點擊店家跳至店家頁面的animate
+    public void animateIntent(int storeNum,View view) {
+        Intent intent = new Intent(CollectionActivity.this,CommentActivity.class);
+        String transitionName = getString(R.string.map_transition_string);
+        //View viewStart = findViewById(R.id.collection_image);
+        View viewStart = view.findViewById(R.id.collection_image);
+        Pair[] pairs = new Pair[1];
+        pairs[0] = new Pair<View,String> (viewStart,transitionName);
+
+        ActivityOptionsCompat options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(CollectionActivity.this,pairs);
+
+        //將資料送至商店頁
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("store",collectionList.get(storeNum));
+        bundle.putAll(options.toBundle());
+        intent.putExtras(bundle);
+        intent.putExtras(options.toBundle());
+        startActivity(intent,options.toBundle());
+
     }
 
     //dp to px

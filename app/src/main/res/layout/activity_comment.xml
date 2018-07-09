@@ -44,8 +44,8 @@
             <com.jude.rollviewpager.RollPagerView
                 android:id="@+id/roll_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:scaleType="fitXY"
+                android:layout_height="250dp"
+                android:scaleType="fitCenter"
                 android:transitionName="@string/map_transition_string"
                 />
             <!--app:rollviewpager_play_delay="3000" -->
