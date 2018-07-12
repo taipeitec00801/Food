@@ -40,8 +40,6 @@ public class ImageInExternalStorage {
 
     public void saveImage(Bitmap bitmap) {
         File file = getFile();
-        Log.e("測試--file", String.valueOf(file));
-        Log.e("測試--saveImage", String.valueOf(file.exists()));
         if (!mediaMounted()) {
             showToast(R.string.msg_ExternalStorageNotFound);
             return;
@@ -50,22 +48,10 @@ public class ImageInExternalStorage {
             file.delete();
         }
         if (bitmap != null) {
-//            FileOutputStream fos = null;
             try (FileOutputStream fos = new FileOutputStream(file)) {
-//                fos = new FileOutputStream(file);
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                Log.e("測試--bitmap", String.valueOf(bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)));
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
-//            } finally {
-//                try {
-//                    if (fos != null) {
-//                        fos.flush();
-//                        fos.close();
-//                    }
-//                } catch (IOException e) {
-//                    Log.e(TAG, e.toString());
-//                }
             }
 
         }
@@ -78,7 +64,6 @@ public class ImageInExternalStorage {
         }
         File file = getFile();
         Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-        Log.e("測試--openFile", String.valueOf(file.exists()));
         if (file.exists() && bitmap != null) {
             imageView.setImageBitmap(bitmap);
         } else {

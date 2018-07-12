@@ -71,9 +71,9 @@ public class SettingsActivity extends AppCompatActivity implements NavigationVie
         super.onStart();
         isMember = prefs.getBoolean("login", false);
         // 是否登入　若是 則顯示登出鍵
-//        if (isMember) {
+        if (isMember) {
             settingLogout.setVisibility(View.VISIBLE);
-//        }
+        }
     }
 
     private void findById() {
