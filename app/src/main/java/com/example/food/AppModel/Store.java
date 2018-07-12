@@ -32,6 +32,11 @@ public class Store implements Serializable{
         this.longitude = longitude;
     }
 
+    public Store(Integer storeId, String storeName) {
+        this.storeId = storeId;
+        this.storeName = storeName;
+    }
+
     public Store() {
     }
 

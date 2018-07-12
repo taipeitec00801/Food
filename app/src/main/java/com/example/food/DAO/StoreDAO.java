@@ -74,6 +74,42 @@ public class StoreDAO {
         return StoreList;
     }
 
+    public List<Store> getStoreByTop() {
+        if (Common.networkConnected(inputActivity)) {
+            StoreList = null;
+            Gson gson = new Gson();
+            String url = Common.URL+"/appStore";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getTopStores");
+            String jsonOut = jsonObject.toString();
+
+            StoreTask = new CommonTask(url, jsonOut);
+
+            try {
+                String jsonIn = StoreTask.execute().get();
+                Log.d("jsonIn",jsonIn);
+                Type listType = new TypeToken<List<Store>>() {
+                }.getType();
+                StoreList = gson.fromJson(jsonIn, listType);
+
+            } catch (Exception e) {
+                Log.e(TAG,e.toString());
+            }
+            if (StoreList == null || StoreList.isEmpty()) {
+                //當伺服器回傳空的List時顯示給使用者"查無資料"。
+                //System.out.println("StoreDAOLIST IS EMPTY");
+                //  Common.showToast(inputActivity, "查無資料");
+            } else {
+                System.out.println("StoreDAOLIST" + StoreList.size());
+                //回傳StoreList。
+                return StoreList;
+            }
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+        return StoreList;
+    }
+
     public List<Store> getCollectionListByUser(String userCollection) {
         if (Common.networkConnected(inputActivity)) {
             StoreList = null;

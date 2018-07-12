@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,8 +32,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.food.AppModel.Store;
 import com.example.food.Collection.CollectionActivity;
 import com.example.food.Comment.CommentActivity;
+import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
 import com.example.food.Other.ImageInExternalStorage;
@@ -45,6 +50,7 @@ import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,13 +63,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private int firstTheme;
     private SharedPreferences prefs;
+    private ImageTaskOIB storeImgTask;
 
     //首頁主要四個icon
     private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
 
     private RollPagerView mRollViewPager;
-
-
+    private List<Store> sList;
+    private  RecyclerView recyclerView;
+private FoodpicAdapter foodpicAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,26 +80,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initContent();
         changepage();
         setupNavigationDrawerMenu();
-        //Common Test 用
-//        gotocommon = findViewById(R.id.recyclerView);
-//        gotocommon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.setClass(MainActivity.this, CommentActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(
-                new StaggeredGridLayoutManager(
-                        1, StaggeredGridLayoutManager.VERTICAL));
-        List<Food> memberList = getFoodList();
-        recyclerView.setAdapter(new FoodpicAdapter(this, memberList));
+        Bundle bundle = getIntent().getExtras();
+        try{
+            sList = (List<Store>) bundle.getSerializable("storeList");
+            Log.d("-------sList---------", String.valueOf(sList.size()));
+        }catch(Exception e){
+            sList = getStoreList();
+            Log.d("-------sList---------", String.valueOf(sList.size()));
+        }
+        recyclerView = findViewById(R.id.recyclerView);
 
-        mRollViewPager = (RollPagerView) findViewById(R.id.roll_view_pager);
+        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
+                        1, StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setAdapter(new FoodpicAdapter(this, sList));
+
+        mRollViewPager =  findViewById(R.id.roll_view_pager);
         //設定播放時間間隔
-        mRollViewPager.setPlayDelay(1000);
+        mRollViewPager.setPlayDelay(3000);
         //設定透明度
         mRollViewPager.setAnimationDurtion(500);
         //設定配置器
@@ -348,6 +353,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.drawable.test1,
                 R.drawable.test2,
                 R.drawable.test3,
+
         };
 
         @Override
@@ -368,11 +374,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private class FoodpicAdapter extends RecyclerView.Adapter<FoodpicAdapter.MyViewHolder> {
         private Context context;
-        private List<Food> foodList;
+        private List<Store> foodList;
 
-        FoodpicAdapter(Context context, List<Food> memberList) {
+        FoodpicAdapter(Context context, List<Store> foodList) {
             this.context = context;
-            this.foodList = memberList;
+            this.foodList = foodList;
 
 
         }
@@ -386,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ivImage = itemView.findViewById(R.id.ivImage);
                 tvId = itemView.findViewById(R.id.tvId);
                 tvName = itemView.findViewById(R.id.tvName);
+
             }
         }
 
@@ -402,39 +409,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         @Override
-        public void onBindViewHolder(MyViewHolder viewHolder, int position) {
-            final Food food = foodList.get(position);
-            viewHolder.ivImage.setImageResource(food.getImage());
-            viewHolder.tvId.setText(String.valueOf(food.getId()));
-            viewHolder.tvName.setText(food.getName());
+        public void onBindViewHolder(MyViewHolder viewHolder, final int position) {
+            final Store food = foodList.get(position);
+
+            String url = Common.URL+"/appGetImages";
+            int id = food.getStoreId();
+            storeImgTask = new ImageTaskOIB(url, id, viewHolder.ivImage);
+            storeImgTask.execute();
+
+           // viewHolder.ivImage.setImageResource(R.drawable.food1);
+            //viewHolder.tvId.setText(String.valueOf(food.getStoreId()));
+            viewHolder.tvName.setText(food.getStoreName());
+
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    switch (food.getId()){
-                        case 1:
-                            Intent intent = new Intent(MainActivity.this, CommentActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 2:
-                            Intent intent2 = new Intent(MainActivity.this, CommentActivity.class);
-                            startActivity(intent2);
-                            break;
-                        case 3:
-                            Intent intent3 = new Intent(MainActivity.this, CommentActivity.class);
-                            startActivity(intent3);
-                            break;
+                    animateIntent(position,v);
 
-                    }
                 }
             });
         }
+
     }
 
-    public List<Food> getFoodList() {
-        List<Food> memberList = new ArrayList<>();
-        memberList.add(new Food(1, R.drawable.food1, "shop1"));
-        memberList.add(new Food(2, R.drawable.food2, "shop2"));
-        memberList.add(new Food(3, R.drawable.food3, "shop3"));
-        return memberList;
+    //點擊店家跳至店家頁面的animate
+    public void animateIntent(int storeNum,View view) {
+        Intent intent = new Intent(MainActivity.this,CommentActivity.class);
+        String transitionName = getString(R.string.map_transition_string);
+        //String transitionName2 = getString(R.string.map_storeInfo_name);
+        View viewStart = view.findViewById(R.id.ivImage);
+      //  View viewStart2 = findViewById(R.id.storeInfo);
+
+        Pair[] pairs = new Pair[1];
+        pairs[0] = new Pair<View,String> (viewStart,transitionName);
+
+
+        ActivityOptionsCompat options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,pairs);
+
+        //將資料送至商店頁
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("store",sList.get(storeNum));
+        bundle.putAll(options.toBundle());
+        intent.putExtras(bundle);
+        intent.putExtras(options.toBundle());
+        startActivity(intent,options.toBundle());
+
+    }
+
+    public List<Store> getStoreList() {
+        List<Store> storeList = new ArrayList<>();
+        storeList.add(new Store(1,  "詠豐堂EIHODO"));
+        storeList.add(new Store(2,  "彡耕居食事所"));
+        storeList.add(new Store(3, "花漾點點"));
+        Log.d("-------storeList---------", String.valueOf(storeList.size()));
+        return storeList;
     }
 }
