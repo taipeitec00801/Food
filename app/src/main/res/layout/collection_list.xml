@@ -9,6 +9,7 @@
         android:id="@+id/collection_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:transitionName="@string/map_transition_string"
         android:src="@drawable/logo" />
 
     <TextView
