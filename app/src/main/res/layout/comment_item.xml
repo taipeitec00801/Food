@@ -85,8 +85,9 @@
                             android:textStyle="bold" />
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right">
 
                             <!--<com.ldoublem.thumbUplib.ThumbUpView-->
                                 <!--android:id="@+id/tpv"-->
@@ -97,12 +98,19 @@
                                 <!--app:edgeColor="#9d55b8"-->
                                 <!--app:fillColor="#FF0000"-->
                                 <!--app:unlikeType="1" />-->
-                            <com.airbnb.lottie.LottieAnimationView
+                            <ImageView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                app:lottie_rawRes="@raw/like"
-                                app:lottie_loop="true"
-                                app:lottie_autoPlay="true"/>
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center|right"
+                                android:layout_margin="5dp"
+                                android:src="@drawable/like" />
+
+                            <TextView
+                                android:id="@+id/comment_RecomCount"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="12"
+                                android:textSize="25sp" />
 
                         </LinearLayout>
                     </LinearLayout>

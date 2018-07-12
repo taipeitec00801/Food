@@ -17,10 +17,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.example.food.AppModel.CommentForApp;
 import com.example.food.R;
 import com.example.food.Sort.SortAsActivity;
 import com.ldoublem.thumbUplib.ThumbUpView;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Information extends AppCompatActivity {
@@ -28,23 +30,29 @@ public class Information extends AppCompatActivity {
     private Button button5;
     private RecyclerView recyclerView;
     ThumbUpView  tpv;
-    TextView tv;
-
+    private TextView mediumText , tv , comment_info;
+    private CommentForApp cfa;
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Bundle bundle = getIntent().getExtras();
+        cfa = (CommentForApp) bundle.get("commen");
         setContentView(R.layout.activity_comment_information);
         goview();
         initContent();
+
+        mediumText = findViewById(R.id.MediumText);
+        comment_info = findViewById(R.id.information_comment_tv);
+        mediumText.setText(cfa.getUserNickName());
+        comment_info.setText(cfa.getComment());
 
 //          愛心按鈕
         tpv =findViewById(R.id.tpv);
         tpv.setLike();
         tv =findViewById(R.id.tv);
-
+        tv.setText(cfa.getCommentRecomCount());
         tpv.setUnLikeType(ThumbUpView.LikeType.broken);
         tpv.setCracksColor(Color.WHITE);
         tpv.setFillColor(Color.rgb(255, 0, 0));

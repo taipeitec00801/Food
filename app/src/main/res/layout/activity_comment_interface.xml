@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".Comment.Comment_interface"
     android:orientation="vertical"
-    android:background="?attr/colorBackground">
+    android:background="?attr/colorBackground"
+    >
 
     <include
         android:id="@+id/comment_interface_toolbar"
@@ -19,6 +20,7 @@
         android:layout_alignParentTop="true">
         <!--改成可以自己選照片-->
         <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/cv_comment_inf"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="6dp"

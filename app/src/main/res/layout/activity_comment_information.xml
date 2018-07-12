@@ -73,6 +73,7 @@
             android:src="@drawable/food1" />
 
         <TextView
+            android:id="@+id/information_comment_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/myedittext"

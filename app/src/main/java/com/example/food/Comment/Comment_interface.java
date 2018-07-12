@@ -8,24 +8,20 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,28 +30,27 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.food.Map.CustomProgressDialog;
-import com.example.food.Member.LoginActivity;
-import com.example.food.Member.MemberActivity;
-import com.example.food.Other.ImageInExternalStorage;
-import com.example.food.Other.InputFormat;
-import com.example.food.R;
-import com.example.food.Settings.*;
+import com.example.food.AppModel.CommentForApp;
 import com.example.food.DAO.task.Common;
+import com.example.food.Other.ImageInExternalStorage;
+import com.example.food.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Comment_interface extends AppCompatActivity {
     private AppBarLayout mAppBarLayout;
     private Button button2;
     private PopupWindow popWindow = new PopupWindow ();
     private File file;
+    private SharedPreferences prefs;
     private ImageButton ibPickPicture;
     private ImageView ivComment;
     private static final int REQ_TAKE_PICTURE = 0;
@@ -64,6 +59,8 @@ public class Comment_interface extends AppCompatActivity {
     private Uri contentUri, croppedImageUri;
     private byte[] image;
     private Toolbar toolbar;
+    private CommentForApp cfa;
+    private TextView mediumText;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +69,15 @@ public class Comment_interface extends AppCompatActivity {
         initContent();
         review();
         selectCardView();
-    }
+
+        mediumText = findViewById(R.id.MediumText);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+        mediumText.setText(prefs.getString("nickname", "訪客"));
+        CircleImageView cv_comment_inf = findViewById(R.id.cv_comment_inf);
+
+        ImageInExternalStorage imgExStorage = new ImageInExternalStorage(Comment_interface.this, prefs);
+        imgExStorage.openFile(cv_comment_inf);
+   }
 
     @Override
     protected void onStart() {
