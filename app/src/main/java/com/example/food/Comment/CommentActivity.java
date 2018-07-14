@@ -41,19 +41,19 @@ public class CommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
         mRollViewPager =findViewById(R.id.roll_view_pager);
-        tv = findViewById(R.id.tv);
-        tv1 = findViewById(R.id.tv1);
-        tv2 = findViewById(R.id.tv2);
-        tv3 = findViewById(R.id.tv3);
+        tv = findViewById(R.id.tv_store_info_name);
+        tv1 = findViewById(R.id.tv_store_info_address);
+        tv2 = findViewById(R.id.tv_store_info_time);
+        tv3 = findViewById(R.id.tv_store_info_phone);
         //get bundle From Map
         Bundle bundle = getIntent().getExtras();
         store = (Store) bundle.getSerializable("store");
         Log.d("storeList",""+store.getStoreName());
 
-        tv.setText("店名:"+store.getStoreName());
-        tv1.setText("地址:"+store.getStoreAddress());
-        tv2.setText("營業時間："+store.getServiceHours());
-        tv3.setText("連絡電話:"+store.getStorePhone());
+        tv.setText(store.getStoreName());
+        tv1.setText("地址 : "+store.getStoreAddress());
+        tv2.setText("營業時間 ： "+store.getServiceHours());
+        tv3.setText("連絡電話 : "+store.getStorePhone());
 
 
         //设置播放时间间隔
