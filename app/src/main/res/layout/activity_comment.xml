@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Comment.CommentActivity"
-    android:orientation="vertical"
     android:background="?attr/colorBackground"
-    android:name=".Settings.SettingsActivity"
-    >
+    tools:context=".Comment.CommentActivity">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingbutton"
+        android:id="@+id/floating_button"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
@@ -22,7 +18,7 @@
         android:backgroundTint="@color/colorPrimary"
         android:scaleType="center"
         android:src="@drawable/plus_positive_add_mathematical_symbol"
-        app:rippleColor="#3CB371" />
+        app:rippleColor="#c5b8b8b8" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -36,90 +32,120 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="?attr/colorBackground"
-            android:orientation="vertical">
+            android:background="?attr/colorBackground">
 
             <com.jude.rollviewpager.RollPagerView
                 android:id="@+id/roll_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="280dp"
                 android:scaleType="fitCenter"
-                android:transitionName="@string/map_transition_string"
-                />
+                android:transitionName="@string/map_transition_string" />
+
             <TextView
                 android:id="@+id/tv_store_info_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="店名:忠貞小館"
-                android:textSize="28sp"
-                android:textColor="@color/colorWhite"
-                android:textStyle="bold"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="220dp"
+                android:text="@string/text_store_name"
+                android:textColor="@color/colorWhite"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:background="#5333"
                 android:transitionName="@string/map_storeInfo_name" />
+
+            <Button
+                android:id="@+id/bt_storeInfo_map"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/tv_store_info_name"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/mk1" />
+
         </RelativeLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cardview_background_color"
+            android:orientation="vertical"
+            android:padding="6dp">
+
             <LinearLayout
-                android:id="@+id/linearlayout_introduce"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:background="@drawable/cardview_background_color"
-                android:padding="6dp"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:transitionName="@string/map_storeInfo_name">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="營業時間 : "
+                    android:textColor="@color/colorText"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_store_info_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:text="@string/text_store_time"
                     android:textColor="@color/colorText"
-                    android:text="營業時間：11:00-22:00;連絡電話:02-23389881"
-                    android:transitionName="@string/map_storeInfo_name" />
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:transitionName="@string/map_storeInfo_name">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="店家電話 : "
+                    android:textColor="@color/colorText"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_store_info_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="連絡電話:02-23389881"
-                    android:textSize="18sp"
+                    android:text="@string/text_store_phone"
                     android:textColor="@color/colorText"
-                    android:transitionName="@string/map_storeInfo_name" />
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:transitionName="@string/map_storeInfo_name">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="店家地址 : "
+                    android:textColor="@color/colorText"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_store_info_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:text="@string/text_store_address"
                     android:textColor="@color/colorText"
-                    android:text="地址：台北市大安區新生南路一段103-2號"
-                    android:transitionName="@string/map_storeInfo_name" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <!--<Button-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="0.5"-->
-                    <!--android:text="分享店家資訊"-->
-                    <!--android:background="@drawable/button_rounde"-->
-                    <!--/>-->
-                    <!--<Button-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_weight="0.5"-->
-                        <!--android:text="店家詳細地圖"-->
-                        <!--android:background="@drawable/button_rounde"-->
-                        <!--/>-->
-
-                </LinearLayout>
+                    android:textSize="18sp" />
             </LinearLayout>
+        </LinearLayout>
 
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Comment_recycleview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="12dp"
             android:paddingEnd="5dp">
 
         </android.support.v7.widget.RecyclerView>

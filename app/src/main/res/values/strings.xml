@@ -46,7 +46,16 @@
 
     <!--評論-->
     <string name="text_insert_Comment">新增評論</string>
-    <string name="text_information">店家資訊</string>
+    <string name="text_store_info">店家資訊</string>
+    <string name="text_store_name">店家名稱</string>
+    <string name="text_store_address">店家地址</string>
+    <string name="text_store_phone">店家電話</string>
+    <string name="text_store_time">營業時間</string>
+    <string name="text_Comment">評論</string>
+    <string name="text_like">推薦</string>
+    <string name="text_share">分享</string>
+    <string name="text_coll">收藏</string>
+
     <!-- setting -->
     <string name="textLogout">登出</string>
     <string name="settingDayNight">夜間模式</string>
