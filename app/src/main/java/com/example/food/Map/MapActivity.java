@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PagerSnapHelper;
@@ -51,6 +52,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -91,6 +93,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     private Toolbar mtoolbar;
     private boolean dialogShow = false;
     private boolean getList = false;
+    private boolean mapReady = false;
 
     @Override //Create Menu
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,12 +107,9 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         if (googleServicesAvailable()) {
             setContentView(R.layout.activity_map);
             initProgressDialog();
-            mtoolbar = findViewById(R.id.map_toolbar);
-            initToolBar();
+            initMap();
             t1=new Thread(r1);
             t1.start();
-           // getStoreList();
-           // new initMarkers().execute();
             /*  接收Search結果 並執行
                         locationToMarker(String StoreAddress)*/
         }
@@ -118,38 +118,49 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     @Override
     protected void onStart() {
         super.onStart();
-       // new initMarkers().execute();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
         progressDialog.dismiss();
-        mapFragment.onDetach();
+        //Detach mapFragment
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fmMap);
+        GoogleMapOptions options = new GoogleMapOptions();
+        options.useViewLifecycleInFragment(true);
+        mapFragment = SupportMapFragment.newInstance(options);
+        //Check mapFragment is Null
+        if(mapFragment.isVisible())
+            Log.d("googleMapStatus","mapFragment isVisible()");
+        else
+            Log.d("googleMapStatus","mapFragment IS Null");
+
+        MapActivity.this.finish();
         super.onDestroy();
     }
 
     private Runnable r1 = new Runnable() {
         public void run() {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            getDeviceLocation();
             Log.d("Thread", String.valueOf(t1.getState()));
             //這裡放執行緒要執行的程式。
-            getDeviceLocation();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Log.d("runOnUiThread = " , String.valueOf(Thread.currentThread().getId()));
-                    // Skipped 36 frames!  The application may be doing too much work on its main thread.
-//                   if(dialogShow)
-                    initMap();
+                    mtoolbar = findViewById(R.id.map_toolbar);
+                    initToolBar();
                 }
             });
-//            mtoolbar = findViewById(R.id.map_toolbar);
-//            initToolBar();
-
         }
     };
 
@@ -199,8 +210,6 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
             recyclerView.setVisibility(View.VISIBLE);
         }
         progressDialog.dismiss();
-       // Log.d("makeMarkers = " , String.valueOf(Thread.currentThread().getId()));
-      //  Log.d("Thread", String.valueOf(t1.getState()));
     }
 
     //點擊店家跳至店家頁面的animate
@@ -320,7 +329,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
         //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fmMap);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fmMap);
         mapFragment.getMapAsync(MapActivity.this);
-        mapFragment.setMenuVisibility(true);
+
+        //mapFragment.setMenuVisibility(true);
     }
 
     //check googleServicesAvailable
@@ -354,12 +364,18 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                             getStoreList(currentlocation); //將位置傳入並和StoreList比對
                            // Log.d("currentlocation",""+currentlocation.getLatitude()+"|"+currentlocation.getLongitude());
                             //User為圓心半徑50M
-                            mgoogleMap.addCircle(new CircleOptions()
-                                    .center(new LatLng(currentlocation.getLatitude(),currentlocation.getLongitude()))
-                                    .radius(10) // In meters
-                                    .strokeColor(0x800000FF) //ARGB，
-                                    .strokeWidth(2f)
-                                    .fillColor(0x200000FF));
+                            try {
+                                mgoogleMap.addCircle(new CircleOptions()
+                                        .center(new LatLng(currentlocation.getLatitude(),currentlocation.getLongitude()))
+                                        .radius(10) // In meters
+                                        .strokeColor(0x800000FF) //ARGB，
+                                        .strokeWidth(2f)
+                                        .fillColor(0x200000FF));
+
+                            }catch (NullPointerException e) {
+                                System.out.print("addCircle:"+e.getStackTrace().toString());
+                            }
+
                         } else {
                             new AlertDialog().show(getSupportFragmentManager(),"Warm");
                         }
@@ -377,9 +393,9 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
     }
 
     @Override
-    public void onMapReady(final GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) {
         mgoogleMap = googleMap;
-        mgoogleMap.setOnMapLoadedCallback(this);
+       // mgoogleMap.setOnMapLoadedCallback(this);
         LocationManager mlocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //判斷GPS或WIFI是否開啟
         boolean isGPSEnable = mlocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -430,8 +446,14 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                 .zoom(17)
                 .build();
         CameraUpdate update = CameraUpdateFactory.newCameraPosition(cameraPosition);
-        //mgoogleMap.animateCamera(update);
-        mgoogleMap.moveCamera(update);
+        try {
+            mgoogleMap.animateCamera(update);
+           // mgoogleMap.moveCamera(update);
+        } catch(NullPointerException e) {
+            System.out.print("animateCamera: "+e.getStackTrace());
+        }
+
+        //mgoogleMap.moveCamera(update);
     }
 
     LocationRequest mLocationRequest;
@@ -576,6 +598,9 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
          }
          defaultMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon()));
          lastClicked = defaultMarker;
+         double lat = storeList.get(position).getLatitude();
+         double lon = storeList.get(position).getLongitude();
+         setLocation(lat,lon);
     }
 
     //地址轉換成座標
@@ -661,8 +686,10 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapLoa
                 String[] imgRes = storeList.get(0).getStorePicture().split(",");
                 String storeImg = "\\data\\images\\Store_img\\"+imgRes[0]+".jpg";
                 Log.d("imgRes",""+storeImg);
+                //拿到List後makeMarkers
                 handViews();
                 getList = true;
+                mgoogleMap.setOnMapLoadedCallback(this);
             }
 
         } else {

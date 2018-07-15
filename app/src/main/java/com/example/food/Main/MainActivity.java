@@ -211,9 +211,6 @@ private FoodpicAdapter foodpicAdapter;
         ImageInExternalStorage imgExStorage = new ImageInExternalStorage(MainActivity.this, prefs);
         imgExStorage.openFile(ivUserImage);
 
-        Log.e("測試--logo", String.valueOf(((BitmapDrawable) ivUserImage.getDrawable()).getBitmap()));
-
-
         if (!prefs.getBoolean("login", false)) {
             //尚未登入點擊頭像 到登入頁
             ivUserImage.setOnClickListener(new View.OnClickListener() {
