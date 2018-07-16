@@ -296,8 +296,11 @@ public class CommentActivity extends AppCompatActivity {
         public void onBindViewHolder(MyViewHolder viewHolder, int position) {
             final CommentForApp cfa = cfaList.get(position);
             viewHolder.textView.setText(cfa.getUserNickName());
-//            viewHolder.imageView.setImageResource(member.getImage());
-            viewHolder.messageView.setText(cfa.getComment());
+            Log.d("CommentForApp====:",""+cfa.getMsgCid());
+            String url = Common.URL + "/appGetCommentMember";
+            storeImgTask = new ImageTaskOIB(url, Integer.parseInt(cfa.getMsgCid()), position, viewHolder.imageView);
+            storeImgTask.execute();
+            viewHolder.messageView.setText(cfa.getComment().substring(0,15)+"...");
             viewHolder.likeView.setText(cfa.getCommentRecomCount());
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -12,97 +12,108 @@
     android:id="@+id/CommentInformationToolbar"
     layout="@layout/toolbar" />
 
-
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/CommentInformationToolbar"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/CommentInformationToolbar"
+        android:descendantFocusability="blocksDescendants">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="72dp">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/CommentInformationToolbar"
+            android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_margin="6dp"
-                android:src="@drawable/logo"
-                app:civ_border_color="@color/colorText"
-                app:civ_border_width="2dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="6dp"
+                    android:src="@drawable/logo"
+                    android:id="@+id/commInfo_mbImg"
+                    app:civ_border_color="@color/colorText"
+                    app:civ_border_width="2dp" />
+
+                <TextView
+                    android:id="@+id/MediumText"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:text="Medium Text"
+                    android:textSize="24dp" />
+
+
+                <com.ldoublem.thumbUplib.ThumbUpView
+                    android:id="@+id/tpv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="50dp"
+                    app:bgColor="@color/colorWhite"
+                    app:cracksColor="#33475f"
+                    app:edgeColor="#9d55b8"
+                    app:fillColor="#ea8010"
+                    app:unlikeType="1" />
+
+                <TextView
+                    android:id="@+id/tv"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:text="89"
+                    android:textSize="25sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/commPic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:src="@drawable/food1" />
 
             <TextView
-                android:id="@+id/MediumText"
-                android:layout_width="160dp"
+                android:id="@+id/information_comment_tv"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:text="Medium Text"
-                android:textSize="24dp" />
+                android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，我又再度到意舍酒店，這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />
 
-
-            <com.ldoublem.thumbUplib.ThumbUpView
-                android:id="@+id/tpv"
-                android:layout_marginLeft="50dp"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                app:bgColor="@color/colorWhite"
-                app:cracksColor="#33475f"
-                app:edgeColor="#9d55b8"
-                app:fillColor="#ea8010"
-                app:unlikeType="1" />
-
-            <TextView
-                android:id="@+id/tv"
-                android:layout_width="40dp"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/information_message"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="5dp"
-                android:text="89"
-                android:textSize="25sp" />
+                android:background="@drawable/myedittext"
+                android:padding="12dp"
+                android:paddingEnd="5dp" />
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="0.85"
+                    android:hint="留言"
+                    android:singleLine="true" />
+
+                <Button
+                    android:id="@+id/gobutton"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="0.15"
+                    android:background="@drawable/button_rounde"
+                    android:text="GO" />
+            </LinearLayout>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/pic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/food1"
-            android:scaleType="fitCenter"
-            />
+    </android.support.v4.widget.NestedScrollView>
 
-        <TextView
-            android:id="@+id/information_comment_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，我又再度到意舍酒店，這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/information_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/myedittext"
-            android:padding="12dp"
-            android:paddingEnd="5dp"/>
-        <LinearLayout
 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_weight="0.85"
-                android:hint="留言"
-                android:singleLine="true" />
-
-            <Button
-                android:id="@+id/gobutton"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_weight="0.15"
-                android:background="@drawable/button_rounde"
-                android:text="GO" />
-        </LinearLayout>
-    </LinearLayout>
 
 </RelativeLayout>

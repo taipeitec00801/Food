@@ -23,6 +23,8 @@ import android.widget.TextView;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.AppModel.CommentForApp;
 import com.example.food.AppModel.Message;
+import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.R;
 import com.example.food.Sort.SortAsActivity;
 import com.ldoublem.thumbUplib.ThumbUpView;
@@ -36,6 +38,8 @@ public class Information extends AppCompatActivity {
     ThumbUpView  tpv;
     private TextView mediumText , tv , comment_info;
     private CommentForApp cfa;
+    private ImageView mbImg,commImg;
+    private ImageTaskOIB imageTaskOIB;
 
 
     @Override
@@ -46,6 +50,18 @@ public class Information extends AppCompatActivity {
         setContentView(R.layout.activity_comment_information);
         goview();
         initContent();
+        //get mbImg
+        mbImg = findViewById(R.id.commInfo_mbImg);
+        String url = Common.URL + "/appGetCommentMember";
+        int id = Integer.parseInt(cfa.getMsgCid());
+        imageTaskOIB = new ImageTaskOIB(url, id,mbImg);
+        imageTaskOIB.execute();
+        //get commImg
+        commImg = findViewById(R.id.commPic);
+        String url2 = Common.URL + "/appGetCommentImg";
+        int id2 = Integer.parseInt(cfa.getMsgCid());
+        imageTaskOIB = new ImageTaskOIB(url2, id2,commImg);
+        imageTaskOIB.execute();
 
         mediumText = findViewById(R.id.MediumText);
         comment_info = findViewById(R.id.information_comment_tv);
