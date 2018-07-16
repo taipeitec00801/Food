@@ -10,6 +10,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -32,9 +34,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.AppModel.Store;
 import com.example.food.Collection.CollectionActivity;
 import com.example.food.Comment.CommentActivity;
+import com.example.food.DAO.StoreDAO;
 import com.example.food.DAO.task.Common;
 import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.Map.MapActivity;
@@ -45,6 +50,7 @@ import com.example.food.Other.UnderDevelopmentActivity;
 import com.example.food.R;
 import com.example.food.Search.SearchActivity;
 import com.example.food.Settings.SettingsActivity;
+import com.example.food.Settings.UserInformationActivity;
 import com.example.food.Sort.SortActivity;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
@@ -53,6 +59,7 @@ import com.jude.rollviewpager.hintview.ColorPointHintView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_YES;
@@ -64,35 +71,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int firstTheme;
     private SharedPreferences prefs;
     private ImageTaskOIB storeImgTask;
-
+    private boolean isMember;
+    private StoreDAO storeDAO;
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
     //首頁主要四個icon
     private View imgfork,imgmap,main_collection,main_user;
-
-//    private RollPagerView mRollViewPager;
+    //private RollPagerView mRollViewPager;
     private List<Store> sList;
     private  RecyclerView recyclerView;
-private FoodpicAdapter foodpicAdapter;
+    private FoodpicAdapter foodAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recyclerView = findViewById(R.id.recyclerView);
         initFirst();
         initContent();
         changepage();
         setupNavigationDrawerMenu();
-        Bundle bundle = getIntent().getExtras();
-        try{
-            sList = (List<Store>) bundle.getSerializable("storeList");
-            Log.d("-------sList---------", String.valueOf(sList.size()));
-        }catch(Exception e){
-            sList = getStoreList();
-            Log.d("-------sList---------", String.valueOf(sList.size()));
-        }
 
+        mThread = new HandlerThread("fdfdf");
+        mThread.start();
+        mThreadHandler = new Handler(mThread.getLooper());
+        mThreadHandler.post(r1);
+
+        recyclerView = findViewById(R.id.recyclerView_main);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
-                        1, StaggeredGridLayoutManager.VERTICAL));
-        recyclerView.setAdapter(new FoodpicAdapter(this, sList));
+                1, StaggeredGridLayoutManager.VERTICAL));
+
 
 //        mRollViewPager =  findViewById(R.id.roll_view_pager);
         //設定播放時間間隔
@@ -138,27 +145,77 @@ private FoodpicAdapter foodpicAdapter;
         main_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                isLogin(UserInformationActivity.class);
             }
         });
 
 
     }
 
+    //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
+    private void isLogin(Class wantToGo) {
+        final Intent intent = new Intent();
+        if (isMember) {
+            intent.setClass(MainActivity.this, wantToGo);
+            startActivity(intent);
+        } else {
+            new MaterialDialog.Builder(MainActivity.this)
+                    .title("訪客您好!")
+                    .backgroundColorRes(R.color.colorDialogBackground)
+                    .positiveColorRes(R.color.colorText)
+                    .neutralColorRes(R.color.colorText)
+                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                    .content("欲使用該功能，請先登入")
+                    .positiveText(R.string.textIKnow)
+                    .neutralText(R.string.textGoTo)
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            intent.setClass(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         askPermissions();
-
+        isMember = prefs.getBoolean("login", false);
         //判斷 主題是否有變動  若有 recreate 這個 Activity
         int nowTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (nowTheme != firstTheme) {
             recreate();
         }
-        Log.e("測試--login",String.valueOf(prefs.getBoolean("login",false)));
+        Log.e("測試--login",String.valueOf(isMember));
     }
+
+    private Runnable r1 = new Runnable() {
+        public void run() {
+            //這裡放執行緒要執行的程式。
+
+            storeDAO = new StoreDAO(MainActivity.this);
+            sList = storeDAO.getStoreByTop();
+
+            foodAd = new MainActivity.FoodpicAdapter(MainActivity.this , sList);
+            mThreadHandler.post(r3);
+        }
+    };
+    private Runnable r3 = new Runnable() {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // update TextView here!
+                    recyclerView.setAdapter(foodAd);
+                }
+            });
+
+        }
+    };
 
     //  首次 執行App 或是 重開App  的偏好設定
     private void initFirst() {
@@ -282,24 +339,6 @@ private FoodpicAdapter foodpicAdapter;
         actionBarDrawerToggle.syncState();
     }
 
-    /*   每個 Activity  的要使用
-            @Override
-            protected void onActivityResult ...       */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // requestCode "RESULT_OK" 代表 前一頁
-            // 一定要有   RESULT_OK
-            case RESULT_OK:
-                break;
-            // requestCode "0" 代表 首頁
-            case 0:
-                break;
-            default:
-                break;
-        }
-    }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -380,20 +419,17 @@ private FoodpicAdapter foodpicAdapter;
         FoodpicAdapter(Context context, List<Store> foodList) {
             this.context = context;
             this.foodList = foodList;
-
-
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
             ImageView ivImage;
-            TextView tvId, tvName;
+            TextView tvName, tvAddress;
 
             MyViewHolder(View itemView) {
                 super(itemView);
                 ivImage = itemView.findViewById(R.id.ivImage);
-                tvId = itemView.findViewById(R.id.tvId);
                 tvName = itemView.findViewById(R.id.tvName);
-
+                tvAddress = itemView.findViewById(R.id.tvAddress);
             }
         }
 
@@ -421,6 +457,7 @@ private FoodpicAdapter foodpicAdapter;
            // viewHolder.ivImage.setImageResource(R.drawable.food1);
             //viewHolder.tvId.setText(String.valueOf(food.getStoreId()));
             viewHolder.tvName.setText(food.getStoreName());
+            viewHolder.tvAddress.setText(food.getStoreAddress());
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -454,15 +491,16 @@ private FoodpicAdapter foodpicAdapter;
         bundle.putAll(options.toBundle());
         intent.putExtras(bundle);
         intent.putExtras(options.toBundle());
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent,options.toBundle());
 
     }
 
     public List<Store> getStoreList() {
         List<Store> storeList = new ArrayList<>();
-        storeList.add(new Store(1,  "詠豐堂EIHODO"));
-        storeList.add(new Store(2,  "彡耕居食事所"));
-        storeList.add(new Store(3, "花漾點點"));
+        storeList.add(new Store(1,  "詠豐堂EIHODO", "address"));
+        storeList.add(new Store(2,  "彡耕居食事所","address"));
+        storeList.add(new Store(3, "花漾點點","address"));
         Log.d("-------storeList---------", String.valueOf(storeList.size()));
         return storeList;
     }

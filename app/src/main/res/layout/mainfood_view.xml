@@ -4,48 +4,46 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
-    android:padding="6dp"
-    card_view:cardBackgroundColor="#ffdddddd"
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="6dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="6dp"
         android:orientation="vertical"
+        android:background="?attr/colorCardBackground"
         android:padding="6dp">
 
-
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/colorText"
+            android:text="Name" />
 
         <ImageView
             android:id="@+id/ivImage"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_width="368dp"
+            android:layout_height="207dp"
             android:layout_gravity="center"
             android:src="@drawable/test3"
+            android:layout_marginTop="6dp"
             android:scaleType="fitXY"
             />
-        <LinearLayout
+
+
+
+        <TextView
+            android:id="@+id/tvAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="12dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="店名" />
-
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text=" McDonald's" />
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/colorText"
+            android:textSize="20sp"
+            android:text="Address" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

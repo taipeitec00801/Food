@@ -17,148 +17,132 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorBackground"
             android:orientation="vertical">
-            <!-- 第15行  高度未知  我改成 wrap_content  -->
             <include
                 android:id="@+id/mainToolbar"
                 layout="@layout/toolbar" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@color/colorWhite">
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorText"
+                android:gravity="center_horizontal">
 
                 <LinearLayout
+                    android:id="@+id/main_user"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" >
-                    <LinearLayout
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:background="#ff6600"
+                    android:paddingTop="8dp">
+
+                    <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:src="?attr/ivMainUser" />
 
-
-                        <LinearLayout
-                            android:id="@+id/main_user"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:padding="6dp"
-                            android:layout_margin="1dp"
-                            android:background="#fbd786"
-                            android:orientation="vertical" >
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:src="?attr/ivMainUser"
-                                android:layout_weight="2"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:textSize="20sp"
-                                android:textColor="@color/colorText"
-                                android:text="@string/textMember" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:id="@+id/main_collection"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:padding="6dp"
-                            android:layout_margin="1dp"
-                            android:background="#3366ff"
-                            android:orientation="vertical" >
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:src="?attr/ivMainColl"
-                                android:layout_weight="2"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:textSize="20sp"
-                                android:textColor="@color/colorText"
-                                android:text="@string/text_coll" />
-                        </LinearLayout>
-
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/textMember"
+                        android:textColor="@color/colorText"
+                        android:textSize="20sp" />
                 </LinearLayout>
-                </LinearLayout>
-
 
                 <LinearLayout
+                    android:id="@+id/imgmap"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" >
-                    <LinearLayout
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_margin="1dp"
+                    android:background="#3385ff"
+                    android:paddingTop="8dp">
+
+                    <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:src="?attr/ivMainMap" />
 
-
-                        <LinearLayout
-                            android:id="@+id/imgmap"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:padding="6dp"
-                            android:layout_margin="1dp"
-                            android:background="#009933"
-                            android:orientation="vertical" >
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:src="?attr/ivMainMap"
-                                android:layout_weight="2"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:textSize="20sp"
-                                android:textColor="@color/colorText"
-                                android:text="@string/textMap" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:id="@+id/imgfork"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:padding="6dp"
-                            android:layout_margin="1dp"
-                            android:background=" #cc0000"
-                            android:orientation="vertical" >
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:src="?attr/ivMainSort"
-                                android:layout_weight="2"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:textSize="20sp"
-                                android:textColor="@color/colorText"
-                                android:text="@string/textSort" />
-                        </LinearLayout>
-
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/textMap"
+                        android:textColor="@color/colorText"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/main_collection"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="1dp"
+                    android:background="#009933"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:src="?attr/ivMainColl" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/text_coll"
+                        android:textColor="@color/colorText"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/imgfork"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="1dp"
+                    android:background="#cc0000"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:src="?attr/ivMainSort" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/textSort"
+                        android:textColor="@color/colorText"
+                        android:textSize="20sp" />
+                </LinearLayout>
 
             </LinearLayout>
 
-            <!-- 第54 ~ 78行  每個 icon 我建議各用一個 CardView 包裝
-                  或者 用floating button 運用 -->
+
+
 
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/recyclerView_main"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:padding="12dp"/>
 
         </LinearLayout>
 

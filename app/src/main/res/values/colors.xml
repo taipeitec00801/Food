@@ -11,8 +11,8 @@
     <color name="backgroundStart">#2c3e50</color>
     <color name="backgroundEnd">#bdc3c7</color>
 
-    <color name="cardBackgroundStart">#9fafbc</color>
-    <color name="cardBackgroundEnd">#dde1e2</color>
+    <color name="cardBackgroundStart">#ada996</color>
+    <color name="cardBackgroundEnd">#eaeaea</color>
 
     <color name="drawerLayoutBackground">#deee</color>
 

@@ -15,21 +15,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class WelcomeActivity  extends Activity {
-    private StoreDAO storeDAO;
-    private List<Store> storeList;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_activity);
 
-        storeDAO = new StoreDAO(WelcomeActivity.this);
-        storeList = storeDAO.getStoreByTop();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("storeList", (Serializable) storeList);
-        Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
-        WelcomeActivity.this.finish();
         mHandler.sendEmptyMessageDelayed(GOTO_MAIN_ACTIVITY, 2000); //2秒跳轉
     }
     private static final int GOTO_MAIN_ACTIVITY = 0;
