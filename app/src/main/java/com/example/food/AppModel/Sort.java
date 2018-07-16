@@ -1,28 +1,47 @@
 package com.example.food.AppModel;
 
+import android.graphics.drawable.Drawable;
+
 public class Sort {
-    private int ivLsrc,sortLnum;
+    private int sortLnum;
     private String tvLname;
-    private int ivRsrc,sortRnum;
+    private int sortRnum;
     private String tvRname;
+    private Drawable sortR , sortL;
+    private Integer ivLsrc , ivRsrc;
 
-    public Sort( int ivLsrc, int sortLnum, String tvLname,int ivRsrc, int sortRnum, String tvRname) {
-
-        this.ivLsrc = ivLsrc;
+    public Sort(Integer ivLsrc, int sortLnum,String tvLname,  Integer ivRsrc, int sortRnum , String tvRname) {
         this.sortLnum = sortLnum;
         this.tvLname = tvLname;
-        this.ivRsrc = ivRsrc;
         this.sortRnum = sortRnum;
         this.tvRname = tvRname;
+        this.ivRsrc = ivRsrc;
+        this.ivLsrc = ivLsrc;
     }
 
+    public Sort(Drawable sortL, int sortLnum,String tvLname,  Drawable sortR, int sortRnum , String tvRname) {
+        this.sortLnum = sortLnum;
+        this.tvLname = tvLname;
+        this.sortRnum = sortRnum;
+        this.tvRname = tvRname;
+        this.sortR = sortR;
+        this.sortL = sortL;
+    }
 
-    public int getIvLsrc() {
+    public Integer getIvLsrc() {
         return ivLsrc;
     }
 
-    public void setIvLsrc(int ivLsrc) {
+    public void setIvLsrc(Integer ivLsrc) {
         this.ivLsrc = ivLsrc;
+    }
+
+    public Integer getIvRsrc() {
+        return ivRsrc;
+    }
+
+    public void setIvRsrc(Integer ivRsrc) {
+        this.ivRsrc = ivRsrc;
     }
 
     public int getSortLnum() {
@@ -41,14 +60,6 @@ public class Sort {
         this.tvLname = tvLname;
     }
 
-    public int getIvRsrc() {
-        return ivRsrc;
-    }
-
-    public void setIvRsrc(int ivRsrc) {
-        this.ivRsrc = ivRsrc;
-    }
-
     public int getSortRnum() {
         return sortRnum;
     }
@@ -63,5 +74,21 @@ public class Sort {
 
     public void setTvRname(String tvRname) {
         this.tvRname = tvRname;
+    }
+
+    public Drawable getSortR() {
+        return sortR;
+    }
+
+    public void setSortR(Drawable sortR) {
+        this.sortR = sortR;
+    }
+
+    public Drawable getSortL() {
+        return sortL;
+    }
+
+    public void setSortL(Drawable sortL) {
+        this.sortL = sortL;
     }
 }

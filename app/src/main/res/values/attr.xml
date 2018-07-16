@@ -19,6 +19,11 @@
     <attr name="ivSettingGender" format="reference" />
     <attr name="ivChevronRight" format="reference" />
 
+    <attr name="ivMainUser" format="reference" />
+    <attr name="ivMainMap" format="reference" />
+    <attr name="ivMainColl" format="reference" />
+    <attr name="ivMainSort" format="reference" />
+
 
     <!-- string -->
     <attr name="tvSettingDayNight" format="reference" />
