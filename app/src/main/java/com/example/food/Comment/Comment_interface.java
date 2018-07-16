@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -34,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.food.AppModel.CommentForApp;
+import com.example.food.AppModel.Message;
+import com.example.food.AppModel.Store;
 import com.example.food.DAO.task.Common;
 import com.example.food.Other.ImageInExternalStorage;
 import com.example.food.R;
@@ -46,10 +49,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Comment_interface extends AppCompatActivity {
-    private AppBarLayout mAppBarLayout;
-    private Button button2;
+
     private PopupWindow popWindow = new PopupWindow ();
     private File file;
+    private String storeName;
     private SharedPreferences prefs;
     private ImageButton ibPickPicture;
     private ImageView ivComment;
@@ -60,16 +63,19 @@ public class Comment_interface extends AppCompatActivity {
     private byte[] image;
     private Toolbar toolbar;
     private CommentForApp cfa;
-    private TextView mediumText;
+    private TextView mediumText,storeid;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = getIntent().getExtras();
+        storeName = (String) bundle.get("storename");
         setContentView(R.layout.activity_comment_interface);
         findViews();
         initContent();
         review();
         selectCardView();
-
+        TextView storeid = findViewById(R.id.storeid);
+        storeid.setText("店家:"+storeName);
         mediumText = findViewById(R.id.MediumText);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         mediumText.setText(prefs.getString("nickname", "訪客"));
@@ -86,14 +92,14 @@ public class Comment_interface extends AppCompatActivity {
         Common.askPermissions(Comment_interface.this, permissions, Common.PERMISSION_READ_EXTERNAL_STORAGE);
     }
     private void review() {
-        button2=findViewById(R.id.Collection);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent =new Intent(Comment_interface.this,CommentActivity.class);
-                startActivity(intent);
-            }
-        });
+//        button2=findViewById(R.id.Collection);
+//        button2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent =new Intent(Comment_interface.this,CommentActivity.class);
+//                startActivity(intent);
+//            }
+//        });測試用
     }
     private void initContent() {
 //         toolbar = findViewById(R.id.comment_interface_toolbar);
@@ -223,7 +229,7 @@ public class Comment_interface extends AppCompatActivity {
                 }
             }
         }
-    private void crop(Uri sourceImageUri) {
+        private void crop(Uri sourceImageUri) {
         File file = Comment_interface.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         file = new File(file, "picture_cropped.jpg");
         croppedImageUri = Uri.fromFile(file);
@@ -258,3 +264,4 @@ public class Comment_interface extends AppCompatActivity {
     }
 
 }
+

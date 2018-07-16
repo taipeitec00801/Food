@@ -57,7 +57,7 @@ public class CommentActivity extends AppCompatActivity {
     private ImageTaskOIB storeImgTask;
     private Handler mThreadHandler;
     private HandlerThread mThread;
-    private StoreDAO sDAO5566;
+    private StoreDAO sDAO;
     private List<CommentForApp> cfaList;
     private RecyclerView rvComment;
     private MemberAdapter commentAd;
@@ -121,7 +121,7 @@ public class CommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 View mView = LayoutInflater.from(CommentActivity.this)
-                        .inflate(R.layout.take_photo_pop, null, false);
+                        .inflate(R.layout.store_info_pop, null, false);
 
                 popWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT, true);
@@ -141,13 +141,18 @@ public class CommentActivity extends AppCompatActivity {
                     }
                 });
 
-                //新增平論
+                //新增評論
                 View store_comment = mView.findViewById(R.id.store_comment);
                 store_comment.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("storename" , store.getStoreName());
                         Intent intent = new Intent(CommentActivity.this, Comment_interface.class);
+                        intent.putExtras(bundle);
                         startActivity(intent);
+
                     }
                 });
 
@@ -182,7 +187,7 @@ public class CommentActivity extends AppCompatActivity {
                 });
 
                 //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
-                popWindow.showAsDropDown(view, -50, 0);
+                popWindow.showAsDropDown(view, -50, -200);
 
                 // 设置弹出窗体的背景
                 // 实例化一个ColorDrawable颜色为半透明
@@ -210,8 +215,8 @@ public class CommentActivity extends AppCompatActivity {
         public void run() {
             //這裡放執行緒要執行的程式。
             Log.d("store.getStoreId()---------------------------" , store.getStoreId().toString());
-            sDAO5566 = new StoreDAO(CommentActivity.this);
-            cfaList =  sDAO5566.getCommentForApp(store.getStoreId());
+            sDAO = new StoreDAO(CommentActivity.this);
+            cfaList =  sDAO.getCommentForApp(store.getStoreId());
             Log.d("------------------------------------" , String.valueOf(cfaList.size()));
             commentAd = new MemberAdapter(CommentActivity.this , cfaList);
             mThreadHandler.post(r3);

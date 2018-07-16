@@ -4,16 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorBackground"
+    android:background="@drawable/myedittext"
     android:orientation="vertical"
     tools:context=".Comment.Information">
 
     <include
     android:id="@+id/CommentInformationToolbar"
     layout="@layout/toolbar" />
-
-
-
 
 
     <LinearLayout
@@ -70,19 +67,22 @@
             android:id="@+id/pic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/food1" />
+            android:src="@drawable/food1"
+            android:scaleType="fitCenter"
+            />
 
         <TextView
             android:id="@+id/information_comment_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/myedittext"
             android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，我又再度到意舍酒店，這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />
-        <TextView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/information_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/myedittext"
-            android:text="User留言"/>
+            android:padding="12dp"
+            android:paddingEnd="5dp"/>
         <LinearLayout
 
             android:layout_width="match_parent"
@@ -90,17 +90,15 @@
 
             <EditText
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:layout_weight="0.85"
                 android:hint="留言"
-                android:singleLine="true"
-                android:background="@drawable/myedittext"
-                android:maxLines="3" />
+                android:singleLine="true" />
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/gobutton"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="30dp"
                 android:layout_weight="0.15"
                 android:background="@drawable/button_rounde"
                 android:text="GO" />
