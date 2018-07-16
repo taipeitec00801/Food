@@ -2,16 +2,14 @@ package com.example.food.Comment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -20,33 +18,27 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.food.AppModel.Comment;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.food.AppModel.CommentForApp;
-import com.example.food.AppModel.Member;
 import com.example.food.AppModel.Store;
-
-
-import com.example.food.DAO.MemberDAO;
 import com.example.food.DAO.StoreDAO;
 import com.example.food.DAO.task.Common;
-import com.example.food.DAO.task.CommonTask;
 import com.example.food.DAO.task.ImageTaskOIB;
-import com.example.food.Settings.UserInformationActivity;
+import com.example.food.Map.MapActivity;
+import com.example.food.Member.LoginActivity;
+import com.example.food.R;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.adapter.DynamicPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
-import com.example.food.R;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -59,15 +51,21 @@ public class CommentActivity extends AppCompatActivity {
     private HandlerThread mThread;
     private StoreDAO sDAO;
     private List<CommentForApp> cfaList;
+    private SharedPreferences prefs;
+    private boolean isMember, collected;
     private RecyclerView rvComment;
     private MemberAdapter commentAd;
+    private ImageView store_recom_img, store_collect_img;
+    private Integer recom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
         findById();
-
+        sDAO = new StoreDAO(CommentActivity.this);
+        recom = 0;
+        collected = false;
         //get bundle From Map
         Bundle bundle = getIntent().getExtras();
         store = (Store) bundle.getSerializable("store");
@@ -94,7 +92,13 @@ public class CommentActivity extends AppCompatActivity {
         mRollViewPager.setAdapter(new TestNormalAdapter());
         mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY, Color.WHITE));
 //        new commentTask().execute();
-        changeview();
+        changeView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isMember = prefs.getBoolean("login", false);
     }
 
     private void findById() {
@@ -104,96 +108,157 @@ public class CommentActivity extends AppCompatActivity {
         tv1 = findViewById(R.id.tv_store_info_address);
         tv2 = findViewById(R.id.tv_store_info_time);
         tv3 = findViewById(R.id.tv_store_info_phone);
+        prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
     }
 
-    private void changeview() {
-        //跳地圖
+    //判斷為會員時才能有該功能 若沒有登入 跳出訊息提示
+    private void isLogin(View view) {
+        if (isMember) {
+            View mView = LayoutInflater.from(CommentActivity.this)
+                    .inflate(R.layout.store_info_pop, null, false);
+
+            popWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+            // 设置弹出窗体可点击
+            popWindow.setFocusable(true);
+            // 设置弹出窗体显示时的动画，从底部向上弹出
+            popWindow.setAnimationStyle(R.style.take_photo_anim);
+
+            //檢查持是否已推薦
+            store_recom_img = mView.findViewById(R.id.store_recom_img);
+            store_collect_img = mView.findViewById(R.id.store_collect_img);
+
+            if (recom == 1){
+                store_recom_img.setImageResource(R.drawable.comment_is_like);
+            }
+            if (collected){
+                store_collect_img.setImageResource(R.drawable.bookmark_is);
+            }
+
+
+
+            //推薦
+            View store_recom = mView.findViewById(R.id.store_recom);
+            store_recom.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (recom == 1) {
+                        store_recom_img.setImageResource(R.drawable.comment_like);
+                        recom = 0;
+                    }else if (recom == 0) {
+                        store_recom_img.setImageResource(R.drawable.comment_is_like);
+                        recom = 1;
+                    }
+                    boolean isYN = sDAO.updateStRecom(prefs.getInt("memberId", 0), store.getStoreId(), recom);
+                    if (isYN) {
+                        popWindow.dismiss();
+                    }
+                }
+            });
+
+            //新增評論
+            View store_comment = mView.findViewById(R.id.store_comment);
+            store_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("storename" , store.getStoreName());
+                    Intent intent = new Intent(CommentActivity.this, Comment_interface.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+                }
+            });
+            //收藏
+            View store_collect = mView.findViewById(R.id.store_collect);
+            store_collect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (collected) {
+                        store_recom_img.setImageResource(R.drawable.bookmark);
+                        collected = false;
+                    }else {
+                        store_recom_img.setImageResource(R.drawable.bookmark_is);
+                        collected = true;
+                    }
+                    //修改收藏
+                }
+            });
+
+            //分享
+            View store_share = mView.findViewById(R.id.store_share);
+            store_share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popWindow.dismiss();
+                }
+            });
+
+
+            // 设置外部可点击
+            popWindow.setOutsideTouchable(true);
+            // 添加OnTouchListener监听判断获取触屏位置如果在选择框外面则销毁弹出框
+            popWindow.setTouchInterceptor(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return false;
+                    // 这里如果返回true的话，touch事件将被拦截
+                    // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+                }
+            });
+
+            //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
+            popWindow.showAsDropDown(view, -50, -300);
+
+            // 设置弹出窗体的背景
+            // 实例化一个ColorDrawable颜色为半透明
+            popWindow.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+        } else {
+            new MaterialDialog.Builder(CommentActivity.this)
+                    .title("訪客您好!")
+                    .backgroundColorRes(R.color.colorDialogBackground)
+                    .positiveColorRes(R.color.colorText)
+                    .neutralColorRes(R.color.colorText)
+                    .icon(Objects.requireNonNull(getDrawable(R.drawable.warn_icon)))
+                    .content("欲使用該功能，請先登入")
+                    .positiveText(R.string.textIKnow)
+                    .neutralText(R.string.textGoTo)
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Intent intent = new Intent();
+                            intent.setClass(CommentActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    private void changeView(){
+
+        FloatingActionButton floatingButton = findViewById(R.id.floating_button);
+        floatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //執行 登入狀態判斷
+                isLogin(view);
+
+            }
+        });
+
+        //會跳到地圖頁
         Button bt_storeInfo_map = findViewById(R.id.bt_storeInfo_map);
         bt_storeInfo_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intentMap = new Intent(CommentActivity.this, MapActivity.class);
+                //...
             }
         });
+    }
 
-        FloatingActionButton floating_Button = findViewById(R.id.floating_button);
-        floating_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View mView = LayoutInflater.from(CommentActivity.this)
-                        .inflate(R.layout.store_info_pop, null, false);
-
-                popWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
-                // 设置弹出窗体可点击
-                popWindow.setFocusable(true);
-                // 设置弹出窗体显示时的动画，从底部向上弹出
-                popWindow.setAnimationStyle(R.style.take_photo_anim);
-
-                // 设置按钮监听
-                //推薦
-                View store_recom = mView.findViewById(R.id.store_recom);
-                store_recom.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
-
-                //新增評論
-                View store_comment = mView.findViewById(R.id.store_comment);
-                store_comment.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("storename" , store.getStoreName());
-                        Intent intent = new Intent(CommentActivity.this, Comment_interface.class);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-
-                    }
-                });
-
-                //收藏
-                View store_collect = mView.findViewById(R.id.store_collect);
-                store_collect.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
-
-                //分享
-                View store_share = mView.findViewById(R.id.store_share);
-                store_share.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
-
-                // 设置外部可点击
-                popWindow.setOutsideTouchable(true);
-                // 添加OnTouchListener监听判断获取触屏位置如果在选择框外面则销毁弹出框
-                popWindow.setTouchInterceptor(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        return false;
-                        // 这里如果返回true的话，touch事件将被拦截
-                        // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
-                    }
-                });
-
-                //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
-                popWindow.showAsDropDown(view, -50, -200);
-
-                // 设置弹出窗体的背景
-                // 实例化一个ColorDrawable颜色为半透明
-                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0000000));
-            }
-        });
 
 
 
@@ -210,13 +275,14 @@ public class CommentActivity extends AppCompatActivity {
 //                return null;
 //            }
 //        }
-    }
+//    }
     private Runnable r1 = new Runnable() {
         public void run() {
             //這裡放執行緒要執行的程式。
             Log.d("store.getStoreId()---------------------------" , store.getStoreId().toString());
-            sDAO = new StoreDAO(CommentActivity.this);
+
             cfaList =  sDAO.getCommentForApp(store.getStoreId());
+            recom = sDAO.getStRecom(prefs.getInt("memberId", 0), store.getStoreId());
             Log.d("------------------------------------" , String.valueOf(cfaList.size()));
             commentAd = new MemberAdapter(CommentActivity.this , cfaList);
             mThreadHandler.post(r3);
@@ -230,6 +296,14 @@ public class CommentActivity extends AppCompatActivity {
                 public void run() {
                     // update TextView here!
                     rvComment.setAdapter(commentAd);
+
+                    String userCollection = prefs.getString("collection", "");
+                    String[] coll = userCollection.split(",");
+                    for (String n : coll) {
+                        if (Integer.valueOf(n) == store.getStoreId()){
+                            collected = true;
+                        }
+                    }
                 }
             });
 

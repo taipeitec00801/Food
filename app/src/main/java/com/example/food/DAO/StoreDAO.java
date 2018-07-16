@@ -191,8 +191,8 @@ public class StoreDAO {
     }
 
 
-    public Integer updateStRecom(Integer memberId, Integer storeId, Integer recomYN) {
-        Integer isStRecom = 0;
+    public Boolean updateStRecom(Integer memberId, Integer storeId, Integer recomYN) {
+        Boolean isStRecom = false;
         if (Common.networkConnected(inputActivity)) {
 
             String url = Common.URL + "/appUpdateStRecom";
@@ -200,6 +200,32 @@ public class StoreDAO {
             jsonObject.addProperty("memberId", memberId);
             jsonObject.addProperty("storeId", storeId);
             jsonObject.addProperty("recomYN", recomYN);
+
+            int count = 0;
+            try {
+                String result = new CommonTask(url, jsonObject.toString()).execute().get();
+                count = Integer.valueOf(result);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+            if (count > 0) {
+                isStRecom = true;
+            }
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+        return isStRecom;
+    }
+
+    public Integer getStRecom(Integer memberId, Integer storeId) {
+        Integer isStRecom = 0;
+        if (Common.networkConnected(inputActivity)) {
+
+            String url = Common.URL + "/appGetStRecom";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("memberId", memberId);
+            jsonObject.addProperty("storeId", storeId);
 
             try {
                 String result = new CommonTask(url, jsonObject.toString()).execute().get();
@@ -214,5 +240,4 @@ public class StoreDAO {
         }
         return isStRecom;
     }
-
 }
