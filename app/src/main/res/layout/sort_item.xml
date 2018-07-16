@@ -49,16 +49,17 @@
                     app:mrl_rippleColor="#000000">
                 <!--用來設定ImageView和TextView的比例-->
                 <LinearLayout
+                    android:id="@+id/sort_item_Left_ll"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="@drawable/sort_1">
 
                     <ImageView
                         android:id="@+id/sort_item_Left_iv"
                         android:layout_width="match_parent"
                         android:layout_weight="3"
                         android:layout_height="0dp"
-                        android:src="@drawable/logo"
                         android:layout_margin="30dp"
                         android:background="@android:color/transparent"/>
 
@@ -115,6 +116,7 @@
                     app:mrl_rippleColor="#000000">
 
                 <LinearLayout
+                    android:id="@+id/sort_item_Right_ll"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
@@ -124,7 +126,6 @@
                         android:layout_width="match_parent"
                         android:layout_weight="3"
                         android:layout_height="0dp"
-                        android:src="@drawable/logo"
                         android:layout_margin="30dp"
                         android:background="@android:color/transparent"/>
 

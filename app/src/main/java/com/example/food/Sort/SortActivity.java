@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -25,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -272,14 +274,17 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             CardView cvLeft, cvRight;
             CardView cvMoveL, cvMoveR;
             MaterialRippleLayout mrlL, mrlR;
+            LinearLayout rll , lll;
             SpinKitView skvL, skvR;
 
             SortViewHolder(View itemView) {
                 super(itemView);
-                ivImageLeft = itemView.findViewById(R.id.sort_item_Left_iv);
+//                ivImageLeft = itemView.findViewById(R.id.sort_item_Left_iv);
+                rll = itemView.findViewById(R.id.sort_item_Right_ll);
                 tvNameLeft = itemView.findViewById(R.id.sort_item_Left_tv);
 
-                ivImageRight = itemView.findViewById(R.id.sort_item_Right_iv);
+//                ivImageRight = itemView.findViewById(R.id.sort_item_Right_iv);
+                lll = itemView.findViewById(R.id.sort_item_Left_ll);
                 tvNameRight = itemView.findViewById(R.id.sort_item_Right_tv);
 
                 cvLeft = itemView.findViewById(R.id.sort_item_Lift_cv);
@@ -287,6 +292,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
 
                 cvRight = itemView.findViewById(R.id.sort_item_Right_cv);
                 cvMoveR = itemView.findViewById(R.id.sort_item_cv_moveR);
+
 
                 mrlL = itemView.findViewById(R.id.sort_item_ripple_L);
                 mrlR = itemView.findViewById(R.id.sort_item_ripple_R);
@@ -316,26 +322,29 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             int colorL;
             int colorR;
             if (position % 2 == 0) {
-                colorL = 0xff34CCD6;//藍色
-                colorR = 0xffFF7676;//紅色
+//                colorL = 0xff34CCD6;//藍色
+//                colorR = 0xffFF7676;//紅色
+                colorL = 0xff000000;
+                colorR = 0xff000000;
                 Drawable drawable = getDrawable(R.drawable.sb);
                 viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-                drawable = getDrawable(R.drawable.sr);
+                drawable = getDrawable(R.drawable.sb);
                 viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
             } else {
-                colorL = 0xffFF7676;
-                colorR = 0xff34CCD6;
-                Drawable drawable = getDrawable(R.drawable.sr);
+                colorL = 0xff000000;
+                colorR = 0xff000000;
+                Drawable drawable = getDrawable(R.drawable.sb);
                 viewHolder.tvNameLeft.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
                 drawable = getDrawable(R.drawable.sb);
                 viewHolder.tvNameRight.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
             }
-            viewHolder.ivImageLeft.setImageResource(sort.getIvLsrc());
+            viewHolder.rll.setBackground(sort.getSortR());
             viewHolder.tvNameLeft.setText(String.valueOf(sort.getTvLname()));
             viewHolder.tvNameLeft.setTextColor(colorL);
             viewHolder.cvLeft.setCardBackgroundColor(colorL);
 
-            viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
+//            viewHolder.ivImageRight.setImageResource(sort.getIvRsrc());
+            viewHolder.lll.setBackground(sort.getSortL());
             viewHolder.tvNameRight.setText(String.valueOf(sort.getTvRname()));
             viewHolder.tvNameRight.setTextColor(colorR);
             viewHolder.cvRight.setCardBackgroundColor(colorR);
@@ -413,20 +422,20 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
     //分類的資料庫
     public List<Sort> getSortList() {
         List<Sort> sortList = new ArrayList<>();
-        sortList.add(new Sort(R.drawable.s03, 0, "中式餐廳",
-                R.drawable.s02, 1, "西式餐廳"));
+        sortList.add(new Sort(getDrawable(R.drawable.sort_0), 0, "中式餐廳",
+                getDrawable(R.drawable.sort_1), 1, "西式餐廳"));
 
-        sortList.add(new Sort(R.drawable.s05, 3, "韓式餐廳",
-                R.drawable.s04, 2, "日式餐廳"));
+        sortList.add(new Sort(getDrawable(R.drawable.sort_3), 3, "韓式餐廳",
+                getDrawable(R.drawable.sort_2), 2, "日式餐廳"));
 
-        sortList.add(new Sort(R.drawable.s06, 5, "港式餐廳",
-                R.drawable.s07, 4, "泰式餐廳"));
+        sortList.add(new Sort(getDrawable(R.drawable.sort_5), 5, "港式餐廳",
+                getDrawable(R.drawable.sort_4), 4, "泰式餐廳"));
 
-        sortList.add(new Sort(R.drawable.s08, 6, "路邊美食",
-                R.drawable.s09, 8, "冰涼滋味"));
+        sortList.add(new Sort(getDrawable(R.drawable.sort_6), 6, "路邊美食",
+                getDrawable(R.drawable.sort_8), 8, "冰涼滋味"));
 
-        sortList.add(new Sort(R.drawable.s10, 7, "甜點飲品",
-                R.drawable.s01, 9, "其他美食"));
+        sortList.add(new Sort(getDrawable(R.drawable.sort_7), 7, "甜點飲品",
+                getDrawable(R.drawable.sort_9), 9, "其他美食"));
 
         return sortList;
     }
