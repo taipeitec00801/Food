@@ -191,6 +191,28 @@ public class StoreDAO {
     }
 
 
+    public Integer updateStRecom(Integer memberId, Integer storeId, Integer recomYN) {
+        Integer isStRecom = 0;
+        if (Common.networkConnected(inputActivity)) {
 
+            String url = Common.URL + "/appUpdateStRecom";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("memberId", memberId);
+            jsonObject.addProperty("storeId", storeId);
+            jsonObject.addProperty("recomYN", recomYN);
+
+            try {
+                String result = new CommonTask(url, jsonObject.toString()).execute().get();
+                isStRecom = Integer.valueOf(result);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+
+        } else {
+            Common.showToast(inputActivity, "no network connection available");
+        }
+        return isStRecom;
+    }
 
 }
