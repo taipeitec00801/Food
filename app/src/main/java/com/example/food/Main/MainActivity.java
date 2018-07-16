@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageTaskOIB storeImgTask;
 
     //首頁主要四個icon
-    private ImageView imgfork,gotocommon,imgmap,collection,magnifier;
+    private View imgfork,imgmap,main_collection,main_user;
 
-    private RollPagerView mRollViewPager;
+//    private RollPagerView mRollViewPager;
     private List<Store> sList;
     private  RecyclerView recyclerView;
 private FoodpicAdapter foodpicAdapter;
@@ -76,6 +76,7 @@ private FoodpicAdapter foodpicAdapter;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView = findViewById(R.id.recyclerView);
         initFirst();
         initContent();
         changepage();
@@ -88,21 +89,20 @@ private FoodpicAdapter foodpicAdapter;
             sList = getStoreList();
             Log.d("-------sList---------", String.valueOf(sList.size()));
         }
-        recyclerView = findViewById(R.id.recyclerView);
 
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(
                         1, StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setAdapter(new FoodpicAdapter(this, sList));
 
-        mRollViewPager =  findViewById(R.id.roll_view_pager);
+//        mRollViewPager =  findViewById(R.id.roll_view_pager);
         //設定播放時間間隔
-        mRollViewPager.setPlayDelay(3000);
-        //設定透明度
-        mRollViewPager.setAnimationDurtion(500);
+//        mRollViewPager.setPlayDelay(3000);
+//        //設定透明度
+//        mRollViewPager.setAnimationDurtion(500);
         //設定配置器
-        mRollViewPager.setAdapter(new TestNormalAdapter());
-
-        mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
+//        mRollViewPager.setAdapter(new TestNormalAdapter());
+//
+//        mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
 
     }
     //首頁icon跳頁轉換
@@ -112,6 +112,7 @@ private FoodpicAdapter foodpicAdapter;
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SortActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -120,22 +121,25 @@ private FoodpicAdapter foodpicAdapter;
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
-        collection = findViewById(R.id.collection);
-        collection.setOnClickListener(new View.OnClickListener() {
+        main_collection = findViewById(R.id.main_collection);
+        main_collection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
-        magnifier = findViewById(R.id.magnifier);
-        magnifier.setOnClickListener(new View.OnClickListener() {
+        main_user = findViewById(R.id.main_user);
+        main_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -344,29 +348,29 @@ private FoodpicAdapter foodpicAdapter;
 
 
 
-    //rollpageview
-    private class TestNormalAdapter extends StaticPagerAdapter {
-        private int[] imgs = {
-                R.drawable.test1,
-                R.drawable.test2,
-                R.drawable.test3,
-
-        };
-
-        @Override
-        public View getView(ViewGroup container, int position) {
-            ImageView view = new ImageView(container.getContext());
-            view.setImageResource(imgs[position]);
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return imgs.length;
-        }
-    }
+//    //rollpageview
+//    private class TestNormalAdapter extends StaticPagerAdapter {
+//        private int[] imgs = {
+//                R.drawable.test1,
+//                R.drawable.test2,
+//                R.drawable.test3,
+//
+//        };
+//
+//        @Override
+//        public View getView(ViewGroup container, int position) {
+//            ImageView view = new ImageView(container.getContext());
+//            view.setImageResource(imgs[position]);
+//            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//            return view;
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return imgs.length;
+//        }
+//    }
 
 
     private class FoodpicAdapter extends RecyclerView.Adapter<FoodpicAdapter.MyViewHolder> {

@@ -26,6 +26,11 @@
         <item name="ivSettingGender">@drawable/ic_wc_white_24dp</item>
         <item name="ivChevronRight">@drawable/ic_chevron_right_white</item>
 
+        <item name="ivMainUser">@drawable/user_white</item>
+        <item name="ivMainMap">@drawable/map_white</item>
+        <item name="ivMainColl">@drawable/collection_white</item>
+        <item name="ivMainSort">@drawable/fork_white</item>
+
         <!-- 切換 string -->
         <item name="tvSettingDayNight">@string/settingDaytime</item>
     </style>
