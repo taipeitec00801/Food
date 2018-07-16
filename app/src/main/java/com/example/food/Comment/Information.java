@@ -87,7 +87,7 @@ public class Information extends AppCompatActivity {
     private void initContent() {
         Toolbar toolbar = findViewById(R.id.CommentInformationToolbar);
 //        toolbar.setTitle(R.string.text_insert_Comment);
-        toolbar.setTitle(getString(R.string.text_information));
+        toolbar.setTitle(getString(R.string.text_store_info));
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
