@@ -3,105 +3,244 @@ package com.example.food.Comment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.food.AppModel.Comment;
+import com.example.food.AppModel.CommentForApp;
+import com.example.food.AppModel.Member;
 import com.example.food.AppModel.Store;
 
 
+import com.example.food.DAO.MemberDAO;
+import com.example.food.DAO.StoreDAO;
 import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.CommonTask;
 import com.example.food.DAO.task.ImageTaskOIB;
+import com.example.food.Settings.UserInformationActivity;
 import com.jude.rollviewpager.RollPagerView;
 import com.jude.rollviewpager.adapter.DynamicPagerAdapter;
 import com.jude.rollviewpager.hintview.ColorPointHintView;
 import com.example.food.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommentActivity extends AppCompatActivity {
 
-
-    private View linearlayout_introduce,floatingbutton;
+    private PopupWindow popWindow = new PopupWindow();
     private RollPagerView mRollViewPager;
-    private TextView tv,tv1,tv2,tv3;
+    private TextView tv, tv1, tv2, tv3;
     private Store store;
     private ImageTaskOIB storeImgTask;
+    private Handler mThreadHandler;
+    private HandlerThread mThread;
+    private StoreDAO sDAO5566;
+    private List<CommentForApp> cfaList;
+    private RecyclerView rvComment;
+    private MemberAdapter commentAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
-        mRollViewPager =findViewById(R.id.roll_view_pager);
-        tv = findViewById(R.id.tv_store_info_name);
-        tv1 = findViewById(R.id.tv_store_info_address);
-        tv2 = findViewById(R.id.tv_store_info_time);
-        tv3 = findViewById(R.id.tv_store_info_phone);
+        findById();
+
         //get bundle From Map
         Bundle bundle = getIntent().getExtras();
         store = (Store) bundle.getSerializable("store");
-        Log.d("storeList",""+store.getStoreName());
+        Log.d("storeList", "" + store.getStoreName());
 
         tv.setText(store.getStoreName());
-        tv1.setText("地址 : "+store.getStoreAddress());
-        tv2.setText("營業時間 ： "+store.getServiceHours());
-        tv3.setText("連絡電話 : "+store.getStorePhone());
+        tv1.setText(store.getStoreAddress());
+        tv2.setText(store.getServiceHours());
+        tv3.setText(store.getStorePhone());
+
+        mThread = new HandlerThread("fdfdf");
+        mThread.start();
+        mThreadHandler = new Handler(mThread.getLooper());
+        mThreadHandler.post(r1);
 
 
+        rvComment.setLayoutManager(new StaggeredGridLayoutManager(
+                1, StaggeredGridLayoutManager.VERTICAL));
         //设置播放时间间隔
 //        mRollViewPager.setPlayDelay(3000);
         //设置透明度
         mRollViewPager.setAnimationDurtion(500);
         //设置适配器
         mRollViewPager.setAdapter(new TestNormalAdapter());
-        mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY,Color.WHITE));
+        mRollViewPager.setHintView(new ColorPointHintView(this, Color.GRAY, Color.WHITE));
 //        new commentTask().execute();
-
+        changeview();
     }
 
-    @Override
-    protected void onStart() {
-        new commentTask().execute();
-        super.onStart();
+    private void findById() {
+        rvComment = findViewById(R.id.Comment_recycleview);
+        mRollViewPager = findViewById(R.id.roll_view_pager);
+        tv = findViewById(R.id.tv_store_info_name);
+        tv1 = findViewById(R.id.tv_store_info_address);
+        tv2 = findViewById(R.id.tv_store_info_time);
+        tv3 = findViewById(R.id.tv_store_info_phone);
     }
 
-    class commentTask extends AsyncTask<Void,Void,Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            changeview();
-            RecyclerView recyclerView=findViewById(R.id.Comment_recycleview);
-            recyclerView.setLayoutManager(
-                    new StaggeredGridLayoutManager(
-                            1,StaggeredGridLayoutManager.VERTICAL));
-            List<Member> memberList = getMemberList();
-            recyclerView.setAdapter(new MemberAdapter(CommentActivity.this, memberList));
-            return null;
+    private void changeview() {
+        //跳地圖
+        Button bt_storeInfo_map = findViewById(R.id.bt_storeInfo_map);
+        bt_storeInfo_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        FloatingActionButton floating_Button = findViewById(R.id.floating_button);
+        floating_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View mView = LayoutInflater.from(CommentActivity.this)
+                        .inflate(R.layout.take_photo_pop, null, false);
+
+                popWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+                // 设置弹出窗体可点击
+                popWindow.setFocusable(true);
+                // 设置弹出窗体显示时的动画，从底部向上弹出
+                popWindow.setAnimationStyle(R.style.take_photo_anim);
+
+                // 设置按钮监听
+                //推薦
+                View store_recom = mView.findViewById(R.id.store_recom);
+                store_recom.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                //新增平論
+                View store_comment = mView.findViewById(R.id.store_comment);
+                store_comment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(CommentActivity.this, Comment_interface.class);
+                        startActivity(intent);
+                    }
+                });
+
+                //收藏
+                View store_collect = mView.findViewById(R.id.store_collect);
+                store_collect.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                //分享
+                View store_share = mView.findViewById(R.id.store_share);
+                store_share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                // 设置外部可点击
+                popWindow.setOutsideTouchable(true);
+                // 添加OnTouchListener监听判断获取触屏位置如果在选择框外面则销毁弹出框
+                popWindow.setTouchInterceptor(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                        // 这里如果返回true的话，touch事件将被拦截
+                        // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+                    }
+                });
+
+                //设置popupWindow显示的位置，参数依次是参照View，x轴的偏移量，y轴的偏移量
+                popWindow.showAsDropDown(view, -50, 0);
+
+                // 设置弹出窗体的背景
+                // 实例化一个ColorDrawable颜色为半透明
+                popWindow.setBackgroundDrawable(new ColorDrawable(0xb0000000));
+            }
+        });
+
+
+
+//        class commentTask extends AsyncTask<Void, Void, Void> {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//
+//                RecyclerView recyclerView = findViewById(R.id.Comment_recycleview);
+//                recyclerView.setLayoutManager(
+//                        new StaggeredGridLayoutManager(
+//                                1, StaggeredGridLayoutManager.VERTICAL));
+////            List<Member> memberList = getMemberList();
+////            recyclerView.setAdapter(new MemberAdapter(CommentActivity.this, memberList));
+//                return null;
+//            }
+//        }
+    }
+    private Runnable r1 = new Runnable() {
+        public void run() {
+            //這裡放執行緒要執行的程式。
+            Log.d("store.getStoreId()---------------------------" , store.getStoreId().toString());
+            sDAO5566 = new StoreDAO(CommentActivity.this);
+            cfaList =  sDAO5566.getCommentForApp(store.getStoreId());
+            Log.d("------------------------------------" , String.valueOf(cfaList.size()));
+            commentAd = new MemberAdapter(CommentActivity.this , cfaList);
+            mThreadHandler.post(r3);
         }
-    }
+    };
+    private Runnable r3 = new Runnable() {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // update TextView here!
+                    rvComment.setAdapter(commentAd);
+                }
+            });
+
+        }
+    };
 
     private class TestNormalAdapter extends DynamicPagerAdapter {
-//        private int[] imgs = {
-//                R.drawable.food,
-//                R.drawable.food1,
-//                R.drawable.food2,
-//                R.drawable.food,
-//        };
+
         @Override
         public View getView(ViewGroup container, int position) {
             ImageView view = new ImageView(container.getContext());
             String url = Common.URL + "/appGetAllImages";
             int id = store.getStoreId();
-            storeImgTask = new ImageTaskOIB(url,id,position,view);
+            storeImgTask = new ImageTaskOIB(url, id, position, view);
             storeImgTask.execute();
-           // view.setImageResource(imgs[position]);
+            // view.setImageResource(imgs[position]);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             return view;
@@ -114,80 +253,62 @@ public class CommentActivity extends AppCompatActivity {
         }
     }
 
-    private void changeview(){
-        linearlayout_introduce=findViewById(R.id.linearlayout_introduce);
-        linearlayout_introduce.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(CommentActivity.this, Introduce.class);
-                startActivity(intent);
-            }
-        });
-        floatingbutton=findViewById(R.id.floatingbutton);
-        floatingbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(CommentActivity.this, Comment_interface.class);
-                startActivity(intent);
-//                Map intent還沒連結
-            }
-        });
-    }
+
+
     private class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MyViewHolder> {
         private Context context;
-        private List<Member> MembersList;
+        private List<CommentForApp> cfaList;
 
-        MemberAdapter(Context context, List<Member> MembersList) {
+        MemberAdapter(Context context, List<CommentForApp> cfaList) {
             this.context = context;
-            this.MembersList = MembersList;
-        }
-
-        @Override
-        public  MyViewHolder onCreateViewHolder(ViewGroup viewGroup ,int viewType){
-            View itemView =LayoutInflater.from(context)
-                        .inflate(R.layout.comment_item,viewGroup,false);
-            return new MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(MyViewHolder viewHolder, int position){
-            final Member member =MembersList.get(position);
-            viewHolder.textView.setText(member.getName());
-            viewHolder.imageView.setImageResource(member.getImage());
-            viewHolder.textView.setText(member.getMessage());
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent=new Intent(CommentActivity.this, Information.class);
-                    startActivity(intent);
-                }
-            });
-        }
-        @Override
-        public int getItemCount() {
-            return  MembersList.size();
+            this.cfaList = cfaList;
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView textView;
+            TextView textView , likeView;
             ImageView imageView;
             TextView messageView;
 
 
-            MyViewHolder(View itemview){
+            MyViewHolder(View itemview) {
                 super(itemview);
 
-                textView=itemview.findViewById(R.id.customname);
-                imageView=itemview.findViewById(R.id.iv);
-                messageView=itemview.findViewById(R.id.Usermessage);
+                likeView = itemview.findViewById(R.id.comment_RecomCount);
+                textView = itemview.findViewById(R.id.customname);
+                imageView = itemview.findViewById(R.id.iv);
+                messageView = itemview.findViewById(R.id.Usermessage);
             }
         }
-    }
 
-    public List<Member> getMemberList() {
-        List<Member> MemberList=new ArrayList<>();
-        MemberList.add(new Member("1",R.drawable.man,"David"));
-        MemberList.add(new Member("2",R.drawable.man,"Mary"));
-        return MemberList;
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View itemView = LayoutInflater.from(context)
+                    .inflate(R.layout.comment_item, viewGroup, false);
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(MyViewHolder viewHolder, int position) {
+            final CommentForApp cfa = cfaList.get(position);
+            viewHolder.textView.setText(cfa.getUserNickName());
+//            viewHolder.imageView.setImageResource(member.getImage());
+            viewHolder.messageView.setText(cfa.getComment());
+            viewHolder.likeView.setText(cfa.getCommentRecomCount());
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("commen" , cfa);
+                    Intent intent = new Intent(CommentActivity.this, Information.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return cfaList.size();
+        }
     }
 }

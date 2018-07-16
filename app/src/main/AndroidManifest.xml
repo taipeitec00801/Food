@@ -83,7 +83,6 @@
             android:parentActivityName=".Comment.CommentActivity" />
         <activity android:name=".Comment.Information"
             android:parentActivityName=".Comment.CommentActivity" />
-        <activity android:name=".Comment.Introduce"/>
     </application>
 
 </manifest>
