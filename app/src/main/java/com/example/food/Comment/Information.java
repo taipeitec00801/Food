@@ -48,7 +48,6 @@ public class Information extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         cfa = (CommentForApp) bundle.get("commen");
         setContentView(R.layout.activity_comment_information);
-        goview();
         initContent();
         //get mbImg
         mbImg = findViewById(R.id.commInfo_mbImg);
@@ -93,23 +92,14 @@ public class Information extends AppCompatActivity {
     }
 
 
-    private void goview(){
-        gobutton=findViewById(R.id.gobutton);
-        gobutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent =new Intent(Information.this,CommentActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+
 
     private void initContent() {
         Toolbar toolbar = findViewById(R.id.CommentInformationToolbar);
 //        toolbar.setTitle(R.string.text_insert_Comment);
-        toolbar.setTitle(getString(R.string.text_store_info));
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        toolbar.setTitle(R.string.text_content);
+//        setSupportActionBar(toolbar);
+//        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     //留言

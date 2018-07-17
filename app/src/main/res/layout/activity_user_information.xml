@@ -10,6 +10,8 @@
         android:id="@+id/settingsUserInformationToolbar"
         layout="@layout/toolbar" />
 
+
+
     <!--被點擊後將會跑出載入動畫，預設狀態為invisible(隱藏)-->
     <com.github.ybq.android.spinkit.SpinKitView
         style="@style/SpinKitView.Large.FadingCircle"
@@ -24,6 +26,11 @@
         android:visibility="invisible"
         app:SpinKit_Color="@color/colorWhite" />
 
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/settingsUserInformationToolbar"
+        android:descendantFocusability="blocksDescendants">
     <android.support.v7.widget.CardView
         android:id="@+id/rv_Set_userInfo"
         android:layout_width="match_parent"
@@ -294,6 +301,7 @@
                 android:layout_below="@+id/cvUserGender"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"
                 app:cardBackgroundColor="@color/colorPrimary"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="20dp">
@@ -309,6 +317,10 @@
             </android.support.v7.widget.CardView>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
-
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:text=" "/>-->
+    </android.support.v4.widget.NestedScrollView>
 </RelativeLayout>
 

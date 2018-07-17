@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/myedittext"
+    android:background="?attr/colorBackground"
     android:orientation="vertical"
     tools:context=".Comment.Information">
 
@@ -39,20 +39,20 @@
 
                 <TextView
                     android:id="@+id/MediumText"
-                    android:layout_width="160dp"
+                    android:layout_width="220dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:padding="10dp"
+                    android:textColor="@color/colorWhite"
                     android:text="Medium Text"
-                    android:textSize="24dp" />
+                    android:textSize="20dp" />
 
 
                 <com.ldoublem.thumbUplib.ThumbUpView
                     android:id="@+id/tpv"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="20dp"
                     app:bgColor="@color/colorWhite"
                     app:cracksColor="#33475f"
                     app:edgeColor="#9d55b8"
@@ -61,55 +61,42 @@
 
                 <TextView
                     android:id="@+id/tv"
-                    android:layout_width="40dp"
+                    android:layout_width="32dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_gravity="center"
-                    android:padding="5dp"
+                    android:textColor="@color/colorWhite"
                     android:text="89"
                     android:textSize="25sp" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/commPic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
+                android:layout_width="320dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitXY"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/food1" />
+
+
 
             <TextView
                 android:id="@+id/information_comment_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorText"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:background="?attr/colorCardBackground"
+                android:padding="6dp"
+                android:textSize="16sp"
                 android:text="繼上次造訪松山意舍QUE原木燒烤餐廳之後，我又再度到意舍酒店，這次是位於西門町，以美式料理作主軸的吃吧餐廳。" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/information_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/myedittext"
-                android:padding="12dp"
-                android:paddingEnd="5dp" />
 
-            <LinearLayout
 
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="0.85"
-                    android:hint="留言"
-                    android:singleLine="true" />
 
-                <Button
-                    android:id="@+id/gobutton"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="0.15"
-                    android:background="@drawable/button_rounde"
-                    android:text="GO" />
-            </LinearLayout>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

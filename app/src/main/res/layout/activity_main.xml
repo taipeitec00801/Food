@@ -25,7 +25,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/colorText"
+                android:background="@color/colorWhite"
                 android:gravity="center_horizontal">
 
                 <LinearLayout
@@ -42,7 +42,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:src="?attr/ivMainUser" />
+                        android:src="@drawable/user_white" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="@string/textMember"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -68,7 +68,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:src="?attr/ivMainMap" />
+                        android:src="@drawable/map_white" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="@string/textMap"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -94,7 +94,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:src="?attr/ivMainColl" />
+                        android:src="@drawable/collection_white" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="@string/text_coll"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -120,7 +120,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:src="?attr/ivMainSort" />
+                        android:src="@drawable/fork_white" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -128,15 +128,11 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="@string/textSort"
-                        android:textColor="@color/colorText"
+                        android:textColor="@color/colorWhite"
                         android:textSize="20sp" />
                 </LinearLayout>
 
             </LinearLayout>
-
-
-
-
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_main"

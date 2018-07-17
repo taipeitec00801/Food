@@ -382,7 +382,7 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
             });
 
             //設定每個item動畫延遲時間，position超過3，不使用動畫。
-            if (position <= 3) {
+            if (position <= 2) {
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(SortActivity.this, R.anim.sort_item_down);
                 am.setStartOffset(aniTime);

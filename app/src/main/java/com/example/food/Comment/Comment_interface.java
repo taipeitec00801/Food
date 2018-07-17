@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -45,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,8 +56,8 @@ public class Comment_interface extends AppCompatActivity {
     private File file;
     private String storeName;
     private SharedPreferences prefs;
-    private ImageButton ibPickPicture;
-    private ImageView ivComment;
+    private ImageView ibPickPicture;
+    private CardView ivComment;
     private static final int REQ_TAKE_PICTURE = 0;
     private static final int REQ_PICK_IMAGE = 1;
     private static final int REQ_CROP_PICTURE = 2;
@@ -67,19 +69,18 @@ public class Comment_interface extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getIntent().getExtras();
-        storeName = (String) bundle.get("storename");
         setContentView(R.layout.activity_comment_interface);
         findViews();
         initContent();
-        review();
+        Bundle bundle = getIntent().getExtras();
+        storeName = (String) bundle.get("storename");
         selectCardView();
         TextView storeid = findViewById(R.id.storeid);
         storeid.setText("店家:"+storeName);
         mediumText = findViewById(R.id.MediumText);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
         mediumText.setText(prefs.getString("nickname", "訪客"));
-        CircleImageView cv_comment_inf = findViewById(R.id.cv_comment_inf);
+        ImageView cv_comment_inf = findViewById(R.id.cv_comment_inf);
 
         ImageInExternalStorage imgExStorage = new ImageInExternalStorage(Comment_interface.this, prefs);
         imgExStorage.openFile(cv_comment_inf);
@@ -91,20 +92,10 @@ public class Comment_interface extends AppCompatActivity {
         String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
         Common.askPermissions(Comment_interface.this, permissions, Common.PERMISSION_READ_EXTERNAL_STORAGE);
     }
-    private void review() {
-//        button2=findViewById(R.id.Collection);
-//        button2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent =new Intent(Comment_interface.this,CommentActivity.class);
-//                startActivity(intent);
-//            }
-//        });測試用
-    }
+
     private void initContent() {
-//         toolbar = findViewById(R.id.comment_interface_toolbar);
-//        toolbar.setTitle(R.string.text_insert_Comment);
-//        toolbar.setTitle(getString(R.string.text_insert_Comment));
+         toolbar = findViewById(R.id.comment_interface_toolbar);
+        toolbar.setTitle(getString(R.string.text_insert_Comment));
 //        setSupportActionBar(toolbar);
 //        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
@@ -115,7 +106,7 @@ public class Comment_interface extends AppCompatActivity {
     }
     private void selectCardView() {
         /* 個人頭像 */
-        ibPickPicture.setOnClickListener(new View.OnClickListener() {
+        ivComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 View mView = LayoutInflater.from(Comment_interface.this)
@@ -219,7 +210,7 @@ public class Comment_interface extends AppCompatActivity {
                         try {
                             Bitmap picture = BitmapFactory.decodeStream(
                                     Comment_interface.this.getContentResolver().openInputStream(croppedImageUri));
-                            ivComment.setImageBitmap(picture);
+                            ibPickPicture.setImageBitmap(picture);
                             ByteArrayOutputStream out = new ByteArrayOutputStream();
                             picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
                             image = out.toByteArray();
