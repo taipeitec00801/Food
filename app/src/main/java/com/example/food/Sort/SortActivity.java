@@ -32,7 +32,7 @@ import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.example.food.AppModel.Sort;
-import com.example.food.AppModel.SortAs;
+import com.example.food.AppModel.Store;
 import com.example.food.Collection.CollectionActivity;
 import com.example.food.DAO.SortDAO;
 import com.example.food.Main.MainActivity;
@@ -400,8 +400,9 @@ public class SortActivity extends AppCompatActivity implements NavigationView.On
         final SortDAO sortDAO = new SortDAO(SortActivity.this);
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
-        List<SortAs> sortAsList = null;
+        List<Store> sortAsList = null;
         String name = null;
+
         int number = 0;
         if (whereCome) {
             name = sort.getTvLname();

@@ -3,7 +3,7 @@ package com.example.food.DAO;
 import android.app.Activity;
 import android.util.Log;
 
-import com.example.food.AppModel.SortAs;
+import com.example.food.AppModel.Store;
 import com.example.food.DAO.task.Common;
 import com.example.food.DAO.task.CommonTask;
 import com.google.gson.Gson;
@@ -17,14 +17,14 @@ public class SortDAO {
     private Activity inputActivity;
     private String TAG;
     private CommonTask spotGetAllTask;
-    private List<SortAs> sortAsList = null;
+    private List<Store> sortAsList = null;
 
     public SortDAO(Activity inputActivity) {
         this.inputActivity = inputActivity;
         TAG = inputActivity.getClass().getName();
     }
 
-    public List<SortAs> sortRestaurant(int sortNumber) {
+    public List<Store> sortRestaurant(int sortNumber) {
         if (Common.networkConnected(inputActivity)) {
             sortAsList = null;
             //建立商店物件的List，以便接收資料庫回傳的資料。
@@ -50,7 +50,7 @@ public class SortDAO {
 //                spotGetAllTask.get(500, TimeUnit.MILLISECONDS);
                 String jsonIn = spotGetAllTask.execute().get();
                 //利用TypeToken指定資料型態為List<SortAs>
-                Type listType = new TypeToken<List<SortAs>>() {
+                Type listType = new TypeToken<List<Store>>() {
                 }.getType();
                 //利用Gson把json字串轉成Type指定的型態(List<SortAs>)後放入sortAsList(List<SortAs>)。
                 sortAsList = gson.fromJson(jsonIn, listType);
@@ -73,7 +73,7 @@ public class SortDAO {
     }
 
 
-    public List<SortAs> findResByName(String storeName){
+    public List<Store> findResByName(String storeName){
         if (Common.networkConnected(inputActivity)) {
             sortAsList = null;
             Gson gson = new Gson();
@@ -85,7 +85,7 @@ public class SortDAO {
             spotGetAllTask = new CommonTask(url, jsonOut);
             try {
                 String jsonIn = spotGetAllTask.execute().get();
-                Type listType = new TypeToken<List<SortAs>>() {}.getType();
+                Type listType = new TypeToken<List<Store>>() {}.getType();
                 sortAsList = gson.fromJson(jsonIn, listType);
             } catch (Exception e) {
                 Log.e(TAG, e.toString());

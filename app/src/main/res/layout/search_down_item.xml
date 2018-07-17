@@ -22,8 +22,7 @@
                 android:layout_weight="0.25"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="3dp"
-                android:src="@drawable/logo"/>
+                android:layout_margin="3dp"/>
 
             <TextView
                 android:id="@+id/search_downItem_resName"

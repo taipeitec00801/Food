@@ -198,6 +198,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             storeDAO = new StoreDAO(MainActivity.this);
             sList = storeDAO.getStoreByTop();
+            if (sList == null || sList.isEmpty()) {
+                sList = getStoreList();
+            }
 
             foodAd = new MainActivity.FoodpicAdapter(MainActivity.this , sList);
             mThreadHandler.post(r3);

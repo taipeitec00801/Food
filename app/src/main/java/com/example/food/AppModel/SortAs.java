@@ -12,6 +12,8 @@ public class SortAs implements Serializable{
     private Integer sortNumber;
     private Integer storeRecomCount;
     private Integer storeCommentCount;
+    private Double latitude;
+    private Double longitude;
 
     public SortAs(Integer storeId, String storeName, String storeAddress, String storePhone, String serviceHours, String storePicture, Integer sortNumber, Integer storeRecomCount, Integer storeCommentCount) {
         this.storeId = storeId;
@@ -26,6 +28,22 @@ public class SortAs implements Serializable{
     }
 
     public SortAs() {
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public Integer getStoreId() {

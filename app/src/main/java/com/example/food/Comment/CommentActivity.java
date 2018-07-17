@@ -39,6 +39,7 @@ import com.jude.rollviewpager.hintview.ColorPointHintView;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Delayed;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -57,6 +58,7 @@ public class CommentActivity extends AppCompatActivity {
     private MemberAdapter commentAd;
     private ImageView store_recom_img, store_collect_img;
     private Integer recom;
+    private TextView com_count_zero;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,7 @@ public class CommentActivity extends AppCompatActivity {
         tv1 = findViewById(R.id.tv_store_info_address);
         tv2 = findViewById(R.id.tv_store_info_time);
         tv3 = findViewById(R.id.tv_store_info_phone);
+        com_count_zero = findViewById(R.id.com_count_zero);
         prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
     }
 
@@ -135,8 +138,6 @@ public class CommentActivity extends AppCompatActivity {
             if (collected){
                 store_collect_img.setImageResource(R.drawable.bookmark_is);
             }
-
-
 
             //推薦
             View store_recom = mView.findViewById(R.id.store_recom);
@@ -176,13 +177,14 @@ public class CommentActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (collected) {
-                        store_recom_img.setImageResource(R.drawable.bookmark);
+                        store_collect_img.setImageResource(R.drawable.bookmark);
                         collected = false;
                     }else {
-                        store_recom_img.setImageResource(R.drawable.bookmark_is);
+                        store_collect_img.setImageResource(R.drawable.bookmark_is);
                         collected = true;
                     }
                     //修改收藏
+                    popWindow.dismiss();
                 }
             });
 
@@ -282,7 +284,12 @@ public class CommentActivity extends AppCompatActivity {
             Log.d("store.getStoreId()---------------------------" , store.getStoreId().toString());
 
             cfaList =  sDAO.getCommentForApp(store.getStoreId());
-            recom = sDAO.getStRecom(prefs.getInt("memberId", 0), store.getStoreId());
+            if (cfaList == null || cfaList.size() < 1) {
+                com_count_zero.setText("尚無評論");
+            }
+            if (isMember) {
+                recom = sDAO.getStRecom(prefs.getInt("memberId", 0), store.getStoreId());
+            }
             Log.d("------------------------------------" , String.valueOf(cfaList.size()));
             commentAd = new MemberAdapter(CommentActivity.this , cfaList);
             mThreadHandler.post(r3);
@@ -297,11 +304,13 @@ public class CommentActivity extends AppCompatActivity {
                     // update TextView here!
                     rvComment.setAdapter(commentAd);
 
-                    String userCollection = prefs.getString("collection", "");
-                    String[] coll = userCollection.split(",");
-                    for (String n : coll) {
-                        if (Integer.valueOf(n) == store.getStoreId()){
-                            collected = true;
+                    if (isMember) {
+                        String userCollection = prefs.getString("collection", "");
+                        String[] coll = userCollection.split(",");
+                        for (String n : coll) {
+                            if (Integer.valueOf(n) == store.getStoreId()) {
+                                collected = true;
+                            }
                         }
                     }
                 }

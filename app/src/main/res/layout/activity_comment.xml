@@ -141,6 +141,8 @@
         </LinearLayout>
 
 
+
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Comment_recycleview"
             android:layout_width="match_parent"
@@ -149,6 +151,16 @@
             android:paddingEnd="5dp">
 
         </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/com_count_zero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorText"
+            android:textSize="32sp"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center"
+            android:text=""/>
+
     </LinearLayout>
 </RelativeLayout>
 

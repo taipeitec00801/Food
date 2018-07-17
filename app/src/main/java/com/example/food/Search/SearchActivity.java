@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -27,9 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.example.food.AppModel.SortAs;
+import com.example.food.AppModel.Store;
 import com.example.food.Collection.CollectionActivity;
+import com.example.food.Comment.CommentActivity;
 import com.example.food.DAO.SortDAO;
+import com.example.food.DAO.task.Common;
+import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.Main.MainActivity;
 import com.example.food.Map.MapActivity;
 import com.example.food.Member.LoginActivity;
@@ -52,7 +56,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private static final String TAG = "SearchActivity";
     private RecyclerView rvUp,rvDown;
     private MaterialSearchBar searchBar;
-    private List<SortAs> sortItemList = null;
+    private List<Store> sortItemList = null;
     private searchAdapter searchAdapter;
     private sortAdapter sortAdapter;
     private boolean ordercont = true;
@@ -60,6 +64,7 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private HandlerThread mThread;
     private TextView tvAbc;
     private SharedPreferences prefs;
+    private ImageTaskOIB storeImgTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,26 +104,8 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                 mThread.start();
                 mThreadHandler=new Handler(mThread.getLooper());
                 mThreadHandler.post(r1);
-//                try {
-//                    mThread.join(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                if(rvUp.getAdapter()==null||rvDown.getAdapter()==null){
-//                try {
-//                    mThread.join();
                 rvUp.setAdapter(searchAdapter);
                 rvDown.setAdapter(sortAdapter);
-//                } catch (InterruptedException e) {
-////                    rvUp.setAdapter(searchAdapter);
-////                    rvDown.setAdapter(sortAdapter);
-////                }
-//                }else{
-//                    sortAdapter.notifyDataSetChanged();
-//                    searchAdapter.notifyDataSetChanged();
-//                    rvUp.setAdapter(searchAdapter);
-////                    rvDown.setAdapter(sortAdapter);
-//                }
                 tvAbc.setVisibility(View.VISIBLE);
 
                 searchBar.disableSearch();
@@ -141,9 +128,9 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private class sortAdapter extends
             RecyclerView.Adapter<sortAdapter.SortViewHolder> {
         private Context context;
-        private List<SortAs> sortList;
+        private List<Store> sortList;
 
-        sortAdapter(Context context, List<SortAs> sortList) {
+        sortAdapter(Context context, List<Store> sortList) {
             this.context = context;
             this.sortList = sortList;
         }
@@ -160,6 +147,9 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
         }
         @Override
         public int getItemCount() {
+            if(sortList.size() >= 5){
+                return 5;
+            }
             return sortList.size();
         }
 
@@ -173,25 +163,41 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
         @Override
         public void onBindViewHolder(@NonNull SortViewHolder viewHolder, int position) {
-            SortAs sort = sortList.get(position);
-            viewHolder.resImg.setImageResource(R.drawable.logo);
+            final Store sort = sortList.get(position);
+
+            String url = Common.URL + "/appGetImages";
+            Log.e(TAG, url);
+            int id = sort.getStoreId();
+            storeImgTask = new ImageTaskOIB(url, id, viewHolder.resImg);
+            storeImgTask.execute();
+
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
             viewHolder.likeNumber.setText(String.valueOf(sort.getStoreRecomCount()));
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("store",sort);
+                    Intent intent = new Intent(SearchActivity.this,CommentActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
     private class searchAdapter extends
             RecyclerView.Adapter<searchAdapter.SearchViewHolder> {
         private Context context;
-        private List<SortAs> sortList;
+        private List<Store> sortList;
 
-        searchAdapter(Context context, List<SortAs> sortList) {
+        searchAdapter(Context context, List<Store> sortList) {
             this.context = context;
             this.sortList = sortList;
         }
 
         class SearchViewHolder extends RecyclerView.ViewHolder {
-            ImageView bgImg,leftImg,rightImg;
+            ImageView bgImg,leftImg,rightImg,midImg;
             TextView resName,resSort,mapBt;
             CircleImageView circleImg;
             MaterialRippleLayout mrLayout;
@@ -202,8 +208,9 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
                 leftImg = itemView.findViewById(R.id.search_item_leftImg);
                 rightImg = itemView.findViewById(R.id.search_item_rightImg);
                 resName = itemView.findViewById(R.id.search_item_resName);
+                midImg = itemView.findViewById(R.id.search_item_midImg);
                 resSort = itemView.findViewById(R.id.search_item_resSort);
-                circleImg = itemView.findViewById(R.id.search_item_circleImg);
+//                circleImg = itemView.findViewById(R.id.search_item_circleImg);
                 mapBt = itemView.findViewById(R.id.search_item_mapBt);
                 mrLayout = itemView.findViewById(R.id.search_item_ripple);
             }
@@ -223,19 +230,45 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
 
         @Override
         public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
-            SortAs sort = sortList.get(position);
+            final Store sort = sortList.get(position);
+
+            String url = Common.URL + "/appGetImages";
+            Log.e(TAG, url);
+            int id = sort.getStoreId();
+            storeImgTask = new ImageTaskOIB(url, id, viewHolder.bgImg);
+            storeImgTask.execute();
+
+            String url2 = Common.URL + "/appGetAllImages";
+            Log.e(TAG, url2);
+            storeImgTask = new ImageTaskOIB(url2, id, 1 , viewHolder.leftImg);
+            storeImgTask.execute();
+            storeImgTask = new ImageTaskOIB(url2, id, 2 , viewHolder.midImg);
+            storeImgTask.execute();
+            storeImgTask = new ImageTaskOIB(url2, id, 3 , viewHolder.rightImg);
+            storeImgTask.execute();
+
             viewHolder.resName.setText(sort.getStoreName());
             viewHolder.resSort.setText(sortName(sort.getSortNumber()));
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(SearchActivity.this,"有喔",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(SearchActivity.this,"有喔",Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("store",sort);
+                    Intent intent = new Intent(SearchActivity.this,MapActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 }
             });
             viewHolder.mrLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 //                    Toast.makeText(SearchActivity.this,"有喔",Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("store",sort);
+                    Intent intent = new Intent(SearchActivity.this,CommentActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 }
             });
         }
@@ -382,9 +415,10 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     }
     public void searchOther(Activity inputActivity , int sortNumber){
         SortDAO sortDAO = new SortDAO(SearchActivity.this);
-        List<SortAs> sortDownList = sortDAO.sortRestaurant(sortNumber);
+        List<Store> sortDownList = sortDAO.sortRestaurant(sortNumber);
         sortAdapter = new sortAdapter(SearchActivity.this, sortDownList);
     }
+
 
     public String sortName(int sortNumber){
         String[] sortNameAry = {"中式餐廳","西式餐廳","日式餐廳","韓式餐廳","泰式餐廳"
@@ -405,7 +439,9 @@ public class SearchActivity extends AppCompatActivity implements NavigationView.
     private Runnable r2 = new Runnable(){
         public void run(){
             //這裡放執行緒要執行的程式。
-            searchOther(SearchActivity.this , sortItemList.get(0).getSortNumber());
+            if(sortItemList.get(0).getSortNumber() != null) {
+                searchOther(SearchActivity.this, sortItemList.get(0).getSortNumber());
+            }
 //            rvDown.setAdapter(sortAdapter);
             mThreadHandler.post(r3);
         }

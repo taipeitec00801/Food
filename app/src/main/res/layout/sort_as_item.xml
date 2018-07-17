@@ -46,14 +46,23 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/sortAs_item_resImg"
-                android:layout_weight="0.6"
+            <android.support.v7.widget.CardView
+                android:layout_weight="0.57"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/food3"
-                android:scaleType="centerCrop"
-                android:layout_margin="5dp"/>
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                app:cardCornerRadius="7dp">
+
+                <ImageView
+                    android:id="@+id/sortAs_item_resImg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+
+            </android.support.v7.widget.CardView>
+
+
             <!--黑線左邊佔總寬度75%-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -65,7 +74,8 @@
                     android:layout_weight="0.5"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="10dp">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -89,7 +99,8 @@
                     android:layout_weight="0.5"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="right">
+                    android:gravity="right"
+                    android:layout_marginRight="10dp">
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"

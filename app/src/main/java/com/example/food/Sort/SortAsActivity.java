@@ -23,8 +23,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.food.AppModel.SortAs;
+import com.balysv.materialripple.MaterialRippleLayout;
+import com.example.food.AppModel.Store;
 import com.example.food.Collection.CollectionActivity;
+import com.example.food.Comment.CommentActivity;
 import com.example.food.DAO.task.Common;
 import com.example.food.DAO.task.ImageTaskOIB;
 import com.example.food.Main.MainActivity;
@@ -59,7 +61,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
 
         //將上一頁送來bundle打開。
         Bundle bundle = getIntent().getExtras();
-        List<SortAs> sortAsList = (List<SortAs>) bundle.getSerializable("SortAsList");
+        List<Store> sortAsList = (List<Store>) bundle.getSerializable("SortAsList");
         if(sortAsList == null || sortAsList.isEmpty()){
             TextView errorText = findViewById(R.id.sortAs_errorTv);
             errorText.setText("連線不穩，請重新嘗試。");
@@ -204,9 +206,9 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
     private class sortAdapter extends
             RecyclerView.Adapter<sortAdapter.SortViewHolder> {
         private Context context;
-        private List<SortAs> sortList;
+        private List<Store> sortList;
 
-        sortAdapter(Context context, List<SortAs> sortList) {
+        sortAdapter(Context context, List<Store> sortList) {
             this.context = context;
             this.sortList = sortList;
         }
@@ -214,6 +216,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
         class SortViewHolder extends RecyclerView.ViewHolder {
             ImageView resImg;
             TextView resName,likeNumber,textNumber,mapBt;
+            MaterialRippleLayout mrl;
             SortViewHolder(View itemView) {
                 super(itemView);
                 resImg = itemView.findViewById(R.id.sortAs_item_resImg);
@@ -221,6 +224,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
                 likeNumber =  itemView.findViewById(R.id.sortAs_item_likeNumber);
                 textNumber = itemView.findViewById(R.id.sortAs_item_textNumber);
                 mapBt = itemView.findViewById(R.id.sortAs_item_mapBt);
+                mrl = itemView.findViewById(R.id.sortAs_item_ripple);
             }
         }
 
@@ -239,7 +243,7 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
 
         @Override
         public void onBindViewHolder(@NonNull SortViewHolder viewHolder, int position) {
-            SortAs sort = sortList.get(position);
+            final Store sort = sortList.get(position);
 
             String url = Common.URL + "/appGetImages";
             Log.e(TAG, url);
@@ -248,14 +252,29 @@ public class SortAsActivity extends AppCompatActivity implements NavigationView.
             storeImgTask.execute();
 
             viewHolder.resName.setText(String.valueOf(sort.getStoreName()));
-            viewHolder.likeNumber.setText(String.valueOf(sort.getSortNumber()));
+            viewHolder.likeNumber.setText(String.valueOf(sort.getStoreRecomCount()));
+            viewHolder.textNumber.setText(String.valueOf(sort.getStoreCommentCount()));
             viewHolder.mapBt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(SortAsActivity.this,"有歐",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(SortAsActivity.this,"有歐",Toast.LENGTH_SHORT).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("store",sort);
+                    Intent intent = new Intent(SortAsActivity.this,MapActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 }
             });
-
+            viewHolder.mrl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("store",sort);
+                    Intent intent = new Intent(SortAsActivity.this,CommentActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
