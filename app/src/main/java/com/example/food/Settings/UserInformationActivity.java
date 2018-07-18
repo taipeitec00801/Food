@@ -125,6 +125,8 @@ public class UserInformationActivity extends AppCompatActivity implements
             // 若有改變頭像 執行 updatePortrait
             if (imageChange) {
                 updateImageResult = memberDAO.updatePortrait(userAccount, image);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                imgExStorage.saveImage(bitmap);
                 // 變更頭像 改回
                 imageChange = false;
             }

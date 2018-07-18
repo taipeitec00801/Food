@@ -253,7 +253,7 @@ public class PreferencesSettingsActivity extends AppCompatActivity {
             });
 
             //設定每個item動畫延遲時間，position超過4，不使用動畫。
-            if (position <= 2) {
+            if (position <= 3) {
                 long aniTime = 100 * position;
                 Animation am = AnimationUtils.loadAnimation(PreferencesSettingsActivity.this, R.anim.sort_item_down);
                 am.setStartOffset(aniTime);

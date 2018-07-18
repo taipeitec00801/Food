@@ -52,7 +52,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="5dp"
                     app:bgColor="@color/colorWhite"
                     app:cracksColor="#33475f"
                     app:edgeColor="#9d55b8"

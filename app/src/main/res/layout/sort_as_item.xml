@@ -34,7 +34,7 @@
                     android:textColor="#000"/>
                 <TextView
                     android:id="@+id/sortAs_item_mapBt"
-                    android:layout_weight="0.15"
+                    android:layout_weight="0.3"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:text="地圖定位"
