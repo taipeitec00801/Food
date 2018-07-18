@@ -151,10 +151,10 @@ public class CommentActivity extends AppCompatActivity {
                         store_recom_img.setImageResource(R.drawable.comment_is_like);
                         recom = 1;
                     }
-                    boolean isYN = sDAO.updateStRecom(prefs.getInt("memberId", 0), store.getStoreId(), recom);
-                    if (isYN) {
+//                    boolean isYN = sDAO.updateStRecom(prefs.getInt("memberId", 0), store.getStoreId(), recom);
+//                    if (isYN) {
                         popWindow.dismiss();
-                    }
+//                    }
                 }
             });
 
@@ -287,9 +287,9 @@ public class CommentActivity extends AppCompatActivity {
             if (cfaList == null || cfaList.size() < 1) {
                 com_count_zero.setText("尚無評論");
             }
-            if (isMember) {
-                recom = sDAO.getStRecom(prefs.getInt("memberId", 0), store.getStoreId());
-            }
+//            if (isMember) {
+//                recom = sDAO.getStRecom(prefs.getInt("memberId", 0), store.getStoreId());
+//            }
             Log.d("------------------------------------" , String.valueOf(cfaList.size()));
             commentAd = new MemberAdapter(CommentActivity.this , cfaList);
             mThreadHandler.post(r3);
