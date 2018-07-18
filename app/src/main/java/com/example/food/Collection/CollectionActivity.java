@@ -406,9 +406,9 @@ public class CollectionActivity extends AppCompatActivity implements NavigationV
             tvName.setText(storeInfo.getStoreName());
             //anim
             long aniTime = position * 10;
-            Animation animation = AnimationUtils.loadAnimation(CollectionActivity.this, R.anim.collection_slide);
-            animation.setStartOffset(aniTime);
-            item_view.startAnimation(animation);
+//            Animation animation = AnimationUtils.loadAnimation(CollectionActivity.this, R.anim.collection_slide);
+//            animation.setStartOffset(aniTime);
+//            item_view.startAnimation(animation);
             return item_view;
         }
     }
