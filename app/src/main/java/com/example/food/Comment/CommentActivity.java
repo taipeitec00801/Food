@@ -285,14 +285,16 @@ public class CommentActivity extends AppCompatActivity {
 
             cfaList =  sDAO.getCommentForApp(store.getStoreId());
             if (cfaList == null || cfaList.size() < 1) {
-                com_count_zero.setText("尚無評論");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        com_count_zero.setText("尚無評論");
+                    }
+                });
+            }else {
+                commentAd = new MemberAdapter(CommentActivity.this , cfaList);
+                mThreadHandler.post(r3);
             }
-//            if (isMember) {
-//                recom = sDAO.getStRecom(prefs.getInt("memberId", 0), store.getStoreId());
-//            }
-            Log.d("------------------------------------" , String.valueOf(cfaList.size()));
-            commentAd = new MemberAdapter(CommentActivity.this , cfaList);
-            mThreadHandler.post(r3);
         }
     };
     private Runnable r3 = new Runnable() {
